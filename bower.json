@@ -1,0 +1,23 @@
+{
+  "name": "node-occ-sample",
+  "description": "node-occ sample web application",
+  "main": "",
+  "authors": [
+    "Etienne Rossignon <etienne.rossignon@gadz.org>"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/erossignon/node-occ",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "ace": "^1.2.6",
+    "bootstrap": "^3.3.7",
+    "threejs": "*"
+  }
+}
