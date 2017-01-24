@@ -8,26 +8,34 @@ function bytesToSize(bytes, precision) {
     var posttxt = 0;
     if (bytes == 0) return 'n/a';
     if (bytes < 1024) {
-            return Number(bytes) + " " + sizes[posttxt];
+        return Number(bytes) + " " + sizes[posttxt];
     }
-    while( bytes >= 1024 ) {
-            posttxt++;
-            bytes = bytes / 1024;
+    while (bytes >= 1024) {
+        posttxt++;
+        bytes = bytes / 1024;
     }
     return bytes.toPrecision(precision) + " " + sizes[posttxt];
 }
 
-
-var editor,  myLayout;
+function w(n,width) {
+return ("00"+n).substr(-width);
+}
+function toReadableDuration(duration) {
+   var milliseconds = duration % 1000;
+   var seconds      = Math.floor(duration/1000)%60;
+   var minutes     = Math.floor(duration/1000/60);
+   return "00:"+w(minutes,2,"0")+":"+w(seconds,2,"0")+"."+w(milliseconds,3);
+}
+var editor, myLayout;
 
 function installLayout() {
     // $('#container').layout({ applyDemoStyles: true });
     myLayout = $('body').layout(
         {
-            west__onresize:    function(x, ui) {
+            west__onresize: function (x, ui) {
                 editor.resize();
             },
-            center__onresize:  function(x, ui) {
+            center__onresize: function (x, ui) {
                 // resize webgl view
                 onWindowResize();
             }
@@ -38,7 +46,7 @@ function installLayout() {
 
 var view;
 
-$(document).ready(function() {
+$(document).ready(function () {
     "use strict";
 
     installLayout();
@@ -50,56 +58,53 @@ $(document).ready(function() {
 
     var container = $("#graphical_view");
 
-    if (container.size() === 0 ) {
+    if (container.size() === 0) {
         throw Error("Cannot find graphical view div");
-    }    
+    }
     view = new GEOMVIEW(container[0]);
 
-    view.on("animate",function() { updateAJS(); });
+    view.on("animate", function () {
+        updateAJS();
+    });
 
     $("#button").click(send_and_build_up_csg);
 
-    $("#zoomAll").click(function() { 
-         view.zoomAll();
+    $("#zoomAll").click(function () {
+        view.zoomAll();
     });
 
 });
 
-function onWindowResize( event ) {
+function onWindowResize(event) {
     view && view.resizeRenderer();
 }
 
-var lastAjaxStart ;
-var lastAjaxDuration;
-var delay;
 
 function restoreUserSession() {
     var rawData = localStorage.getItem("myscript");
     if (!rawData) return;
     var script = decodeURIComponent(rawData);
-    if (script && script!="null") {
+    if (script && script != "null") {
         editor.setValue(script);
-        editor.gotoLine(1,1,false);
-        editor.clearSelection();        
+        editor.gotoLine(1, 1, false);
+        editor.clearSelection();
     }
 }
 
 function saveUserSession() {
-    var script = encodeURIComponent(editor.getValue());
+    const script = encodeURIComponent(editor.getValue());
     if (script) {
-        localStorage.setItem("myscript",script);
+        localStorage.setItem("myscript", script);
     }
 }
 
 function script_isValid() {
 
-    var lint_errors = [];
-    // editor.emit("jslint", lint_errors);
-
-    var annotations = editor.getSession().getAnnotations();
-    if (Object.keys(annotations).length == 0 ) {
+    const annotations = editor.getSession().getAnnotations();
+    if (Object.keys(annotations).length == 0) {
         return true;
     } else {
+        console.log("qsdsq =", annotations.length);
         return false;
     }
 }
@@ -107,22 +112,25 @@ function script_isValid() {
 function installACEEditor() {
 
     editor = ace.edit("editor");
+
+
     editor.isModified = false;
     editor.setTheme("ace/theme/monokai");
     editor.getSession().setMode("ace/mode/javascript");
-    editor.getSession().on('changeAnnotation',function () {
+    //xx editor.getSession()
+    editor.getSession().on('changeAnnotation', function () {
         if (script_isValid()) {
             if (editor.isModified) {
                 $("#button").show();
             }
         } else {
-            $("#button").hide();            
+            $("#button").hide();
         }
     });
-    editor.getSession().on('change', function(e) {
+    editor.getSession().on('change', function (e) {
         editor.isModified = true;
         clearTimeout(delay);
-        delay = setTimeout(function() {
+        delay = setTimeout(function () {
 
         }, 400);
         // e.type, etc
@@ -134,43 +142,46 @@ function installACEEditor() {
 
 }
 
-function installEditor() { return installACEEditor(); }
+function installEditor() {
+    return installACEEditor();
+}
 
 function updatePreview() {
-    if (editor.isModified)  {
+    if (editor.isModified) {
         send_and_build_up_csg();
-        editor.isModified=false;
-        $("#button").hide();        
+        editor.isModified = false;
+        $("#button").hide();
     }
 }
 
+
+var lastAjaxStart;
+var lastAjaxDuration;
+var delay;
 function handle_json_error(request, statusText, errorThrown) {
 
     "use strict";
     console.log(request);
     lastAjaxDuration = new Date() - lastAjaxStart;
-
     $("#ascii_mesh").text(request.responseText + " duration :  " + lastAjaxDuration + " ms");
-
 
 }
 
 
-
-function install_json_mesh(json,size_in_byte) {
+function install_json_mesh(json, size_in_byte) {
 
     "use strict";
 
     view.clearAll();
-    view.updateShapeObject(json,function() {
+    view.updateShapeObject(json, function () {
         view.zoomAll();
     });
-    
+
 
     // log
-    json.logs.forEach(function(line){
+    json.logs.forEach(function (line) {
         var str = "";
-        for ( var a in line ) {
+        for (var a in line) {
             str += line[a];
         }
         $("#ascii_mesh").append("<p>" + str + "</p>");
@@ -179,100 +190,108 @@ function install_json_mesh(json,size_in_byte) {
 }
 
 /**
- * In send_and_build_up_csg_method1 the construction script is passed to the 
- * server as a text string. The provided script is executed by the server in a 
+ * In send_and_build_up_csg_method1 the construction script is passed to the
+ * server as a text string. The provided script is executed by the server in a
  * sandbox to produce the corresponding mesh.
  */
 function send_and_build_up_csg_method2() {
 
     "use strict";
-    
+
     var encoded_script = encodeURIComponent(editor.getValue());
 
-    saveUserSession();
 
     lastAjaxStart = new Date();
 
+    saveUserSession();
     var size_in_byte = 0;
-  
+
     $("#ascii_mesh").text("");
- 
+
 
     var loaded = 0;
-    var startTime  =0;
+    var startTime = 0;
     var endTime = 0;
-
+    var serverTime = 0;
     $.ajax({
-        url: "/csg1" ,
-        data: JSON.stringify({ script: encoded_script}),
+        url: "/csg1",
+        data: JSON.stringify({script: encoded_script}),
         type: "POST",
         contentType: "application/json",
         cache: false,
-        dataType:"text",
+        dataType: "text",
         statusCode: {
-            404: function() {
+            404: function () {
                 $("#response").html('Could not contact server.');
             },
-            500: function() {
+            500: function () {
                 $("#response").html('A server-side error has occurred.');
             }
         },
-        xhr: function() {
-           var xhr = new window.XMLHttpRequest();
+        xhr: function () {
+            var xhr = new window.XMLHttpRequest();
 
-           // http://www.dave-bond.com/blog/2010/01/JQuery-ajax-progress-HMTL5/
-           // http://www.w3.org/TR/XMLHttpRequest/#the-response-attribute
-           xhr.addEventListener("loadstart",function(evt) {
-             console.log(" load start");
-	     startTime = new Date;
-           },false);
-           xhr.addEventListener("loadend",function(evt) {
-             console.log(" load end");
-             console.log( " loading " , evt.loaded , " in " , (endTime - startTime ) / 1.0 , " milliseconds");
-           },false);
+            // http://www.dave-bond.com/blog/2010/01/JQuery-ajax-progress-HMTL5/
+            // http://www.w3.org/TR/XMLHttpRequest/#the-response-attribute
+            xhr.addEventListener("loadstart", function (evt) {
+                console.log(" load start");
+                startTime = new Date; // when the loading has started
+                serverTime = startTime - lastAjaxStart;
+            }, false);
+            xhr.addEventListener("loadend", function (evt) {
+                console.log(" load end");
+                console.log(" loading ", evt.loaded, " in ", (endTime - startTime ) / 1.0, " milliseconds");
+            }, false);
 
-           xhr.addEventListener("progress", function on_progress(evt) {
-                 if (evt.lengthComputable) {
-                   var percentComplete = evt.loaded / evt.total;
-                   console.log(" percent complete : ", percentComplete);
-                 }
-                 console.log(" loaded = " , evt.loaded);
-                 loaded = evt.loaded;
-	   },false);
-          return xhr;
+            xhr.addEventListener("progress", function on_progress(evt) {
+                if (evt.lengthComputable) {
+                    var percentComplete = evt.loaded / evt.total;
+                    console.log(" percent complete : ", percentComplete);
+                }
+                console.log(" loaded = ", evt.loaded);
+                loaded = evt.loaded;
+            }, false);
+            return xhr;
         },
-        success: function(response,statusText,jqXHR) {
-            endTime = new Date
+        success: function (response, statusText, jqXHR) {
+            endTime = new Date; // when the loda is finished
             console.log("Success");
-            if(response){       
-                size_in_byte =  response.length ;
-                lastAjaxDuration = new Date() - lastAjaxStart;
-                $("#ascii_mesh").append("<p>duration: " + lastAjaxDuration + " ms   - size :" + bytesToSize(size_in_byte,3) + " loaded " + bytesToSize(loaded) + " </p>");
-                $("#ascii_mesh").append("<p> loading : " + (endTime-startTime) + " ms  </p>");
- 
+            if (response) {
+                size_in_byte = response.length;
+
+
             }
         },
         error: handle_json_error
-    }).done( function(json) {
-            var t1 = new Date();
-            var obj = JSON.parse(json);
-            var t2 = new Date();
-            install_json_mesh(obj);
-            var t3 = new Date();
-             $("#ascii_mesh").append("<p>parsing duration: " + (t2-t1)  + " ms " + " " + (t3-t2)  + " ms </p>");
-     });
+    }).done(function (json) {
+        var t1 = new Date();
+        var obj = JSON.parse(json);
+        var t2 = new Date();
+        install_json_mesh(obj);
+        var t3 = new Date();
+        lastAjaxDuration = new Date() - lastAjaxStart;
+        var str = "<table>";
+        str+= "  <tr><td>size            </td><td>" + bytesToSize(size_in_byte, 3)    + "</td><td>.                                                            </td></tr>";
+        str+= "  <tr><td>server  time    </td><td>" + toReadableDuration(serverTime)  + "</td><td>(time for server to compute the shape and start sending data)</td></tr>";
+        str+= "  <tr><td>loading time    </td><td>" + toReadableDuration(endTime - startTime) + "</td><td>(time for data sent by server to join the client)            </td></tr>";
+        str+= "  <tr><td>parsing duration</td><td>" + toReadableDuration(t2 - t1)             + "</td><td>.                                                            </td></tr>";
+        str+= "  <tr><td>installation    </td><td>" + toReadableDuration(t3 - t2)             + "</td><td>.                                                            </td></tr>";
+        str+= "  <tr><td>duration        </td><td>" + toReadableDuration(lastAjaxDuration)    + "</td><td>.                                                            </td></tr>";
+        str+= "</table>";
+        $("#ascii_mesh").append(str);
+    });
 }
 
 /**
  * In send_and_build_up_csg_method1 the construction script is executed on the
- * javascript engine of the client browser to produce a JSON object that 
+ * javascript engine of the client browser to produce a JSON object that
  * contains the modeling instructions. The JSON data structure is sent to the
  * erver to produce the mesh of the corresponding solid
  */
 function send_and_build_up_csg_method1() {
     "use strict";
     var object;
-    var err_txt= "";
+    var err_txt = "";
     $("#ascii_mesh").text(err_txt);
     try {
 
@@ -280,27 +299,29 @@ function send_and_build_up_csg_method1() {
         // var code = $("#code").val();
         // /var myCodeMirror = CodeMirror.fromTextArea( $("#code")[0]);
         var code = editor.getValue();
-            code =  "var csg = new CSGTree();" +"var b__ = function() { " + code +     "}; b__(); return csg; " ;
+        code = "var csg = new CSGTree();" + "var b__ = function() { " + code + "}; b__(); return csg; ";
 
         // interpret the script
         object = new Function(code)();
 
-        err_txt= '';
+        err_txt = '';
     } catch (e) {
-        err_txt= 'Error: <code>' + e.toString().replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</code>';
+        err_txt = 'Error: <code>' + e.toString().replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</code>';
         $("#ascii_mesh").text(err_txt);
         return;
     }
 
     $.ajax({
-        url: "/csg" ,
+        url: "/csg",
         data: JSON.stringify(object),
         type: "POST",
         contentType: "application/json",
         cache: false,
-        dataType:"json",
+        dataType: "json",
         error: handle_json_error
-    }).done( function(json) { install_json_mesh(json); });
+    }).done(function (json) {
+        install_json_mesh(json);
+    });
 }
 
 
@@ -312,23 +333,23 @@ function send_and_build_up_csg() {
 
 function SceneCtrl($scope) {
     "use strict";
-/*
-    $scope.getCamera =function() {
-        return camera;
-    };
+    /*
+     $scope.getCamera =function() {
+     return camera;
+     };
 
-    $scope.COG = view.COG; // center of gravity
-    //xx $scope.__defineGetter__("camera", function(){
+     $scope.COG = view.COG; // center of gravity
+     //xx $scope.__defineGetter__("camera", function(){
 
-    //xx     return camera;
-    //xx });
-    $scope.camera1 = {};
-    $scope.camera1.position = {};
+     //xx     return camera;
+     //xx });
+     $scope.camera1 = {};
+     $scope.camera1.position = {};
 
-    $scope.camera1.position.x = camera.position.x;
-    $scope.camera1.position.y = camera.position.y;
-    $scope.camera1.position.z = camera.position.z;
-*/
+     $scope.camera1.position.x = camera.position.x;
+     $scope.camera1.position.y = camera.position.y;
+     $scope.camera1.position.z = camera.position.z;
+     */
 }
 
 function updateAJS() {
@@ -341,19 +362,18 @@ function updateAJS() {
 }
 
 
-var lastJQueryStart ;
+var lastJQueryStart;
 
-function installSpinnerOnAjaxCall()
-{
+function installSpinnerOnAjaxCall() {
 
     $('#loadingDiv')
-    .hide()  // hide it initially
-    .ajaxStart(function() {
-        $(this).show();
-        lastJQueryStart = new Date();
-    })
-    .ajaxStop(function() {
-        $(this).hide();
-        lastAjaxDuration=new Date() - lastJQueryStart;
-    });
+        .hide()  // hide it initially
+        .ajaxStart(function () {
+            $(this).show();
+            lastJQueryStart = new Date();
+        })
+        .ajaxStop(function () {
+            $(this).hide();
+            lastAjaxDuration = new Date() - lastJQueryStart;
+        });
 }

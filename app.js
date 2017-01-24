@@ -65,18 +65,12 @@ if ('development' == env) {
 
 app.use(cors());
 
-app.get('/toto', function (req, res) {
-    res.send('Hello World!');
-});
-
 app.get('/test', function (req, res) {
     res.render("sample", {});
 });
 
 app.get('/viewer', function (req, res) {
-
     console.log(" viewer requested");
-
     res.render("viewer", {});
 });
 

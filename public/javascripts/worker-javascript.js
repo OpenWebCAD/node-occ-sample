@@ -1,1 +1,12528 @@
-function initBaseUrls(a){require.tlns=a}function initSender(){var a=require(null,"ace/lib/event_emitter").EventEmitter,b=require(null,"ace/lib/oop"),c=function(){};return function(){b.implement(this,a),this.callback=function(a,b){postMessage({type:"call",id:b,data:a})},this.emit=function(a,b){postMessage({type:"event",name:a,data:b})}}.call(c.prototype),new c}"no use strict";var console={log:function(a){postMessage({type:"log",data:a})}},window={console:console},normalizeModule=function(a,b){if(b.indexOf("!")!==-1){var c=b.split("!");return normalizeModule(a,c[0])+"!"+normalizeModule(a,c[1])}if(b.charAt(0)=="."){var d=a.split("/").slice(0,-1).join("/"),b=d+"/"+b;while(b.indexOf(".")!==-1&&e!=b)var e=b,b=b.replace(/\/\.\//,"/").replace(/[^\/]+\/\.\.\//,"")}return b},require=function(a,b){var b=normalizeModule(a,b),c=require.modules[b];if(c)return c.initialized||(c.initialized=!0,c.exports=c.factory().exports),c.exports;var d=b.split("/");d[0]=require.tlns[d[0]]||d[0];var e=d.join("/")+".js";return require.id=b,importScripts(e),require(a,b)};require.modules={},require.tlns={};var define=function(a,b,c){arguments.length==2?(c=b,typeof a!="string"&&(b=a,a=require.id)):arguments.length==1&&(c=a,a=require.id);if(a.indexOf("text!")===0)return;var d=function(b,c){return require(a,b,c)};require.modules[a]={factory:function(){var a={exports:{}},b=c(d,a.exports,a);return b&&(a.exports=b),a}}},main,sender;onmessage=function(a){var b=a.data;if(b.command)main[b.command].apply(main,b.args);else if(b.init){initBaseUrls(b.tlns),require(null,"ace/lib/fixoldbrowsers"),sender=initSender();var c=require(null,b.module)[b.classname];main=new c(sender)}else b.event&&sender&&sender._emit(b.event,b.data)},define("ace/lib/fixoldbrowsers",["require","exports","module","ace/lib/regexp","ace/lib/es5-shim"],function(a,b,c){a("./regexp"),a("./es5-shim")}),define("ace/lib/regexp",["require","exports","module"],function(a,b,c){function g(a){return(a.global?"g":"")+(a.ignoreCase?"i":"")+(a.multiline?"m":"")+(a.extended?"x":"")+(a.sticky?"y":"")}function h(a,b,c){if(Array.prototype.indexOf)return a.indexOf(b,c);for(var d=c||0;d<a.length;d++)if(a[d]===b)return d;return-1}var d={exec:RegExp.prototype.exec,test:RegExp.prototype.test,match:String.prototype.match,replace:String.prototype.replace,split:String.prototype.split},e=d.exec.call(/()??/,"")[1]===undefined,f=function(){var a=/^/g;return d.test.call(a,""),!a.lastIndex}();if(f&&e)return;RegExp.prototype.exec=function(a){var b=d.exec.apply(this,arguments),c,i;if(typeof a=="string"&&b){!e&&b.length>1&&h(b,"")>-1&&(i=RegExp(this.source,d.replace.call(g(this),"g","")),d.replace.call(a.slice(b.index),i,function(){for(var a=1;a<arguments.length-2;a++)arguments[a]===undefined&&(b[a]=undefined)}));if(this._xregexp&&this._xregexp.captureNames)for(var j=1;j<b.length;j++)c=this._xregexp.captureNames[j-1],c&&(b[c]=b[j]);!f&&this.global&&!b[0].length&&this.lastIndex>b.index&&this.lastIndex--}return b},f||(RegExp.prototype.test=function(a){var b=d.exec.call(this,a);return b&&this.global&&!b[0].length&&this.lastIndex>b.index&&this.lastIndex--,!!b})}),define("ace/lib/es5-shim",["require","exports","module"],function(a,b,c){function p(a){try{return Object.defineProperty(a,"sentinel",{}),"sentinel"in a}catch(b){}}Function.prototype.bind||(Function.prototype.bind=function(b){var c=this;if(typeof c!="function")throw new TypeError;var d=g.call(arguments,1),e=function(){if(this instanceof e){var a=function(){};a.prototype=c.prototype;var f=new a,h=c.apply(f,d.concat(g.call(arguments)));return h!==null&&Object(h)===h?h:f}return c.apply(b,d.concat(g.call(arguments)))};return e});var d=Function.prototype.call,e=Array.prototype,f=Object.prototype,g=e.slice,h=d.bind(f.toString),i=d.bind(f.hasOwnProperty),j,k,l,m,n;if(n=i(f,"__defineGetter__"))j=d.bind(f.__defineGetter__),k=d.bind(f.__defineSetter__),l=d.bind(f.__lookupGetter__),m=d.bind(f.__lookupSetter__);Array.isArray||(Array.isArray=function(b){return h(b)=="[object Array]"}),Array.prototype.forEach||(Array.prototype.forEach=function(b){var c=G(this),d=arguments[1],e=0,f=c.length>>>0;if(h(b)!="[object Function]")throw new TypeError;while(e<f)e in c&&b.call(d,c[e],e,c),e++}),Array.prototype.map||(Array.prototype.map=function(b){var c=G(this),d=c.length>>>0,e=Array(d),f=arguments[1];if(h(b)!="[object Function]")throw new TypeError;for(var g=0;g<d;g++)g in c&&(e[g]=b.call(f,c[g],g,c));return e}),Array.prototype.filter||(Array.prototype.filter=function(b){var c=G(this),d=c.length>>>0,e=[],f=arguments[1];if(h(b)!="[object Function]")throw new TypeError;for(var g=0;g<d;g++)g in c&&b.call(f,c[g],g,c)&&e.push(c[g]);return e}),Array.prototype.every||(Array.prototype.every=function(b){var c=G(this),d=c.length>>>0,e=arguments[1];if(h(b)!="[object Function]")throw new TypeError;for(var f=0;f<d;f++)if(f in c&&!b.call(e,c[f],f,c))return!1;return!0}),Array.prototype.some||(Array.prototype.some=function(b){var c=G(this),d=c.length>>>0,e=arguments[1];if(h(b)!="[object Function]")throw new TypeError;for(var f=0;f<d;f++)if(f in c&&b.call(e,c[f],f,c))return!0;return!1}),Array.prototype.reduce||(Array.prototype.reduce=function(b){var c=G(this),d=c.length>>>0;if(h(b)!="[object Function]")throw new TypeError;if(!d&&arguments.length==1)throw new TypeError;var e=0,f;if(arguments.length>=2)f=arguments[1];else do{if(e in c){f=c[e++];break}if(++e>=d)throw new TypeError}while(!0);for(;e<d;e++)e in c&&(f=b.call(void 0,f,c[e],e,c));return f}),Array.prototype.reduceRight||(Array.prototype.reduceRight=function(b){var c=G(this),d=c.length>>>0;if(h(b)!="[object Function]")throw new TypeError;if(!d&&arguments.length==1)throw new TypeError;var e,f=d-1;if(arguments.length>=2)e=arguments[1];else do{if(f in c){e=c[f--];break}if(--f<0)throw new TypeError}while(!0);do f in this&&(e=b.call(void 0,e,c[f],f,c));while(f--);return e}),Array.prototype.indexOf||(Array.prototype.indexOf=function(b){var c=G(this),d=c.length>>>0;if(!d)return-1;var e=0;arguments.length>1&&(e=E(arguments[1])),e=e>=0?e:Math.max(0,d+e);for(;e<d;e++)if(e in c&&c[e]===b)return e;return-1}),Array.prototype.lastIndexOf||(Array.prototype.lastIndexOf=function(b){var c=G(this),d=c.length>>>0;if(!d)return-1;var e=d-1;arguments.length>1&&(e=Math.min(e,E(arguments[1]))),e=e>=0?e:d-Math.abs(e);for(;e>=0;e--)if(e in c&&b===c[e])return e;return-1}),Object.getPrototypeOf||(Object.getPrototypeOf=function(b){return b.__proto__||(b.constructor?b.constructor.prototype:f)});if(!Object.getOwnPropertyDescriptor){var o="Object.getOwnPropertyDescriptor called on a non-object: ";Object.getOwnPropertyDescriptor=function(b,c){if(typeof b!="object"&&typeof b!="function"||b===null)throw new TypeError(o+b);if(!i(b,c))return;var d,e,g;d={enumerable:!0,configurable:!0};if(n){var h=b.__proto__;b.__proto__=f;var e=l(b,c),g=m(b,c);b.__proto__=h;if(e||g)return e&&(d.get=e),g&&(d.set=g),d}return d.value=b[c],d}}Object.getOwnPropertyNames||(Object.getOwnPropertyNames=function(b){return Object.keys(b)}),Object.create||(Object.create=function(b,c){var d;if(b===null)d={__proto__:null};else{if(typeof b!="object")throw new TypeError("typeof prototype["+typeof b+"] != 'object'");var e=function(){};e.prototype=b,d=new e,d.__proto__=b}return c!==void 0&&Object.defineProperties(d,c),d});if(Object.defineProperty){var q=p({}),r=typeof document=="undefined"||p(document.createElement("div"));if(!q||!r)var s=Object.defineProperty}if(!Object.defineProperty||s){var t="Property description must be an object: ",u="Object.defineProperty called on non-object: ",v="getters & setters can not be defined on this javascript engine";Object.defineProperty=function(b,c,d){if(typeof b!="object"&&typeof b!="function"||b===null)throw new TypeError(u+b);if(typeof d!="object"&&typeof d!="function"||d===null)throw new TypeError(t+d);if(s)try{return s.call(Object,b,c,d)}catch(e){}if(i(d,"value"))if(n&&(l(b,c)||m(b,c))){var g=b.__proto__;b.__proto__=f,delete b[c],b[c]=d.value,b.__proto__=g}else b[c]=d.value;else{if(!n)throw new TypeError(v);i(d,"get")&&j(b,c,d.get),i(d,"set")&&k(b,c,d.set)}return b}}Object.defineProperties||(Object.defineProperties=function(b,c){for(var d in c)i(c,d)&&Object.defineProperty(b,d,c[d]);return b}),Object.seal||(Object.seal=function(b){return b}),Object.freeze||(Object.freeze=function(b){return b});try{Object.freeze(function(){})}catch(w){Object.freeze=function(b){return function(c){return typeof c=="function"?c:b(c)}}(Object.freeze)}Object.preventExtensions||(Object.preventExtensions=function(b){return b}),Object.isSealed||(Object.isSealed=function(b){return!1}),Object.isFrozen||(Object.isFrozen=function(b){return!1}),Object.isExtensible||(Object.isExtensible=function(b){if(Object(b)===b)throw new TypeError;var c="";while(i(b,c))c+="?";b[c]=!0;var d=i(b,c);return delete b[c],d});if(!Object.keys){var x=!0,y=["toString","toLocaleString","valueOf","hasOwnProperty","isPrototypeOf","propertyIsEnumerable","constructor"],z=y.length;for(var A in{toString:null})x=!1;Object.keys=function H(a){if(typeof a!="object"&&typeof a!="function"||a===null)throw new TypeError("Object.keys called on a non-object");var H=[];for(var b in a)i(a,b)&&H.push(b);if(x)for(var c=0,d=z;c<d;c++){var e=y[c];i(a,e)&&H.push(e)}return H}}if(!Date.prototype.toISOString||(new Date(-621987552e5)).toISOString().indexOf("-000001")===-1)Date.prototype.toISOString=function(){var b,c,d,e;if(!isFinite(this))throw new RangeError;b=[this.getUTCMonth()+1,this.getUTCDate(),this.getUTCHours(),this.getUTCMinutes(),this.getUTCSeconds()],e=this.getUTCFullYear(),e=(e<0?"-":e>9999?"+":"")+("00000"+Math.abs(e)).slice(0<=e&&e<=9999?-4:-6),c=b.length;while(c--)d=b[c],d<10&&(b[c]="0"+d);return e+"-"+b.slice(0,2).join("-")+"T"+b.slice(2).join(":")+"."+("000"+this.getUTCMilliseconds()).slice(-3)+"Z"};Date.now||(Date.now=function(){return(new Date).getTime()}),Date.prototype.toJSON||(Date.prototype.toJSON=function(b){if(typeof this.toISOString!="function")throw new TypeError;return this.toISOString()}),Date.parse("+275760-09-13T00:00:00.000Z")!==864e13&&(Date=function(a){var b=function e(b,c,d,f,g,h,i){var j=arguments.length;if(this instanceof a){var k=j==1&&String(b)===b?new a(e.parse(b)):j>=7?new a(b,c,d,f,g,h,i):j>=6?new a(b,c,d,f,g,h):j>=5?new a(b,c,d,f,g):j>=4?new a(b,c,d,f):j>=3?new a(b,c,d):j>=2?new a(b,c):j>=1?new a(b):new a;return k.constructor=e,k}return a.apply(this,arguments)},c=new RegExp("^(\\d{4}|[+-]\\d{6})(?:-(\\d{2})(?:-(\\d{2})(?:T(\\d{2}):(\\d{2})(?::(\\d{2})(?:\\.(\\d{3}))?)?(?:Z|(?:([-+])(\\d{2}):(\\d{2})))?)?)?)?$");for(var d in a)b[d]=a[d];return b.now=a.now,b.UTC=a.UTC,b.prototype=a.prototype,b.prototype.constructor=b,b.parse=function(d){var e=c.exec(d);if(e){e.shift();for(var f=1;f<7;f++)e[f]=+(e[f]||(f<3?1:0)),f==1&&e[f]--;var g=+e.pop(),h=+e.pop(),i=e.pop(),j=0;if(i){if(h>23||g>59)return NaN;j=(h*60+g)*6e4*(i=="+"?-1:1)}var k=+e[0];return 0<=k&&k<=99?(e[0]=k+400,a.UTC.apply(this,e)+j-126227808e5):a.UTC.apply(this,e)+j}return a.parse.apply(this,arguments)},b}(Date));var B="	\n\f\r   ᠎             　\u2028\u2029﻿";if(!String.prototype.trim||B.trim()){B="["+B+"]";var C=new RegExp("^"+B+B+"*"),D=new RegExp(B+B+"*$");String.prototype.trim=function(){return String(this).replace(C,"").replace(D,"")}}var E=function(a){return a=+a,a!==a?a=0:a!==0&&a!==1/0&&a!==-Infinity&&(a=(a>0||-1)*Math.floor(Math.abs(a))),a},F="a"[0]!="a",G=function(a){if(a==null)throw new TypeError;return F&&typeof a=="string"&&a?a.split(""):Object(a)}}),define("ace/lib/event_emitter",["require","exports","module"],function(a,b,c){var d={};d._emit=d._dispatchEvent=function(a,b){this._eventRegistry=this._eventRegistry||{},this._defaultHandlers=this._defaultHandlers||{};var c=this._eventRegistry[a]||[],d=this._defaultHandlers[a];if(!c.length&&!d)return;b=b||{},b.type||(b.type=a),b.stopPropagation||(b.stopPropagation=function(){this.propagationStopped=!0}),b.preventDefault||(b.preventDefault=function(){this.defaultPrevented=!0});for(var e=0;e<c.length;e++){c[e](b);if(b.propagationStopped)break}if(d&&!b.defaultPrevented)return d(b)},d.setDefaultHandler=function(a,b){this._defaultHandlers=this._defaultHandlers||{};if(this._defaultHandlers[a])throw new Error("The default handler for '"+a+"' is already set");this._defaultHandlers[a]=b},d.on=d.addEventListener=function(a,b){this._eventRegistry=this._eventRegistry||{};var c=this._eventRegistry[a];c||(c=this._eventRegistry[a]=[]),c.indexOf(b)==-1&&c.push(b)},d.removeListener=d.removeEventListener=function(a,b){this._eventRegistry=this._eventRegistry||{};var c=this._eventRegistry[a];if(!c)return;var d=c.indexOf(b);d!==-1&&c.splice(d,1)},d.removeAllListeners=function(a){this._eventRegistry&&(this._eventRegistry[a]=[])},b.EventEmitter=d}),define("ace/lib/oop",["require","exports","module"],function(a,b,c){b.inherits=function(){var a=function(){};return function(b,c){a.prototype=c.prototype,b.super_=c.prototype,b.prototype=new a,b.prototype.constructor=b}}(),b.mixin=function(a,b){for(var c in b)a[c]=b[c]},b.implement=function(a,c){b.mixin(a,c)}}),define("ace/mode/javascript_worker",["require","exports","module","ace/lib/oop","ace/worker/mirror","ace/worker/jshint","ace/narcissus/parser"],function(a,b,c){var d=a("../lib/oop"),e=a("../worker/mirror").Mirror,f=a("../worker/jshint").JSHINT,g=a("../narcissus/parser"),h=b.JavaScriptWorker=function(a){e.call(this,a),this.setTimeout(500)};d.inherits(h,e),function(){this.onUpdate=function(){var a=this.doc.getValue();a=a.replace(/^#!.*\n/,"\n");try{g.parse(a)}catch(b){var c=b.message.split(":"),d=c.pop().trim(),e=parseInt(c.pop().trim())-1;this.sender.emit("narcissus",{row:e,column:null,text:d,type:"error"});return}finally{}f(a,{undef:!1,onevar:!1,passfail:!1}),this.sender.emit("jslint",f.errors)}}.call(h.prototype)}),define("ace/worker/mirror",["require","exports","module","ace/document","ace/lib/lang"],function(a,b,c){var d=a("../document").Document,e=a("../lib/lang"),f=b.Mirror=function(a){this.sender=a;var b=this.doc=new d(""),c=this.deferredUpdate=e.deferredCall(this.onUpdate.bind(this)),f=this;a.on("change",function(a){b.applyDeltas([a.data]),c.schedule(f.$timeout)})};(function(){this.$timeout=500,this.setTimeout=function(a){this.$timeout=a},this.setValue=function(a){this.doc.setValue(a),this.deferredUpdate.schedule(this.$timeout)},this.getValue=function(a){this.sender.callback(this.doc.getValue(),a)},this.onUpdate=function(){}}).call(f.prototype)}),define("ace/document",["require","exports","module","ace/lib/oop","ace/lib/event_emitter","ace/range","ace/anchor"],function(a,b,c){var d=a("./lib/oop"),e=a("./lib/event_emitter").EventEmitter,f=a("./range").Range,g=a("./anchor").Anchor,h=function(a){this.$lines=[],a.length==0?this.$lines=[""]:Array.isArray(a)?this.insertLines(0,a):this.insert({row:0,column:0},a)};(function(){d.implement(this,e),this.setValue=function(a){var b=this.getLength();this.remove(new f(0,0,b,this.getLine(b-1).length)),this.insert({row:0,column:0},a)},this.getValue=function(){return this.getAllLines().join(this.getNewLineCharacter())},this.createAnchor=function(a,b){return new g(this,a,b)},"aaa".split(/a/).length==0?this.$split=function(a){return a.replace(/\r\n|\r/g,"\n").split("\n")}:this.$split=function(a){return a.split(/\r\n|\r|\n/)},this.$detectNewLine=function(a){var b=a.match(/^.*?(\r\n|\r|\n)/m);b?this.$autoNewLine=b[1]:this.$autoNewLine="\n"},this.getNewLineCharacter=function(){switch(this.$newLineMode){case"windows":return"\r\n";case"unix":return"\n";case"auto":return this.$autoNewLine}},this.$autoNewLine="\n",this.$newLineMode="auto",this.setNewLineMode=function(a){if(this.$newLineMode===a)return;this.$newLineMode=a},this.getNewLineMode=function(){return this.$newLineMode},this.isNewLine=function(a){return a=="\r\n"||a=="\r"||a=="\n"},this.getLine=function(a){return this.$lines[a]||""},this.getLines=function(a,b){return this.$lines.slice(a,b+1)},this.getAllLines=function(){return this.getLines(0,this.getLength())},this.getLength=function(){return this.$lines.length},this.getTextRange=function(a){if(a.start.row==a.end.row)return this.$lines[a.start.row].substring(a.start.column,a.end.column);var b=this.getLines(a.start.row+1,a.end.row-1);return b.unshift((this.$lines[a.start.row]||"").substring(a.start.column)),b.push((this.$lines[a.end.row]||"").substring(0,a.end.column)),b.join(this.getNewLineCharacter())},this.$clipPosition=function(a){var b=this.getLength();return a.row>=b&&(a.row=Math.max(0,b-1),a.column=this.getLine(b-1).length),a},this.insert=function(a,b){if(!b||b.length===0)return a;a=this.$clipPosition(a),this.getLength()<=1&&this.$detectNewLine(b);var c=this.$split(b),d=c.splice(0,1)[0],e=c.length==0?null:c.splice(c.length-1,1)[0];return a=this.insertInLine(a,d),e!==null&&(a=this.insertNewLine(a),a=this.insertLines(a.row,c),a=this.insertInLine(a,e||"")),a},this.insertLines=function(a,b){if(b.length==0)return{row:a,column:0};if(b.length>65535){var c=this.insertLines(a,b.slice(65535));b=b.slice(0,65535)}var d=[a,0];d.push.apply(d,b),this.$lines.splice.apply(this.$lines,d);var e=new f(a,0,a+b.length,0),g={action:"insertLines",range:e,lines:b};return this._emit("change",{data:g}),c||e.end},this.insertNewLine=function(a){a=this.$clipPosition(a);var b=this.$lines[a.row]||"";this.$lines[a.row]=b.substring(0,a.column),this.$lines.splice(a.row+1,0,b.substring(a.column,b.length));var c={row:a.row+1,column:0},d={action:"insertText",range:f.fromPoints(a,c),text:this.getNewLineCharacter()};return this._emit("change",{data:d}),c},this.insertInLine=function(a,b){if(b.length==0)return a;var c=this.$lines[a.row]||"";this.$lines[a.row]=c.substring(0,a.column)+b+c.substring(a.column);var d={row:a.row,column:a.column+b.length},e={action:"insertText",range:f.fromPoints(a,d),text:b};return this._emit("change",{data:e}),d},this.remove=function(a){a.start=this.$clipPosition(a.start),a.end=this.$clipPosition(a.end);if(a.isEmpty())return a.start;var b=a.start.row,c=a.end.row;if(a.isMultiLine()){var d=a.start.column==0?b:b+1,e=c-1;a.end.column>0&&this.removeInLine(c,0,a.end.column),e>=d&&this.removeLines(d,e),d!=b&&(this.removeInLine(b,a.start.column,this.getLine(b).length),this.removeNewLine(a.start.row))}else this.removeInLine(b,a.start.column,a.end.column);return a.start},this.removeInLine=function(a,b,c){if(b==c)return;var d=new f(a,b,a,c),e=this.getLine(a),g=e.substring(b,c),h=e.substring(0,b)+e.substring(c,e.length);this.$lines.splice(a,1,h);var i={action:"removeText",range:d,text:g};return this._emit("change",{data:i}),d.start},this.removeLines=function(a,b){var c=new f(a,0,b+1,0),d=this.$lines.splice(a,b-a+1),e={action:"removeLines",range:c,nl:this.getNewLineCharacter(),lines:d};return this._emit("change",{data:e}),d},this.removeNewLine=function(a){var b=this.getLine(a),c=this.getLine(a+1),d=new f(a,b.length,a+1,0),e=b+c;this.$lines.splice(a,2,e);var g={action:"removeText",range:d,text:this.getNewLineCharacter()};this._emit("change",{data:g})},this.replace=function(a,b){if(b.length==0&&a.isEmpty())return a.start;if(b==this.getTextRange(a))return a.end;this.remove(a);if(b)var c=this.insert(a.start,b);else c=a.start;return c},this.applyDeltas=function(a){for(var b=0;b<a.length;b++){var c=a[b],d=f.fromPoints(c.range.start,c.range.end);c.action=="insertLines"?this.insertLines(d.start.row,c.lines):c.action=="insertText"?this.insert(d.start,c.text):c.action=="removeLines"?this.removeLines(d.start.row,d.end.row-1):c.action=="removeText"&&this.remove(d)}},this.revertDeltas=function(a){for(var b=a.length-1;b>=0;b--){var c=a[b],d=f.fromPoints(c.range.start,c.range.end);c.action=="insertLines"?this.removeLines(d.start.row,d.end.row-1):c.action=="insertText"?this.remove(d):c.action=="removeLines"?this.insertLines(d.start.row,c.lines):c.action=="removeText"&&this.insert(d.start,c.text)}}}).call(h.prototype),b.Document=h}),define("ace/range",["require","exports","module"],function(a,b,c){var d=function(a,b,c,d){this.start={row:a,column:b},this.end={row:c,column:d}};(function(){this.isEqual=function(a){return this.start.row==a.start.row&&this.end.row==a.end.row&&this.start.column==a.start.column&&this.end.column==a.end.column},this.toString=function(){return"Range: ["+this.start.row+"/"+this.start.column+"] -> ["+this.end.row+"/"+this.end.column+"]"},this.contains=function(a,b){return this.compare(a,b)==0},this.compareRange=function(a){var b,c=a.end,d=a.start;return b=this.compare(c.row,c.column),b==1?(b=this.compare(d.row,d.column),b==1?2:b==0?1:0):b==-1?-2:(b=this.compare(d.row,d.column),b==-1?-1:b==1?42:0)},this.comparePoint=function(a){return this.compare(a.row,a.column)},this.containsRange=function(a){return this.comparePoint(a.start)==0&&this.comparePoint(a.end)==0},this.intersects=function(a){var b=this.compareRange(a);return b==-1||b==0||b==1},this.isEnd=function(a,b){return this.end.row==a&&this.end.column==b},this.isStart=function(a,b){return this.start.row==a&&this.start.column==b},this.setStart=function(a,b){typeof a=="object"?(this.start.column=a.column,this.start.row=a.row):(this.start.row=a,this.start.column=b)},this.setEnd=function(a,b){typeof a=="object"?(this.end.column=a.column,this.end.row=a.row):(this.end.row=a,this.end.column=b)},this.inside=function(a,b){return this.compare(a,b)==0?this.isEnd(a,b)||this.isStart(a,b)?!1:!0:!1},this.insideStart=function(a,b){return this.compare(a,b)==0?this.isEnd(a,b)?!1:!0:!1},this.insideEnd=function(a,b){return this.compare(a,b)==0?this.isStart(a,b)?!1:!0:!1},this.compare=function(a,b){return!this.isMultiLine()&&a===this.start.row?b<this.start.column?-1:b>this.end.column?1:0:a<this.start.row?-1:a>this.end.row?1:this.start.row===a?b>=this.start.column?0:-1:this.end.row===a?b<=this.end.column?0:1:0},this.compareStart=function(a,b){return this.start.row==a&&this.start.column==b?-1:this.compare(a,b)},this.compareEnd=function(a,b){return this.end.row==a&&this.end.column==b?1:this.compare(a,b)},this.compareInside=function(a,b){return this.end.row==a&&this.end.column==b?1:this.start.row==a&&this.start.column==b?-1:this.compare(a,b)},this.clipRows=function(a,b){if(this.end.row>b)var c={row:b+1,column:0};if(this.start.row>b)var e={row:b+1,column:0};if(this.start.row<a)var e={row:a,column:0};if(this.end.row<a)var c={row:a,column:0};return d.fromPoints(e||this.start,c||this.end)},this.extend=function(a,b){var c=this.compare(a,b);if(c==0)return this;if(c==-1)var e={row:a,column:b};else var f={row:a,column:b};return d.fromPoints(e||this.start,f||this.end)},this.isEmpty=function(){return this.start.row==this.end.row&&this.start.column==this.end.column},this.isMultiLine=function(){return this.start.row!==this.end.row},this.clone=function(){return d.fromPoints(this.start,this.end)},this.collapseRows=function(){return this.end.column==0?new d(this.start.row,0,Math.max(this.start.row,this.end.row-1),0):new d(this.start.row,0,this.end.row,0)},this.toScreenRange=function(a){var b=a.documentToScreenPosition(this.start),c=a.documentToScreenPosition(this.end);return new d(b.row,b.column,c.row,c.column)}}).call(d.prototype),d.fromPoints=function(a,b){return new d(a.row,a.column,b.row,b.column)},b.Range=d}),define("ace/anchor",["require","exports","module","ace/lib/oop","ace/lib/event_emitter"],function(a,b,c){var d=a("./lib/oop"),e=a("./lib/event_emitter").EventEmitter,f=b.Anchor=function(a,b,c){this.document=a,typeof c=="undefined"?this.setPosition(b.row,b.column):this.setPosition(b,c),this.$onChange=this.onChange.bind(this),a.on("change",this.$onChange)};(function(){d.implement(this,e),this.getPosition=function(){return this.$clipPositionToDocument(this.row,this.column)},this.getDocument=function(){return this.document},this.onChange=function(a){var b=a.data,c=b.range;if(c.start.row==c.end.row&&c.start.row!=this.row)return;if(c.start.row>this.row)return;if(c.start.row==this.row&&c.start.column>this.column)return;var d=this.row,e=this.column;b.action==="insertText"?c.start.row===d&&c.start.column<=e?c.start.row===c.end.row?e+=c.end.column-c.start.column:(e-=c.start.column,d+=c.end.row-c.start.row):c.start.row!==c.end.row&&c.start.row<d&&(d+=c.end.row-c.start.row):b.action==="insertLines"?c.start.row<=d&&(d+=c.end.row-c.start.row):b.action=="removeText"?c.start.row==d&&c.start.column<e?c.end.column>=e?e=c.start.column:e=Math.max(0,e-(c.end.column-c.start.column)):c.start.row!==c.end.row&&c.start.row<d?(c.end.row==d&&(e=Math.max(0,e-c.end.column)+c.start.column),d-=c.end.row-c.start.row):c.end.row==d&&(d-=c.end.row-c.start.row,e=Math.max(0,e-c.end.column)+c.start.column):b.action=="removeLines"&&c.start.row<=d&&(c.end.row<=d?d-=c.end.row-c.start.row:(d=c.start.row,e=0)),this.setPosition(d,e,!0)},this.setPosition=function(a,b,c){var d;c?d={row:a,column:b}:d=this.$clipPositionToDocument(a,b);if(this.row==d.row&&this.column==d.column)return;var e={row:this.row,column:this.column};this.row=d.row,this.column=d.column,this._emit("change",{old:e,value:d})},this.detach=function(){this.document.removeEventListener("change",this.$onChange)},this.$clipPositionToDocument=function(a,b){var c={};return a>=this.document.getLength()?(c.row=Math.max(0,this.document.getLength()-1),c.column=this.document.getLine(c.row).length):a<0?(c.row=0,c.column=0):(c.row=a,c.column=Math.min(this.document.getLine(c.row).length,Math.max(0,b))),b<0&&(c.column=0),c}}).call(f.prototype)}),define("ace/lib/lang",["require","exports","module"],function(a,b,c){b.stringReverse=function(a){return a.split("").reverse().join("")},b.stringRepeat=function(a,b){return(new Array(b+1)).join(a)};var d=/^\s\s*/,e=/\s\s*$/;b.stringTrimLeft=function(a){return a.replace(d,"")},b.stringTrimRight=function(a){return a.replace(e,"")},b.copyObject=function(a){var b={};for(var c in a)b[c]=a[c];return b},b.copyArray=function(a){var b=[];for(var c=0,d=a.length;c<d;c++)a[c]&&typeof a[c]=="object"?b[c]=this.copyObject(a[c]):b[c]=a[c];return b},b.deepCopy=function(a){if(typeof a!="object")return a;var b=a.constructor();for(var c in a)typeof a[c]=="object"?b[c]=this.deepCopy(a[c]):b[c]=a[c];return b},b.arrayToMap=function(a){var b={};for(var c=0;c<a.length;c++)b[a[c]]=1;return b},b.createMap=function(a){var b=Object.create(null);for(var c in a)b[c]=a[c];return b},b.arrayRemove=function(a,b){for(var c=0;c<=a.length;c++)b===a[c]&&a.splice(c,1)},b.escapeRegExp=function(a){return a.replace(/([.*+?^${}()|[\]\/\\])/g,"\\$1")},b.getMatchOffsets=function(a,b){var c=[];return a.replace(b,function(a){c.push({offset:arguments[arguments.length-2],length:a.length})}),c},b.deferredCall=function(a){var b=null,c=function(){b=null,a()},d=function(a){return d.cancel(),b=setTimeout(c,a||0),d};return d.schedule=d,d.call=function(){return this.cancel(),a(),d},d.cancel=function(){return clearTimeout(b),b=null,d},d}}),define("ace/worker/jshint",["require","exports","module"],function(a,b,c){var d=function(){function bb(){}function cb(a,b){return Object.prototype.hasOwnProperty.call(a,b)}function db(a,b){e[a]===undefined&&c[a]===undefined&&ib("Bad option: '"+a+"'.",b)}function eb(a,b){var c;for(c in b)cb(b,c)&&(a[c]=b[c])}function fb(){B.couch&&eb(C,g),B.rhino&&eb(C,G),B.prototypejs&&eb(C,F),B.node&&(eb(C,z),B.globalstrict=!0),B.devel&&eb(C,h),B.dojo&&eb(C,i),B.browser&&eb(C,f),B.nonstandard&&eb(C,K),B.jquery&&eb(C,s),B.mootools&&eb(C,x),B.wsh&&eb(C,T),B.esnext&&R(),B.globalstrict&&B.strict!==!1&&(B.strict=!0)}function gb(a,b,c){var d=Math.floor(b/t.length*100);throw{name:"JSHintError",line:b,character:c,message:a+" ("+d+"% scanned).",raw:a}}function hb(a,b,c,e){return d.undefs.push([a,b,c,e])}function ib(a,b,c,e,f,g){var h,i,j;return b=b||y,b.id==="(end)"&&(b=P),i=b.line||0,h=b.from||0,j={id:"(error)",raw:a,evidence:t[i-1]||"",line:i,character:h,a:c,b:e,c:f,d:g},j.reason=a.supplant(j),d.errors.push(j),B.passfail&&gb("Stopping. ",i,h),S+=1,S>=B.maxerr&&gb("Too many errors.",i,h),j}function jb(a,b,c,d,e,f,g){return ib(a,{line:b,from:c},d,e,f,g)}function kb(a,b,c,d,e,f){var g=ib(a,b,c,d,e,f)}function lb(a,b,c,d,e,f,g){return kb(a,{line:b,from:c},d,e,f,g)}function nb(a,b){a==="hasOwnProperty"&&ib("'hasOwnProperty' is a really bad name."),cb(k,a)&&!k["(global)"]&&(k[a]===!0?B.latedef&&ib("'{a}' was used before it was defined.",y,a):!B.shadow&&b!=="exception"&&ib("'{a}' is already defined.",y,a)),k[a]=b,k["(global)"]?(n[a]=k,cb(o,a)&&(B.latedef&&ib("'{a}' was used before it was defined.",y,a),delete o[a])):H[a]=k}function ob(){var a,b,d,e=y.value,f,g;switch(e){case"*/":kb("Unbegun comment.");break;case"/*members":case"/*member":e="/*members",w||(w={}),b=w;break;case"/*jshint":case"/*jslint":b=B,d=c;break;case"/*global":b=C;break;default:kb("What?")}f=mb.token();a:for(;;){for(;;){if(f.type==="special"&&f.value==="*/")break a;if(f.id!=="(endline)"&&f.id!==",")break;f=mb.token()}f.type!=="(string)"&&f.type!=="(identifier)"&&e!=="/*members"&&kb("Bad option.",f),g=mb.token(),g.id===":"?(g=mb.token(),b===w&&kb("Expected '{a}' and instead saw '{b}'.",f,"*/",":"),e==="/*jshint"&&db(f.value,f),f.value!=="indent"||e!=="/*jshint"&&e!=="/*jslint"?f.value!=="maxerr"||e!=="/*jshint"&&e!=="/*jslint"?f.value!=="maxlen"||e!=="/*jshint"&&e!=="/*jslint"?f.value==="validthis"?k["(global)"]?kb("Option 'validthis' can't be used in a global scope."):g.value==="true"||g.value==="false"?b[f.value]=g.value==="true":kb("Bad option value.",g):g.value==="true"?b[f.value]=!0:g.value==="false"?b[f.value]=!1:kb("Bad option value.",g):(a=+g.value,(typeof a!="number"||!isFinite(a)||a<=0||Math.floor(a)!==a)&&kb("Expected a small integer and instead saw '{a}'.",g,g.value),b.maxlen=a):(a=+g.value,(typeof a!="number"||!isFinite(a)||a<=0||Math.floor(a)!==a)&&kb("Expected a small integer and instead saw '{a}'.",g,g.value),b.maxerr=a):(a=+g.value,(typeof a!="number"||!isFinite(a)||a<=0||Math.floor(a)!==a)&&kb("Expected a small integer and instead saw '{a}'.",g,g.value),b.white=!0,b.indent=a),f=mb.token()):((e==="/*jshint"||e==="/*jslint")&&kb("Missing option value.",f),b[f.value]=!1,f=g)}d&&fb()}function pb(a){var b=a||0,c=0,d;while(c<=b)d=u[c],d||(d=u[c]=mb.token()),c+=1;return d}function qb(b,c){switch(P.id){case"(number)":y.id==="."&&ib("A dot following a number can be confused with a decimal point.",P);break;case"-":(y.id==="-"||y.id==="--")&&ib("Confusing minusses.");break;case"+":(y.id==="+"||y.id==="++")&&ib("Confusing plusses.")}if(P.type==="(string)"||P.identifier)a=P.value;b&&y.id!==b&&(c?y.id==="(end)"?ib("Unmatched '{a}'.",c,c.id):ib("Expected '{a}' to match '{b}' from line {c} and instead saw '{d}'.",y,b,c.id,c.line,y.value):(y.type!=="(identifier)"||y.value!==b)&&ib("Expected '{a}' and instead saw '{b}'.",y,b,y.value)),E=P,P=y;for(;;){y=u.shift()||mb.token();if(y.id==="(end)"||y.id==="(error)")return;if(y.type==="special")ob();else if(y.id!=="(endline)")break}}function rb(b,c){var d,e=!1,f=!1;y.id==="(end)"&&kb("Unexpected early end of program.",P),qb(),c&&(a="anonymous",k["(verb)"]=P.value);if(c===!0&&P.fud)d=P.fud();else{if(P.nud)d=P.nud();else{if(y.type==="(number)"&&P.id===".")return ib("A leading decimal point can be confused with a dot: '.{a}'.",P,y.value),qb(),P;kb("Expected an identifier and instead saw '{a}'.",P,P.id)}while(b<y.lbp)e=P.value==="Array",f=P.value==="Object",qb(),e&&P.id==="("&&y.id===")"&&ib("Use the array literal notation [].",P),f&&P.id==="("&&y.id===")"&&ib("Use the object literal notation {}.",P),P.led?d=P.led(d):kb("Expected an operator and instead saw '{a}'.",P,P.id)}return d}function sb(a,b){a=a||P,b=b||y,B.white&&a.character!==b.from&&a.line===b.line&&(a.from+=a.character-a.from,ib("Unexpected space after '{a}'.",a,a.value))}function tb(a,b){a=a||P,b=b||y,B.white&&(a.character!==b.from||a.line!==b.line)&&ib("Unexpected space before '{a}'.",b,b.value)}function ub(a,b){a=a||P,b=b||y,B.white&&!a.comment&&a.line===b.line&&sb(a,b)}function vb(a,b){B.white&&(a=a||P,b=b||y,a.line===b.line&&a.character===b.from&&(a.from+=a.character-a.from,ib("Missing space after '{a}'.",a,a.value)))}function wb(a,b){a=a||P,b=b||y,!B.laxbreak&&a.line!==b.line?ib("Bad line breaking before '{a}'.",b,b.id):B.white&&(a=a||P,b=b||y,a.character===b.from&&(a.from+=a.character-a.from,ib("Missing space after '{a}'.",a,a.value)))}function xb(a){var b;B.white&&y.id!=="(end)"&&(b=q+(a||0),y.from!==b&&ib("Expected '{a}' to have an indentation at {b} instead at {c}.",y,y.value,b,y.from))}function yb(a){a=a||P,a.line!==y.line&&ib("Line breaking error '{a}'.",a,a.value)}function zb(){P.line!==y.line?B.laxcomma||(zb.first&&(ib("Comma warnings can be turned off with 'laxcomma'"),zb.first=!1),ib("Bad line breaking before '{a}'.",P,y.id)):!P.comment&&P.character!==y.from&&B.white&&(P.from+=P.character-P.from,ib("Unexpected space after '{a}'.",P,P.value)),qb(","),vb(P,y)}function Ab(a,b){var c=N[a];if(!c||typeof c!="object")N[a]=c={id:a,lbp:b,value:a};return c}function Bb(a){return Ab(a,0)}function Cb(a,b){var c=Bb(a);return c.identifier=c.reserved=!0,c.fud=b,c}function Db(a,b){var c=Cb(a,b);return c.block=!0,c}function Eb(a){var b=a.id.charAt(0);if(b>="a"&&b<="z"||b>="A"&&b<="Z")a.identifier=a.reserved=!0;return a}function Fb(a,b){var c=Ab(a,150);return Eb(c),c.nud=typeof b=="function"?b:function(){this.right=rb(150),this.arity="unary";if(this.id==="++"||this.id==="--")B.plusplus?ib("Unexpected use of '{a}'.",this,this.id):(!this.right.identifier||this.right.reserved)&&this.right.id!=="."&&this.right.id!=="["&&ib("Bad operand.",this);return this},c}function Gb(a,b){var c=Bb(a);return c.type=a,c.nud=b,c}function Hb(a,b){var c=Gb(a,b);return c.identifier=c.reserved=!0,c}function Ib(a,b){return Hb(a,function(){return typeof b=="function"&&b(this),this})}function Jb(a,b,c,d){var e=Ab(a,c);return Eb(e),e.led=function(e){return d||(wb(E,P),vb(P,y)),a==="in"&&e.id==="!"&&ib("Confusing use of '{a}'.",e,"!"),typeof b=="function"?b(e,this):(this.left=e,this.right=rb(c),this)},e}function Kb(a,b){var c=Ab(a,100);return c.led=function(a){wb(E,P),vb(P,y);var c=rb(100);return a&&a.id==="NaN"||c&&c.id==="NaN"?ib("Use the isNaN function to compare with NaN.",this):b&&b.apply(this,[a,c]),a.id==="!"&&ib("Confusing use of '{a}'.",a,"!"),c.id==="!"&&ib("Confusing use of '{a}'.",c,"!"),this.left=a,this.right=c,this},c}function Lb(a){return a&&(a.type==="(number)"&&+a.value===0||a.type==="(string)"&&a.value===""||a.type==="null"&&!B.eqnull||a.type==="true"||a.type==="false"||a.type==="undefined")}function Mb(a,b){return Ab(a,20).exps=!0,Jb(a,function(a,b){var c;b.left=a,C[a.value]===!1&&H[a.value]["(global)"]===!0?ib("Read only.",a):a["function"]&&ib("'{a}' is a function.",a,a.value);if(a){B.esnext&&k[a.value]==="const"&&ib("Attempting to override '{a}' which is a constant",a,a.value);if(a.id==="."||a.id==="[")return(!a.left||a.left.value==="arguments")&&ib("Bad assignment.",b),b.right=rb(19),b;if(a.identifier&&!a.reserved)return k[a.value]==="exception"&&ib("Do not assign to the exception parameter.",a),b.right=rb(19),b;a===N["function"]&&ib("Expected an identifier in an assignment and instead saw a function invocation.",P)}kb("Bad assignment.",b)},20)}function Nb(a,b,c){var d=Ab(a,c);return Eb(d),d.led=typeof b=="function"?b:function(a){return B.bitwise&&ib("Unexpected use of '{a}'.",this,this.id),this.left=a,this.right=rb(c),this},d}function Ob(a){return Ab(a,20).exps=!0,Jb(a,function(a,b){B.bitwise&&ib("Unexpected use of '{a}'.",b,b.id),vb(E,P),vb(P,y);if(a)return a.id==="."||a.id==="["||a.identifier&&!a.reserved?(rb(19),b):(a===N["function"]&&ib("Expected an identifier in an assignment, and instead saw a function invocation.",P),b);kb("Bad assignment.",b)},20)}function Pb(a,b){var c=Ab(a,150);return c.led=function(a){return B.plusplus?ib("Unexpected use of '{a}'.",this,this.id):(!a.identifier||a.reserved)&&a.id!=="."&&a.id!=="["&&ib("Bad operand.",this),this.left=a,this},c}function Qb(a){if(y.identifier)return qb(),P.reserved&&!B.es5&&(!a||P.value!=="undefined")&&ib("Expected an identifier and instead saw '{a}' (a reserved word).",P,P.id),P.value}function Rb(a){var b=Qb(a);if(b)return b;P.id==="function"&&y.id==="("?ib("Missing name in function declaration."):kb("Expected an identifier and instead saw '{a}'.",y,y.value)}function Sb(a){var b=0,c;if(y.id!==";"||A)return;for(;;){c=pb(b);if(c.reach)return;if(c.id!=="(endline)"){if(c.id==="function"){if(!B.latedef)break;ib("Inner functions should be listed at the top of the outer function.",c);break}ib("Unreachable '{a}' after '{b}'.",c,c.value,a);break}b+=1}}function Tb(a){var b=q,c,d=H,e=y;if(e.id===";"){qb(";");return}e.identifier&&!e.reserved&&pb().id===":"&&(qb(),qb(":"),H=Object.create(d),nb(e.value,"label"),y.labelled||ib("Label '{a}' on {b} statement.",y,e.value,y.value),_.test(e.value+":")&&ib("Label '{a}' looks like a javascript url.",e,e.value),y.label=e.value,e=y),a||xb(),c=rb(0,!0);if(!e.block){!B.expr&&(!c||!c.exps)?ib("Expected an assignment or function call and instead saw an expression.",P):B.nonew&&c.id==="("&&c.left.id==="new"&&ib("Do not use 'new' for side effects.");if(y.id===",")return zb();y.id!==";"?B.asi||(!B.lastsemic||y.id!=="}"||y.line!==P.line)&&jb("Missing semicolon.",P.line,P.character):(sb(P,y),qb(";"),vb(P,y))}return q=b,H=d,c}function Ub(a){var b=[],c,d;while(!y.reach&&y.id!=="(end)")y.id===";"?(d=pb(),(!d||d.id!=="(")&&ib("Unnecessary semicolon."),qb(";")):b.push(Tb(a===y.line));return b}function Vb(){var a,b,c;for(;;){if(y.id==="(string)"){b=pb(0);if(b.id==="(endline)"){a=1;do c=pb(a),a+=1;while(c.id==="(endline)");if(c.id!==";"){if(c.id!=="(string)"&&c.id!=="(number)"&&c.id!=="(regexp)"&&c.identifier!==!0&&c.id!=="}")break;ib("Missing semicolon.",y)}else b=c}else if(b.id==="}")ib("Missing semicolon.",b);else if(b.id!==";")break;xb(),qb(),M[P.value]&&ib('Unnecessary directive "{a}".',P,P.value),P.value==="use strict"&&(B.newcap=!0,B.undef=!0),M[P.value]=!0,b.id===";"&&qb(";");continue}break}}function Wb(a,b,c){var d,e=p,f=q,g,h=H,i,j,l;p=a;if(!a||!B.funcscope)H=Object.create(H);vb(P,y),i=y;if(y.id==="{"){qb("{"),j=P.line;if(y.id!=="}"){q+=B.indent;while(!a&&y.from>q)q+=B.indent;if(c){g={};for(l in M)cb(M,l)&&(g[l]=M[l]);Vb(),B.strict&&k["(context)"]["(global)"]&&!g["use strict"]&&!M["use strict"]&&ib('Missing "use strict" statement.')}d=Ub(j),c&&(M=g),q-=B.indent,j!==y.line&&xb()}else j!==y.line&&xb();qb("}",i),q=f}else a?((!b||B.curly)&&ib("Expected '{a}' and instead saw '{b}'.",y,"{",y.value),A=!0,q+=B.indent,d=[Tb(y.line===P.line)],q-=B.indent,A=!1):kb("Expected '{a}' and instead saw '{b}'.",y,"{",y.value);k["(verb)"]=null;if(!a||!B.funcscope)H=h;return p=e,a&&B.noempty&&(!d||d.length===0)&&ib("Empty block."),d}function Xb(a){w&&typeof w[a]!="boolean"&&ib("Unexpected /*member '{a}'.",P,a),typeof v[a]=="number"?v[a]+=1:v[a]=1}function Yb(a){var b=a.value,c=a.line,d=o[b];typeof d=="function"&&(d=!1),d?d[d.length-1]!==c&&d.push(c):(d=[c],o[b]=d)}function Zb(){var a=Qb(!0);return a||(y.id==="(string)"?(a=y.value,qb()):y.id==="(number)"&&(a=y.value.toString(),qb())),a}function $b(){var a,b=y,c=[];qb("("),ub();if(y.id===")"){qb(")");return}for(;;){a=Rb(!0),c.push(a),nb(a,"parameter");if(y.id!==",")return qb(")",b),ub(E,P),c;zb()}}function _b(b,c){var d,e=B,f=H;return B=Object.create(B),H=Object.create(H),k={"(name)":b||'"'+a+'"',"(line)":y.line,"(context)":k,"(breakage)":0,"(loopage)":0,"(scope)":H,"(statement)":c},d=k,P.funct=k,m.push(k),b&&nb(b,"function"),k["(params)"]=$b(),Wb(!1,!1,!0),H=f,B=e,k["(last)"]=P.line,k=k["(context)"],d}function bc(){function a(){var a={},b=y;qb("{");if(y.id!=="}")for(;;){if(y.id==="(end)")kb("Missing '}' to match '{' from line {a}.",y,b.line);else{if(y.id==="}"){ib("Unexpected comma.",P);break}y.id===","?kb("Unexpected comma.",y):y.id!=="(string)"&&ib("Expected a string and instead saw {a}.",y,y.value)}a[y.value]===!0?ib("Duplicate key '{a}'.",y,y.value):y.value==="__proto__"&&!B.proto||y.value==="__iterator__"&&!B.iterator?ib("The '{a}' key may produce unexpected results.",y,y.value):a[y.value]=!0,qb(),qb(":"),bc();if(y.id!==",")break;qb(",")}qb("}")}function b(){var a=y;qb("[");if(y.id!=="]")for(;;){if(y.id==="(end)")kb("Missing ']' to match '[' from line {a}.",y,a.line);else{if(y.id==="]"){ib("Unexpected comma.",P);break}y.id===","&&kb("Unexpected comma.",y)}bc();if(y.id!==",")break;qb(",")}qb("]")}switch(y.id){case"{":a();break;case"[":b();break;case"true":case"false":case"null":case"(number)":case"(string)":qb();break;case"-":qb("-"),P.character!==y.from&&ib("Unexpected space after '-'.",P),sb(P,y),qb("(number)");break;default:kb("Expected a JSON value.",y)}}var a,b={"<":!0,"<=":!0,"==":!0,"===":!0,"!==":!0,"!=":!0,">":!0,">=":!0,"+":!0,"-":!0,"*":!0,"/":!0,"%":!0},c={asi:!0,bitwise:!0,boss:!0,browser:!0,couch:!0,curly:!0,debug:!0,devel:!0,dojo:!0,eqeqeq:!0,eqnull:!0,es5:!0,esnext:!0,evil:!0,expr:!0,forin:!0,funcscope:!0,globalstrict:!0,immed:!0,iterator:!0,jquery:!0,lastsemic:!0,latedef:!0,laxbreak:!0,laxcomma:!0,loopfunc:!0,mootools:!0,multistr:!0,newcap:!0,noarg:!0,node:!0,noempty:!0,nonew:!0,nonstandard:!0,nomen:!0,onevar:!0,onecase:!0,passfail:!0,plusplus:!0,proto:!0,prototypejs:!0,regexdash:!0,regexp:!0,rhino:!0,undef:!0,scripturl:!0,shadow:!0,smarttabs:!0,strict:!0,sub:!0,supernew:!0,trailing:!0,validthis:!0,withstmt:!0,white:!0,wsh:!0},e={maxlen:!1,indent:!1,maxerr:!1,predef:!1},f={ArrayBuffer:!1,ArrayBufferView:!1,Audio:!1,addEventListener:!1,applicationCache:!1,atob:!1,blur:!1,btoa:!1,clearInterval:!1,clearTimeout:!1,close:!1,closed:!1,DataView:!1,DOMParser:!1,defaultStatus:!1,document:!1,event:!1,FileReader:!1,Float32Array:!1,Float64Array:!1,FormData:!1,focus:!1,frames:!1,getComputedStyle:!1,HTMLElement:!1,HTMLAnchorElement:!1,HTMLBaseElement:!1,HTMLBlockquoteElement:!1,HTMLBodyElement:!1,HTMLBRElement:!1,HTMLButtonElement:!1,HTMLCanvasElement:!1,HTMLDirectoryElement:!1,HTMLDivElement:!1,HTMLDListElement:!1,HTMLFieldSetElement:!1,HTMLFontElement:!1,HTMLFormElement:!1,HTMLFrameElement:!1,HTMLFrameSetElement:!1,HTMLHeadElement:!1,HTMLHeadingElement:!1,HTMLHRElement:!1,HTMLHtmlElement:!1,HTMLIFrameElement:!1,HTMLImageElement:!1,HTMLInputElement:!1,HTMLIsIndexElement:!1,HTMLLabelElement:!1,HTMLLayerElement:!1,HTMLLegendElement:!1,HTMLLIElement:!1,HTMLLinkElement:!1,HTMLMapElement:!1,HTMLMenuElement:!1,HTMLMetaElement:!1,HTMLModElement:!1,HTMLObjectElement:!1,HTMLOListElement:!1,HTMLOptGroupElement:!1,HTMLOptionElement:!1,HTMLParagraphElement:!1,HTMLParamElement:!1,HTMLPreElement:!1,HTMLQuoteElement:!1,HTMLScriptElement:!1,HTMLSelectElement:!1,HTMLStyleElement:!1,HTMLTableCaptionElement:!1,HTMLTableCellElement:!1,HTMLTableColElement:!1,HTMLTableElement:!1,HTMLTableRowElement:!1,HTMLTableSectionElement:!1,HTMLTextAreaElement:!1,HTMLTitleElement:!1,HTMLUListElement:!1,HTMLVideoElement:!1,history:!1,Int16Array:!1,Int32Array:!1,Int8Array:!1,Image:!1,length:!1,localStorage:!1,location:!1,MessageChannel:!1,MessageEvent:!1,MessagePort:!1,moveBy:!1,moveTo:!1,name:!1,navigator:!1,onbeforeunload:!0,onblur:!0,onerror:!0,onfocus:!0,onload:!0,onresize:!0,onunload:!0,open:!1,openDatabase:!1,opener:!1,Option:!1,parent:!1,print:!1,removeEventListener:!1,resizeBy:!1,resizeTo:!1,screen:!1,scroll:!1,scrollBy:!1,scrollTo:!1,sessionStorage:!1,setInterval:!1,setTimeout:!1,SharedWorker:!1,status:!1,top:!1,Uint16Array:!1,Uint32Array:!1,Uint8Array:!1,WebSocket:!1,window:!1,Worker:!1,XMLHttpRequest:!1,XMLSerializer:!1,XPathEvaluator:!1,XPathException:!1,XPathExpression:!1,XPathNamespace:!1,XPathNSResolver:!1,XPathResult:!1},g={require:!1,respond:!1,getRow:!1,emit:!1,send:!1,start:!1,sum:!1,log:!1,exports:!1,module:!1,provides:!1},h={alert:!1,confirm:!1,console:!1,Debug:!1,opera:!1,prompt:!1},i={dojo:!1,dijit:!1,dojox:!1,define:!1,require:!1},j={"\b":"\\b","	":"\\t","\n":"\\n","\f":"\\f","\r":"\\r",'"':'\\"',"/":"\\/","\\":"\\\\"},k,l=["closure","exception","global","label","outer","unused","var"],m,n,o,p,q,r,s={$:!1,jQuery:!1},t,u,v,w,x={$:!1,$$:!1,Assets:!1,Browser:!1,Chain:!1,Class:!1,Color:!1,Cookie:!1,Core:!1,Document:!1,DomReady:!1,DOMReady:!1,Drag:!1,Element:!1,Elements:!1,Event:!1,Events:!1,Fx:!1,Group:!1,Hash:!1,HtmlTable:!1,Iframe:!1,IframeShim:!1,InputValidator:!1,instanceOf:!1,Keyboard:!1,Locale:!1,Mask:!1,MooTools:!1,Native:!1,Options:!1,OverText:!1,Request:!1,Scroller:!1,Slick:!1,Slider:!1,Sortables:!1,Spinner:!1,Swiff:!1,Tips:!1,Type:!1,typeOf:!1,URI:!1,Window:!1},y,z={__filename:!1,__dirname:!1,Buffer:!1,console:!1,exports:!1,GLOBAL:!1,global:!1,module:!1,process:!1,require:!1,setTimeout:!1,clearTimeout:!1,setInterval:!1,clearInterval:!1},A,B,C,D,E,F={$:!1,$$:!1,$A:!1,$F:!1,$H:!1,$R:!1,$break:!1,$continue:!1,$w:!1,Abstract:!1,Ajax:!1,Class:!1,Enumerable:!1,Element:!1,Event:!1,Field:!1,Form:!1,Hash:!1,Insertion:!1,ObjectRange:!1,PeriodicalExecuter:!1,Position:!1,Prototype:!1,Selector:!1,Template:!1,Toggle:!1,Try:!1,Autocompleter:!1,Builder:!1,Control:!1,Draggable:!1,Draggables:!1,Droppables:!1,Effect:!1,Sortable:!1,SortableObserver:!1,Sound:!1,Scriptaculous:!1},G={defineClass:!1,deserialize:!1,gc:!1,help:!1,importPackage:!1,java:!1,load:!1,loadClass:!1,print:!1,quit:!1,readFile:!1,readUrl:!1,runCommand:!1,seal:!1,serialize:!1,spawn:!1,sync:!1,toint32:!1,version:!1},H,I,J={Array:!1,Boolean:!1,Date:!1,decodeURI:!1,decodeURIComponent:!1,encodeURI:!1,encodeURIComponent:!1,Error:!1,eval:!1,EvalError:!1,Function:!1,hasOwnProperty:!1,isFinite:!1,isNaN:!1,JSON:!1,Math:!1,Number:!1,Object:!1,parseInt:!1,parseFloat:!1,RangeError:!1,ReferenceError:!1,RegExp:!1,String:!1,SyntaxError:!1,TypeError:!1,URIError:!1},K={escape:!1,unescape:!1},L={E:!0,LN2:!0,LN10:!0,LOG2E:!0,LOG10E:!0,MAX_VALUE:!0,MIN_VALUE:!0,NEGATIVE_INFINITY:!0,PI:!0,POSITIVE_INFINITY:!0,SQRT1_2:!0,SQRT2:!0},M,N={},O,P,Q,R,S,T={ActiveXObject:!0,Enumerator:!0,GetObject:!0,ScriptEngine:!0,ScriptEngineBuildVersion:!0,ScriptEngineMajorVersion:!0,ScriptEngineMinorVersion:!0,VBArray:!0,WSH:!0,WScript:!0,XDomainRequest:!0},U,V,W,X,Y,Z,$,_,ab;(function(){U=/@cc|<\/?|script|\]\s*\]|<\s*!|&lt/i,V=/[\u0000-\u001f\u007f-\u009f\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/,W=/^\s*([(){}\[.,:;'"~\?\]#@]|==?=?|\/(\*(jshint|jslint|members?|global)?|=|\/)?|\*[\/=]?|\+(?:=|\++)?|-(?:=|-+)?|%=?|&[&=]?|\|[|=]?|>>?>?=?|<([\/=!]|\!(\[|--)?|<=?)?|\^=?|\!=?=?|[a-zA-Z_$][a-zA-Z0-9_$]*|[0-9]+([xX][0-9a-fA-F]+|\.[0-9]*)?([eE][+\-]?[0-9]+)?)/,X=/[\u0000-\u001f&<"\/\\\u007f-\u009f\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/,Y=/[\u0000-\u001f&<"\/\\\u007f-\u009f\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,Z=/\*\/|\/\*/,$=/^([a-zA-Z_$][a-zA-Z0-9_$]*)$/,_=/^(?:javascript|jscript|ecmascript|vbscript|mocha|livescript)\s*:/i,ab=/^\s*\/\*\s*falls\sthrough\s*\*\/\s*$/})(),typeof Array.isArray!="function"&&(Array.isArray=function(a){return Object.prototype.toString.apply(a)==="[object Array]"}),typeof Object.create!="function"&&(Object.create=function(a){return bb.prototype=a,new bb}),typeof Object.keys!="function"&&(Object.keys=function(a){var b=[],c;for(c in a)cb(a,c)&&b.push(c);return b}),typeof String.prototype.entityify!="function"&&(String.prototype.entityify=function(){return this.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")}),typeof String.prototype.isAlpha!="function"&&(String.prototype.isAlpha=function(){return this>="a"&&this<="z￿"||this>="A"&&this<="Z￿"}),typeof String.prototype.isDigit!="function"&&(String.prototype.isDigit=function(){return this>="0"&&this<="9"}),typeof String.prototype.supplant!="function"&&(String.prototype.supplant=function(a){return this.replace(/\{([^{}]*)\}/g,function(b,c){var d=a[c];return typeof d=="string"||typeof d=="number"?d:b})}),typeof String.prototype.name!="function"&&(String.prototype.name=function(){return $.test(this)?this:X.test(this)?'"'+this.replace(Y,function(a){var b=j[a];return b?b:"\\u"+("0000"+a.charCodeAt().toString(16)).slice(-4)})+'"':'"'+this+'"'});var mb=function(){function f(){var a,c;return d>=t.length?!1:(b=1,e=t[d],d+=1,B.smarttabs?a=e.search(/ \t/):a=e.search(/ \t|\t /),a>=0&&jb("Mixed spaces and tabs.",d,a+1),e=e.replace(/\t/g,O),a=e.search(V),a>=0&&jb("Unsafe character.",d,a),B.maxlen&&B.maxlen<e.length&&jb("Line too long.",d,e.length),c=B.trailing&&e.match(/^(.*?)\s+$/),c&&!/^\s+$/.test(e)&&jb("Trailing whitespace.",d,c[1].length+1),!0)}function g(a,e){var f,g;return a==="(color)"||a==="(range)"?g={type:a}:a==="(punctuator)"||a==="(identifier)"&&cb(N,e)?g=N[e]||N["(error)"]:g=N[a],g=Object.create(g),(a==="(string)"||a==="(range)")&&!B.scripturl&&_.test(e)&&jb("Script URL.",d,c),a==="(identifier)"&&(g.identifier=!0,e==="__proto__"&&!B.proto?jb("The '{a}' property is deprecated.",d,c,e):e==="__iterator__"&&!B.iterator?jb("'{a}' is only available in JavaScript 1.7.",d,c,e):B.nomen&&(e.charAt(0)==="_"||e.charAt(e.length-1)==="_")&&(!B.node||P.id==="."||e!=="__dirname"&&e!=="__filename")&&jb("Unexpected {a} in '{b}'.",d,c,"dangling '_'",e)),g.value=e,g.line=d,g.character=b,g.from=c,f=g.id,f!=="(endline)"&&(D=f&&("(,=:[!&|?{};".indexOf(f.charAt(f.length-1))>=0||f==="return"||f==="case")),g}var b,c,d,e;return{init:function(a){typeof a=="string"?t=a.replace(/\r\n/g,"\n").replace(/\r/g,"\n").split("\n"):t=a,t[0]&&t[0].substr(0,2)==="#!"&&(t[0]=""),d=0,f(),c=1},range:function(a,f){var h,i="";c=b,e.charAt(0)!==a&&lb("Expected '{a}' and instead saw '{b}'.",d,b,a,e.charAt(0));for(;;){e=e.slice(1),b+=1,h=e.charAt(0);switch(h){case"":lb("Missing '{a}'.",d,b,h);break;case f:return e=e.slice(1),b+=1,g("(range)",i);case"\\":jb("Unexpected '{a}'.",d,b,h)}i+=h}},token:function(){function v(a){var d=a.exec(e),f;if(d)return n=d[0].length,f=d[1],h=f.charAt(0),e=e.substr(n),c=b+n-f.length,b+=n,f}function w(a){function l(a){var c=parseInt(e.substr(i+1,a),16);i+=a,c>=32&&c<=126&&c!==34&&c!==92&&c!==39&&jb("Unnecessary escapement.",d,b),b+=a,h=String.fromCharCode(c)}var h,i,j="",k=!1;r&&a!=='"'&&jb("Strings must use doublequote.",d,b),i=0;a:for(;;){while(i>=e.length){i=0;var m=d,n=c;if(!f()){lb("Unclosed string.",m,n);break a}k?k=!1:jb("Unclosed string.",m,n)}h=e.charAt(i);if(h===a)return b+=1,e=e.substr(i+1),g("(string)",j,a);if(h<" "){if(h==="\n"||h==="\r")break;jb("Control character in string: {a}.",d,b+i,e.slice(0,i))}else if(h==="\\"){i+=1,b+=1,h=e.charAt(i),u=e.charAt(i+1);switch(h){case"\\":case'"':case"/":break;case"'":r&&jb("Avoid \\'.",d,b);break;case"b":h="\b";break;case"f":h="\f";break;case"n":h="\n";break;case"r":h="\r";break;case"t":h="	";break;case"0":h="\0",u>=0&&u<=7&&M["use strict"]&&jb("Octal literals are not allowed in strict mode.",d,b);break;case"u":l(4);break;case"v":r&&jb("Avoid \\v.",d,b),h="";break;case"x":r&&jb("Avoid \\x-.",d,b),l(2);break;case"":k=!0;if(B.multistr){r&&jb("Avoid EOL escapement.",d,b),h="",b-=1;break}jb("Bad escapement of EOL. Use option multistr if needed.",d,b);break;default:jb("Bad escapement.",d,b)}}j+=h,b+=1,i+=1}}var a,h,i,j,k,l,m,n,o,p,q,s,t,u;for(;;){if(!e)return g(f()?"(endline)":"(end)","");q=v(W);if(!q){q="",h="";while(e&&e<"!")e=e.substr(1);e&&(lb("Unexpected '{a}'.",d,b,e.substr(0,1)),e="")}else{if(h.isAlpha()||h==="_"||h==="$")return g("(identifier)",q);if(h.isDigit())return isFinite(Number(q))||jb("Bad number '{a}'.",d,b,q),e.substr(0,1).isAlpha()&&jb("Missing space after '{a}'.",d,b,q),h==="0"&&(j=q.substr(1,1),j.isDigit()?P.id!=="."&&jb("Don't use extra leading zeros '{a}'.",d,b,q):r&&(j==="x"||j==="X")&&jb("Avoid 0x-. '{a}'.",d,b,q)),q.substr(q.length-1)==="."&&jb("A trailing decimal point can be confused with a dot '{a}'.",d,b,q),g("(number)",q);switch(q){case'"':case"'":return w(q);case"//":e="",P.comment=!0;break;case"/*":for(;;){m=e.search(Z);if(m>=0)break;f()||lb("Unclosed comment.",d,b)}b+=m+2,e.substr(m,1)==="/"&&lb("Nested comment.",d,b),e=e.substr(m+2),P.comment=!0;break;case"/*members":case"/*member":case"/*jshint":case"/*jslint":case"/*global":case"*/":return{value:q,type:"special",line:d,character:b,from:c};case"":break;case"/":P.id==="/="&&lb("A regular expression literal can be confused with '/='.",d,c);if(D){k=0,i=0,n=0;for(;;){a=!0,h=e.charAt(n),n+=1;switch(h){case"":return lb("Unclosed regular expression.",d,c),gb("Stopping.",d,c);case"/":k>0&&jb("{a} unterminated regular expression group(s).",d,c+n,k),h=e.substr(0,n-1),p={g:!0,i:!0,m:!0};while(p[e.charAt(n)]===!0)p[e.charAt(n)]=!1,n+=1;return b+=n,e=e.substr(n),p=e.charAt(0),(p==="/"||p==="*")&&lb("Confusing regular expression.",d,c),g("(regexp)",h);case"\\":h=e.charAt(n),h<" "?jb("Unexpected control character in regular expression.",d,c+n):h==="<"&&jb("Unexpected escaped character '{a}' in regular expression.",d,c+n,h),n+=1;break;case"(":k+=1,a=!1;if(e.charAt(n)==="?"){n+=1;switch(e.charAt(n)){case":":case"=":case"!":n+=1;break;default:jb("Expected '{a}' and instead saw '{b}'.",d,c+n,":",e.charAt(n))}}else i+=1;break;case"|":a=!1;break;case")":k===0?jb("Unescaped '{a}'.",d,c+n,")"):k-=1;break;case" ":p=1;while(e.charAt(n)===" ")n+=1,p+=1;p>1&&jb("Spaces are hard to count. Use {{a}}.",d,c+n,p);break;case"[":h=e.charAt(n),h==="^"&&(n+=1,B.regexp?jb("Insecure '{a}'.",d,c+n,h):e.charAt(n)==="]"&&lb("Unescaped '{a}'.",d,c+n,"^")),h==="]"&&jb("Empty class.",d,c+n-1),s=!1,t=!1;a:do{h=e.charAt(n),n+=1;switch(h){case"[":case"^":jb("Unescaped '{a}'.",d,c+n,h),t?t=!1:s=!0;break;case"-":s&&!t?(s=!1,t=!0):t?t=!1:e.charAt(n)==="]"?t=!0:(B.regexdash!==(n===2||n===3&&e.charAt(1)==="^")&&jb("Unescaped '{a}'.",d,c+n-1,"-"),s=!0);break;case"]":t&&!B.regexdash&&jb("Unescaped '{a}'.",d,c+n-1,"-");break a;case"\\":h=e.charAt(n),h<" "?jb("Unexpected control character in regular expression.",d,c+n):h==="<"&&jb("Unexpected escaped character '{a}' in regular expression.",d,c+n,h),n+=1,/[wsd]/i.test(h)?(t&&(jb("Unescaped '{a}'.",d,c+n,"-"),t=!1),s=!1):t?t=!1:s=!0;break;case"/":jb("Unescaped '{a}'.",d,c+n-1,"/"),t?t=!1:s=!0;break;case"<":t?t=!1:s=!0;break;default:t?t=!1:s=!0}}while(h);break;case".":B.regexp&&jb("Insecure '{a}'.",d,c+n,h);break;case"]":case"?":case"{":case"}":case"+":case"*":jb("Unescaped '{a}'.",d,c+n,h)}if(a)switch(e.charAt(n)){case"?":case"+":case"*":n+=1,e.charAt(n)==="?"&&(n+=1);break;case"{":n+=1,h=e.charAt(n),(h<"0"||h>"9")&&jb("Expected a number and instead saw '{a}'.",d,c+n,h),n+=1,o=+h;for(;;){h=e.charAt(n);if(h<"0"||h>"9")break;n+=1,o=+h+o*10}l=o;if(h===","){n+=1,l=Infinity,h=e.charAt(n);if(h>="0"&&h<="9"){n+=1,l=+h;for(;;){h=e.charAt(n);if(h<"0"||h>"9")break;n+=1,l=+h+l*10}}}e.charAt(n)!=="}"?jb("Expected '{a}' and instead saw '{b}'.",d,c+n,"}",h):n+=1,e.charAt(n)==="?"&&(n+=1),o>l&&jb("'{a}' should not be greater than '{b}'.",d,c+n,o,l)}}return h=e.substr(0,n-1),b+=n,e=e.substr(n),g("(regexp)",h)}return g("(punctuator)",q);case"#":return g("(punctuator)",q);default:return g("(punctuator)",q)}}}}}}();Gb("(number)",function(){return this}),Gb("(string)",function(){return this}),N["(identifier)"]={type:"(identifier)",lbp:0,identifier:!0,nud:function(){var b=this.value,c=H[b],d;typeof c=="function"?c=undefined:typeof c=="boolean"&&(d=k,k=m[0],nb(b,"var"),c=k,k=d);if(k===c)switch(k[b]){case"unused":k[b]="var";break;case"unction":k[b]="function",this["function"]=!0;break;case"function":this["function"]=!0;break;case"label":ib("'{a}' is a statement label.",P,b)}else if(k["(global)"])B.undef&&typeof C[b]!="boolean"&&(a!=="typeof"&&a!=="delete"||y&&(y.value==="."||y.value==="["))&&hb(k,"'{a}' is not defined.",P,b),Yb(P);else switch(k[b]){case"closure":case"function":case"var":case"unused":ib("'{a}' used out of scope.",P,b);break;case"label":ib("'{a}' is a statement label.",P,b);break;case"outer":case"global":break;default:if(c===!0)k[b]=!0;else if(c===null)ib("'{a}' is not allowed.",P,b),Yb(P);else if(typeof c!="object")B.undef&&(a!=="typeof"&&a!=="delete"||y&&(y.value==="."||y.value==="["))&&hb(k,"'{a}' is not defined.",P,b),k[b]=!0,Yb(P);else switch(c[b]){case"function":case"unction":this["function"]=!0,c[b]="closure",k[b]=c["(global)"]?"global":"outer";break;case"var":case"unused":c[b]="closure",k[b]=c["(global)"]?"global":"outer";break;case"closure":case"parameter":k[b]=c["(global)"]?"global":"outer";break;case"label":ib("'{a}' is a statement label.",P,b)}}return this},led:function(){kb("Expected an operator and instead saw '{a}'.",y,y.value)}},Gb("(regexp)",function(){return this}),Bb("(endline)"),Bb("(begin)"),Bb("(end)").reach=!0,Bb("</").reach=!0,Bb("<!"),Bb("<!--"),Bb("-->"),Bb("(error)").reach=!0,Bb("}").reach=!0,Bb(")"),Bb("]"),Bb('"').reach=!0,Bb("'").reach=!0,Bb(";"),Bb(":").reach=!0,Bb(","),Bb("#"),Bb("@"),Hb("else"),Hb("case").reach=!0,Hb("catch"),Hb("default").reach=!0,Hb("finally"),Ib("arguments",function(a){M["use strict"]&&k["(global)"]&&ib("Strict violation.",a)}),Ib("eval"),Ib("false"),Ib("Infinity"),Ib("NaN"),Ib("null"),Ib("this",function(a){M["use strict"]&&!B.validthis&&(k["(statement)"]&&k["(name)"].charAt(0)>"Z"||k["(global)"])&&ib("Possible strict violation.",a)}),Ib("true"),Ib("undefined"),Mb("=","assign",20),Mb("+=","assignadd",20),Mb("-=","assignsub",20),Mb("*=","assignmult",20),Mb("/=","assigndiv",20).nud=function(){kb("A regular expression literal can be confused with '/='.")},Mb("%=","assignmod",20),Ob("&=","assignbitand",20),Ob("|=","assignbitor",20),Ob("^=","assignbitxor",20),Ob("<<=","assignshiftleft",20),Ob(">>=","assignshiftright",20),Ob(">>>=","assignshiftrightunsigned",20),Jb("?",function(a,b){return b.left=a,b.right=rb(10),qb(":"),b["else"]=rb(10),b},30),Jb("||","or",40),Jb("&&","and",50),Nb("|","bitor",70),Nb("^","bitxor",80),Nb("&","bitand",90),Kb("==",function(a,b){var c=B.eqnull&&(a.value==="null"||b.value==="null");return!c&&B.eqeqeq?ib("Expected '{a}' and instead saw '{b}'.",this,"===","=="):Lb(a)?ib("Use '{a}' to compare with '{b}'.",this,"===",a.value):Lb(b)&&ib("Use '{a}' to compare with '{b}'.",this,"===",b.value),this}),Kb("==="),Kb("!=",function(a,b){var c=B.eqnull&&(a.value==="null"||b.value==="null");return!c&&B.eqeqeq?ib("Expected '{a}' and instead saw '{b}'.",this,"!==","!="):Lb(a)?ib("Use '{a}' to compare with '{b}'.",this,"!==",a.value):Lb(b)&&ib("Use '{a}' to compare with '{b}'.",this,"!==",b.value),this}),Kb("!=="),Kb("<"),Kb(">"),Kb("<="),Kb(">="),Nb("<<","shiftleft",120),Nb(">>","shiftright",120),Nb(">>>","shiftrightunsigned",120),Jb("in","in",120),Jb("instanceof","instanceof",120),Jb("+",function(a,b){var c=rb(130);return a&&c&&a.id==="(string)"&&c.id==="(string)"?(a.value+=c.value,a.character=c.character,!B.scripturl&&_.test(a.value)&&ib("JavaScript URL.",a),a):(b.left=a,b.right=c,b)},130),Fb("+","num"),Fb("+++",function(){return ib("Confusing pluses."),this.right=rb(150),this.arity="unary",this}),Jb("+++",function(a){return ib("Confusing pluses."),this.left=a,this.right=rb(130),this},130),Jb("-","sub",130),Fb("-","neg"),Fb("---",function(){return ib("Confusing minuses."),this.right=rb(150),this.arity="unary",this}),Jb("---",function(a){return ib("Confusing minuses."),this.left=a,this.right=rb(130),this},130),Jb("*","mult",140),Jb("/","div",140),Jb("%","mod",140),Pb("++","postinc"),Fb("++","preinc"),N["++"].exps=!0,Pb("--","postdec"),Fb("--","predec"),N["--"].exps=!0,Fb("delete",function(){var a=rb(0);return(!a||a.id!=="."&&a.id!=="[")&&ib("Variables should not be deleted."),this.first=a,this}).exps=!0,Fb("~",function(){return B.bitwise&&ib("Unexpected '{a}'.",this,"~"),rb(150),this}),Fb("!",function(){return this.right=rb(150),this.arity="unary",b[this.right.id]===!0&&ib("Confusing use of '{a}'.",this,"!"),this}),Fb("typeof","typeof"),Fb("new",function(){var a=rb(155),b;if(a&&a.id!=="function")if(a.identifier){a["new"]=!0;switch(a.value){case"Number":case"String":case"Boolean":case"Math":case"JSON":ib("Do not use {a} as a constructor.",P,a.value);break;case"Function":B.evil||ib("The Function constructor is eval.");break;case"Date":case"RegExp":break;default:a.id!=="function"&&(b=a.value.substr(0,1),B.newcap&&(b<"A"||b>"Z")&&ib("A constructor name should start with an uppercase letter.",P))}}else a.id!=="."&&a.id!=="["&&a.id!=="("&&ib("Bad constructor.",P);else B.supernew||ib("Weird construction. Delete 'new'.",this);return sb(P,y),y.id!=="("&&!B.supernew&&ib("Missing '()' invoking a constructor."),this.first=a,this}),N["new"].exps=!0,Fb("void").exps=!0,Jb(".",function(a,b){sb(E,P),tb();var c=Rb();return typeof c=="string"&&Xb(c),b.left=a,b.right=c,!a||a.value!=="arguments"||c!=="callee"&&c!=="caller"?!B.evil&&a&&a.value==="document"&&(c==="write"||c==="writeln")&&ib("document.write can be a form of eval.",a):B.noarg?ib("Avoid arguments.{a}.",a,c):M["use strict"]&&kb("Strict violation."),!B.evil&&(c==="eval"||c==="execScript")&&ib("eval is evil."),b},160,!0),Jb("(",function(a,b){E.id!=="}"&&E.id!==")"&&tb(E,P),ub(),B.immed&&!a.immed&&a.id==="function"&&ib("Wrap an immediate function invocation in parentheses to assist the reader in understanding that the expression is the result of a function, and not the function itself.");var c=0,d=[];a&&a.type==="(identifier)"&&a.value.match(/^[A-Z]([A-Z0-9_$]*[a-z][A-Za-z0-9_$]*)?$/)&&a.value!=="Number"&&a.value!=="String"&&a.value!=="Boolean"&&a.value!=="Date"&&(a.value==="Math"?ib("Math is not a function.",a):B.newcap&&ib("Missing 'new' prefix when invoking a constructor.",a));if(y.id!==")")for(;;){d[d.length]=rb(10),c+=1;if(y.id!==",")break;zb()}return qb(")"),ub(E,P),typeof a=="object"&&(a.value==="parseInt"&&c===1&&ib("Missing radix parameter.",a),B.evil||(a.value==="eval"||a.value==="Function"||a.value==="execScript"?ib("eval is evil.",a):d[0]&&d[0].id==="(string)"&&(a.value==="setTimeout"||a.value==="setInterval")&&ib("Implied eval is evil. Pass a function instead of a string.",a)),!a.identifier&&a.id!=="."&&a.id!=="["&&a.id!=="("&&a.id!=="&&"&&a.id!=="||"&&a.id!=="?"&&ib("Bad invocation.",a)),b.left=a,b},155,!0).exps=!0,Fb("(",function(){ub(),y.id==="function"&&(y.immed=!0);var a=rb(0);return qb(")",this),ub(E,P),B.immed&&a.id==="function"&&(y.id==="("||y.id==="."&&(pb().value==="call"||pb().value==="apply")?ib("Move the invocation into the parens that contain the function.",y):ib("Do not wrap function literals in parens unless they are to be immediately invoked.",this)),a}),Jb("[",function(a,b){tb(E,P),ub();var c=rb(0),d;return c&&c.type==="(string)"&&(!B.evil&&(c.value==="eval"||c.value==="execScript")&&ib("eval is evil.",b),Xb(c.value),!B.sub&&$.test(c.value)&&(d=N[c.value],(!d||!d.reserved)&&ib("['{a}'] is better written in dot notation.",c,c.value))),qb("]",b),ub(E,P),b.left=a,b.right=c,b},160,!0),Fb("[",function(){var a=P.line!==y.line;this.first=[],a&&(q+=B.indent,y.from===q+B.indent&&(q+=B.indent));while(y.id!=="(end)"){while(y.id===",")ib("Extra comma."),qb(",");if(y.id==="]")break;a&&P.line!==y.line&&xb(),this.first.push(rb(10));if(y.id!==",")break;zb();if(y.id==="]"&&!B.es5){ib("Extra comma.",P);break}}return a&&(q-=B.indent,xb()),qb("]",this),this},160),function(a){a.nud=function(){function h(a,b){g[a]&&cb(g,a)?ib("Duplicate member '{a}'.",y,c):g[a]={},g[a].basic=!0,g[a].basicToken=b}function i(a,b){g[a]&&cb(g,a)?(g[a].basic||g[a].setter)&&ib("Duplicate member '{a}'.",y,c):g[a]={},g[a].setter=!0,g[a].setterToken=b}function j(a){g[a]&&cb(g,a)?(g[a].basic||g[a].getter)&&ib("Duplicate member '{a}'.",y,c):g[a]={},g[a].getter=!0,g[a].getterToken=P}var a,b,c,d,e,f,g={};a=P.line!==y.line,a&&(q+=B.indent,y.from===q+B.indent&&(q+=B.indent));for(;;){if(y.id==="}")break;a&&xb();if(y.value==="get"&&pb().id!==":")qb("get"),B.es5||kb("get/set are ES5 features."),c=Zb(),c||kb("Missing property name."),j(c),f=y,sb(P,y),b=_b(),e=b["(params)"],e&&ib("Unexpected parameter '{a}' in get {b} function.",f,e[0],c),sb(P,y);else if(y.value==="set"&&pb().id!==":")qb("set"),B.es5||kb("get/set are ES5 features."),c=Zb(),c||kb("Missing property name."),i(c,y),f=y,sb(P,y),b=_b(),e=b["(params)"],(!e||e.length!==1)&&ib("Expected a single parameter in set {a} function.",f,c);else{c=Zb(),h(c,y);if(typeof c!="string")break;qb(":"),vb(P,y),rb(10)}Xb(c);if(y.id!==",")break;zb(),y.id===","?ib("Extra comma.",P):y.id==="}"&&!B.es5&&ib("Extra comma.",P)}a&&(q-=B.indent,xb()),qb("}",this);if(B.es5)for(var k in g)cb(g,k)&&g[k].setter&&!g[k].getter&&ib("Setter is defined without getter.",g[k].setterToken);return this},a.fud=function(){kb("Expected to see a statement and instead saw a block.",P)}}(Bb("{")),R=function(){var a=Cb("const",function(a){var b,c,d;this.first=[];for(;;){vb(P,y),b=Rb(),k[b]==="const"&&ib("const '"+b+"' has already been declared"),k["(global)"]&&C[b]===!1&&ib("Redefinition of '{a}'.",P,b),nb(b,"const");if(a)break;c=P,this.first.push(P),y.id!=="="&&ib("const '{a}' is initialized to 'undefined'.",P,b),y.id==="="&&(vb(P,y),qb("="),vb(P,y),y.id==="undefined"&&ib("It is not necessary to initialize '{a}' to 'undefined'.",P,b),pb(0).id==="="&&y.identifier&&kb("Constant {a} was not declared correctly.",y,y.value),d=rb(0),c.first=d);if(y.id!==",")break;zb()}return this});a.exps=!0};var ac=Cb("var",function(a){var b,c,d;k["(onevar)"]&&B.onevar?ib("Too many var statements."):k["(global)"]||(k["(onevar)"]=!0),this.first=[];for(;;){vb(P,y),b=Rb(),B.esnext&&k[b]==="const"&&ib("const '"+b+"' has already been declared"),k["(global)"]&&C[b]===!1&&ib("Redefinition of '{a}'.",P,b),nb(b,"unused");if(a)break;c=P,this.first.push(P),y.id==="="&&(vb(P,y),qb("="),vb(P,y),y.id==="undefined"&&ib("It is not necessary to initialize '{a}' to 'undefined'.",P,b),pb(0).id==="="&&y.identifier&&kb("Variable {a} was not declared correctly.",y,y.value),d=rb(0),c.first=d);if(y.id!==",")break;zb()}return this});ac.exps=!0,Db("function",function(){p&&ib("Function declarations should not be placed in blocks. Use a function expression or move the statement to the top of the outer function.",P);var a=Rb();return B.esnext&&k[a]==="const"&&ib("const '"+a+"' has already been declared"),sb(P,y),nb(a,"unction"),_b(a,!0),y.id==="("&&y.line===P.line&&kb("Function declarations are not invocable. Wrap the whole function invocation in parens."),this}),Fb("function",function(){var a=Qb();return a?sb(P,y):vb(P,y),_b(a),!B.loopfunc&&k["(loopage)"]&&ib("Don't make functions within a loop."),this}),Db("if",function(){var a=y;return qb("("),vb(this,a),ub(),rb(20),y.id==="="&&(B.boss||ib("Expected a conditional expression and instead saw an assignment."),qb("="),rb(20)),qb(")",a),ub(E,P),Wb(!0,!0),y.id==="else"&&(vb(P,y),qb("else"),y.id==="if"||y.id==="switch"?Tb(!0):Wb(!0,!0)),this}),Db("try",function(){var a,b,c;Wb(!1),y.id==="catch"&&(qb("catch"),vb(P,y),qb("("),c=H,H=Object.create(c),b=y.value,y.type!=="(identifier)"?ib("Expected an identifier and instead saw '{a}'.",y,b):nb(b,"exception"),qb(),qb(")"),Wb(!1),a=!0,H=c);if(y.id==="finally"){qb("finally"),Wb(!1);return}return a||kb("Expected '{a}' and instead saw '{b}'.",y,"catch",y.value),this}),Db("while",function(){var a=y;return k["(breakage)"]+=1,k["(loopage)"]+=1,qb("("),vb(this,a),ub(),rb(20),y.id==="="&&(B.boss||ib("Expected a conditional expression and instead saw an assignment."),qb("="),rb(20)),qb(")",a),ub(E,P),Wb(!0,!0),k["(breakage)"]-=1,k["(loopage)"]-=1,this}).labelled=!0,Db("with",function(){var a=y;return M["use strict"]?kb("'with' is not allowed in strict mode.",P):B.withstmt||ib("Don't use 'with'.",P),qb("("),vb(this,a),ub(),rb(0),qb(")",a),ub(E,P),Wb(!0,!0),this}),Db("switch",function(){var a=y,b=!1;k["(breakage)"]+=1,qb("("),vb(this,a),ub(),this.condition=rb(20),qb(")",a),ub(E,P),vb(P,y),a=y,qb("{"),vb(P,y),q+=B.indent,this.cases=[];for(;;)switch(y.id){case"case":switch(k["(verb)"]){case"break":case"case":case"continue":case"return":case"switch":case"throw":break;default:ab.test(t[y.line-2])||ib("Expected a 'break' statement before 'case'.",P)}xb(-B.indent),qb("case"),this.cases.push(rb(20)),b=!0,qb(":"),k["(verb)"]="case";break;case"default":switch(k["(verb)"]){case"break":case"continue":case"return":case"throw":break;default:ab.test(t[y.line-2])||ib("Expected a 'break' statement before 'default'.",P)}xb(-B.indent),qb("default"),b=!0,qb(":");break;case"}":q-=B.indent,xb(),qb("}",a);if(this.cases.length===1||this.condition.id==="true"||this.condition.id==="false")B.onecase||ib("This 'switch' should be an 'if'.",this);k["(breakage)"]-=1,k["(verb)"]=undefined;return;case"(end)":kb("Missing '{a}'.",y,"}");return;default:if(b)switch(P.id){case",":kb("Each value should have its own case label.");return;case":":b=!1,Ub();break;default:kb("Missing ':' on a case clause.",P);return}else{if(P.id!==":"){kb("Expected '{a}' and instead saw '{b}'.",y,"case",y.value);return}qb(":"),kb("Unexpected '{a}'.",P,":"),Ub()}}}).labelled=!0,Cb("debugger",function(){return B.debug||ib("All 'debugger' statements should be removed."),this}).exps=!0,function(){var a=Cb("do",function(){k["(breakage)"]+=1,k["(loopage)"]+=1,this.first=Wb(!0),qb("while");var a=y;return vb(P,a),qb("("),ub(),rb(20),y.id==="="&&(B.boss||ib("Expected a conditional expression and instead saw an assignment."),qb("="),rb(20)),qb(")",a),ub(E,P),k["(breakage)"]-=1,k["(loopage)"]-=1,this});a.labelled=!0,a.exps=!0}(),Db("for",function(){var a,b=y;k["(breakage)"]+=1,k["(loopage)"]+=1,qb("("),vb(this,b),ub();if(pb(y.id==="var"?1:0).id==="in"){if(y.id==="var")qb("var"),ac.fud.call(ac,!0);else{switch(k[y.value]){case"unused":k[y.value]="var";break;case"var":break;default:ib("Bad for in variable '{a}'.",y,y.value)}qb()}return qb("in"),rb(20),qb(")",b),a=Wb(!0,!0),B.forin&&a&&(a.length>1||typeof a[0]!="object"||a[0].value!=="if")&&ib("The body of a for in should be wrapped in an if statement to filter unwanted properties from the prototype.",this),k["(breakage)"]-=1,k["(loopage)"]-=1,this}if(y.id!==";")if(y.id==="var")qb("var"),ac.fud.call(ac);else for(;;){rb(0,"for");if(y.id!==",")break;zb()}yb(P),qb(";"),y.id!==";"&&(rb(20),y.id==="="&&(B.boss||ib("Expected a conditional expression and instead saw an assignment."),qb("="),rb(20))),yb(P),qb(";"),y.id===";"&&kb("Expected '{a}' and instead saw '{b}'.",y,")",";");if(y.id!==")")for(;;){rb(0,"for");if(y.id!==",")break;zb()}return qb(")",b),ub(E,P),Wb(!0,!0),k["(breakage)"]-=1,k["(loopage)"]-=1,this}).labelled=!0,Cb("break",function(){var a=y.value;return k["(breakage)"]===0&&ib("Unexpected '{a}'.",y,this.value),B.asi||yb(this),y.id!==";"&&P.line===y.line&&(k[a]!=="label"?ib("'{a}' is not a statement label.",y,a):H[a]!==k&&ib("'{a}' is out of scope.",y,a),this.first=y,qb()),Sb("break"),this}).exps=!0,Cb("continue",function(){var a=y.value;return k["(breakage)"]===0&&ib("Unexpected '{a}'.",y,this.value),B.asi||yb(this),y.id!==";"?P.line===y.line&&(k[a]!=="label"?ib("'{a}' is not a statement label.",y,a):H[a]!==k&&ib("'{a}' is out of scope.",y,a),this.first=y,qb()):k["(loopage)"]||ib("Unexpected '{a}'.",y,this.value),Sb("continue"),this}).exps=!0,Cb("return",function(){return this.line===y.line?(y.id==="(regexp)"&&ib("Wrap the /regexp/ literal in parens to disambiguate the slash operator."),y.id!==";"&&!y.reach&&(vb(P,y),pb().value==="="&&!B.boss&&jb("Did you mean to return a conditional instead of an assignment?",P.line,P.character+1),this.first=rb(0))):B.asi||yb(this),Sb("return"),this}).exps=!0,Cb("throw",function(){return yb(this),vb(P,y),this.first=rb(20),Sb("throw"),this}).exps=!0,Hb("class"),Hb("const"),Hb("enum"),Hb("export"),Hb("extends"),Hb("import"),Hb("super"),Hb("let"),Hb("yield"),Hb("implements"),Hb("interface"),Hb("package"),Hb("private"),Hb("protected"),Hb("public"),Hb("static");var cc=function(a,b,c){var e,f,g;d.errors=[],d.undefs=[],C=Object.create(J),eb(C,c||{});if(b){e=b.predef;if(e)if(Array.isArray(e))for(f=0;f<e.length;f+=1)C[e[f]]=!0;else if(typeof e=="object"){g=Object.keys(e);for(f=0;f<g.length;f+=1)C[g[f]]=!!e[g[f]]}B=b}else B={};B.indent=B.indent||4,B.maxerr=B.maxerr||50,O="";for(f=0;f<B.indent;f+=1)O+=" ";q=1,n=Object.create(C),H=n,k={"(global)":!0,"(name)":"(global)","(scope)":H,"(breakage)":0,"(loopage)":0},m=[k],Q=[],I=null,v={},w=null,o={},p=!1,u=[],r=!1,S=0,mb.init(a),D=!0,M={},E=P=y=N["(begin)"];for(var h in b)cb(b,h)&&db(h,P);fb(),eb(C,c||{}),zb.first=!0;try{qb();switch(y.id){case"{":case"[":B.laxbreak=!0,r=!0,bc();break;default:Vb(),M["use strict"]&&!B.globalstrict&&ib('Use the function form of "use strict".',E),Ub()}qb("(end)");var i=function(a,b){do{if(typeof b[a]=="string")return b[a]==="unused"?b[a]="var":b[a]==="unction"&&(b[a]="closure"),!0;b=b["(context)"]}while(b);return!1},j=function(a,b){if(!o[a])return;var c=[];for(var d=0;d<o[a].length;d+=1)o[a][d]!==b&&c.push(o[a][d]);c.length===0?delete o[a]:o[a]=c};for(f=0;f<d.undefs.length;f+=1)g=d.undefs[f].slice(0),i(g[2].value,g[0])?j(g[2].value,g[2].line):ib.apply(ib,g.slice(1))}catch(l){if(l){var s=y||{};d.errors.push({raw:l.raw,reason:l.message,line:l.line||s.line,character:l.character||s.from},null)}}return d.errors.length===0};return cc.data=function(){var a={functions:[],options:B},b,c,d=[],e,f,g,h=[],i,j=[],k;cc.errors.length&&(a.errors=cc.errors),r&&(a.json=!0);for(i in o)cb(o,i)&&d.push({name:i,line:o[i]});d.length>0&&(a.implieds=d),Q.length>0&&(a.urls=Q),c=Object.keys(H),c.length>0&&(a.globals=c);for(f=1;f<m.length;f+=1){e=m[f],b={};for(g=0;g<l.length;g+=1)b[l[g]]=[];for(i in e)cb(e,i)&&i.charAt(0)!=="("&&(k=e[i],k==="unction"&&(k="unused"),Array.isArray(b[k])&&(b[k].push(i),k==="unused"&&j.push({name:i,line:e["(line)"],"function":e["(name)"]})));for(g=0;g<l.length;g+=1)b[l[g]].length===0&&delete b[l[g]];b.name=e["(name)"],b.param=e["(params)"],b.line=e["(line)"],b.last=e["(last)"],a.functions.push(b)}j.length>0&&(a.unused=j),h=[];for(i in v)if(typeof v[i]=="number"){a.member=v;break}return a},cc.report=function(a){function o(a,b){var c,d,e;if(b){m.push("<div><i>"+a+"</i> "),b=b.sort();for(d=0;d<b.length;d+=1)b[d]!==e&&(e=b[d],m.push((c?", ":"")+e),c=!0);m.push("</div>")}}var b=cc.data(),c=[],d,e,f,g,h,i,j,k="",l,m=[],n;if(b.errors||b.implieds||b.unused){f=!0,m.push("<div id=errors><i>Error:</i>");if(b.errors)for(h=0;h<b.errors.length;h+=1)d=b.errors[h],d&&(e=d.evidence||"",m.push("<p>Problem"+(isFinite(d.line)?" at line "+d.line+" character "+d.character:"")+": "+d.reason.entityify()+"</p><p class=evidence>"+(e&&(e.length>80?e.slice(0,77)+"...":e).entityify())+"</p>"));if(b.implieds){n=[];for(h=0;h<b.implieds.length;h+=1)n[h]="<code>"+b.implieds[h].name+"</code>&nbsp;<i>"+b.implieds[h].line+"</i>";m.push("<p><i>Implied global:</i> "+n.join(", ")+"</p>")}if(b.unused){n=[];for(h=0;h<b.unused.length;h+=1)n[h]="<code><u>"+b.unused[h].name+"</u></code>&nbsp;<i>"+b.unused[h].line+"</i> <code>"+b.unused[h]["function"]+"</code>";m.push("<p><i>Unused variable:</i> "+n.join(", ")+"</p>")}b.json&&m.push("<p>JSON: bad.</p>"),m.push("</div>")}if(!a){m.push("<br><div id=functions>"),b.urls&&o("URLs<br>",b.urls,"<br>"),b.json&&!f?m.push("<p>JSON: good.</p>"):b.globals?m.push("<div><i>Global</i> "+b.globals.sort().join(", ")+"</div>"):m.push("<div><i>No new global variables introduced.</i></div>");for(h=0;h<b.functions.length;h+=1)g=b.functions[h],m.push("<br><div class=function><i>"+g.line+"-"+g.last+"</i> "+(g.name||"")+"("+(g.param?g.param.join(", "):"")+")</div>"),o("<big><b>Unused</b></big>",g.unused),o("Closure",g.closure),o("Variable",g["var"]),o("Exception",g.exception),o("Outer",g.outer),o("Global",g.global),o("Label",g.label);if(b.member){c=Object.keys(b.member);if(c.length){c=c.sort(),k="<br><pre id=members>/*members ",j=10;for(h=0;h<c.length;h+=1)i=c[h],l=i.name(),j+l.length>72&&(m.push(k+"<br>"),k="    ",j=1),j+=l.length+2,b.member[i]===1&&(l="<i>"+l+"</i>"),h<c.length-1&&(l+=", "),k+=l;m.push(k+"<br>*/</pre>")}m.push("</div>")}}return m.join("")},cc.jshint=cc,cc}();typeof b=="object"&&b&&(b.JSHINT=d)}),define("ace/narcissus/parser",["require","exports","module","ace/narcissus/lexer","ace/narcissus/definitions","ace/narcissus/options"],function(require,exports,module){function pushDestructuringVarDecls(a,b){for(var c in a){var d=a[c];d.type===IDENTIFIER?b.varDecls.push(d):pushDestructuringVarDecls(d,b)}}function Parser(a){a.parser=this,this.t=a,this.x=null,this.unexpectedEOF=!1,options.mozillaMode&&(this.mozillaMode=!0),options.parenFreeMode&&(this.parenFreeMode=!0)}function StaticContext(a,b,c,d,e){this.parentScript=a,this.parentBlock=b||a,this.inModule=c||!1,this.inFunction=d||!1,this.inForLoopInit=!1,this.topLevel=!0,this.allLabels=new Stack,this.currentLabels=new Stack,this.labeledTargets=new Stack,this.defaultLoopTarget=null,this.defaultTarget=null,this.strictMode=e}function Pragma(a){if(a.type===SEMICOLON){var b=a.expression;if(b.type===STRING&&b.value==="use strict")return a.pragma="strict",!0}return!1}function Node(a,b){var c=a.token;c?(this.type=c.type,this.value=c.value,this.lineno=c.lineno,this.start=c.start,this.end=c.end):this.lineno=a.lineno,this.filename=a.filename,this.children=[];for(var d in b)this[d]=b[d]}function SyntheticNode(a){this.children=[];for(var b in a)this[b]=a[b];this.synthetic=!0}function unevalableConst(a){var b=definitions.tokens[a],c=definitions.opTypeNames.hasOwnProperty(b)?definitions.opTypeNames[b]:b in definitions.keywords?b.toUpperCase():b;return{toSource:function(){return c}}}function tokenString(a){var b=definitions.tokens[a];return/^\W/.test(b)?definitions.opTypeNames[b]:b.toUpperCase()}function blockInit(){return{type:BLOCK,varDecls:[]}}function scriptInit(){return{type:SCRIPT,funDecls:[],varDecls:[],modDefns:new Dict,modAssns:new Dict,modDecls:new Dict,modLoads:new Dict,impDecls:[],expDecls:[],exports:new Dict,hasEmptyReturn:!1,hasReturnWithValue:!1,hasYield:!1}}function Export(a,b){this.node=a,this.isDefinition=b,this.resolved=null}function registerExport(a,b){function c(b,c){if(a.has(b))throw new SyntaxError("multiple exports of "+b);a.set(b,c)}switch(b.type){case MODULE:case FUNCTION:c(b.name,new Export(b,!0));break;case VAR:for(var d=0;d<b.children.length;d++)c(b.children[d].name,new Export(b.children[d],!0));break;case LET:case CONST:throw new Error("NYI: "+definitions.tokens[b.type]);case EXPORT:for(var d=0;d<b.pathList.length;d++){var e=b.pathList[d];switch(e.type){case OBJECT_INIT:for(var f=0;f<e.children.length;f++){var g=e.children[f];g.type===IDENTIFIER?c(g.value,new Export(g,!1)):c(g.children[0].value,new Export(g.children[1],!1))}break;case DOT:c(e.children[1].value,new Export(e,!1));break;case IDENTIFIER:c(e.value,new Export(e,!1));break;default:throw new Error("unexpected export path: "+definitions.tokens[e.type])}}break;default:throw new Error("unexpected export decl: "+definitions.tokens[exp.type])}}function Module(a){var b=a.body.exports,c=a.body.modDefns,d=new Dict;b.forEach(function(a,b){var e=b.node;if(e.type===MODULE)d.set(a,e);else if(!b.isDefinition&&e.type===IDENTIFIER&&c.has(e.value)){var f=c.get(e.value);d.set(a,f)}}),this.node=a,this.exports=b,this.exportedModules=d}function isPragmaToken(a){switch(a){case IDENTIFIER:case STRING:case NUMBER:case NULL:case TRUE:case FALSE:return!0}return!1}function parse(a,b,c){var d=new Tokenizer(a,b,c,options.allowHTMLComments),e=new Parser(d);return e.Script(!1,!1,!0)}function parseFunction(a,b,c,d,e){var f=new Tokenizer(a,d,e),g=new Parser(f);return g.x=new StaticContext(null,null,!1,!1,!1),g.FunctionDefinition(b,c)}function parseStdin(a,b,c,d){if(a.match(/^[\s]*\.begin[\s]*$/))return++b.value,parseMultiline(b,c);d(a.trim())&&(a="");for(;;)try{var e=new Tokenizer(a,"stdin",b.value,!1),f=new Parser(e),g=f.Script(!1,!1);return b.value=e.lineno,g}catch(h){if(!f.unexpectedEOF)throw h;var i;do{c&&putstr(c),i=readline();if(!i)throw h}while(d(i.trim()));a+="\n"+i}}function parseMultiline(a,b){var c="";for(;;){b&&putstr(b);var d=readline();if(d===null)return null;if(d.match(/^[\s]*\.end[\s]*$/))break;c+="\n"+d}var e=new Tokenizer(c,"stdin",a.value,!1),f=new Parser(e),g=f.Script(!1,!1);return a.value=e.lineno,g}var lexer=require("./lexer"),definitions=require("./definitions"),options=require("./options"),Tokenizer=lexer.Tokenizer,Dict=definitions.Dict,Stack=definitions.Stack;eval(definitions.consts),StaticContext.prototype={update:function(a){var b={};for(var c in a)b[c]={value:a[c],writable:!0,enumerable:!0,configurable:!0};return Object.create(this,b)},pushLabel:function(a){return this.update({currentLabels:this.currentLabels.push(a),allLabels:this.allLabels.push(a)})},pushTarget:function(a){var b=a.isLoop,c=b||a.type===SWITCH;return this.currentLabels.isEmpty()?(b&&this.update({defaultLoopTarget:a}),c&&this.update({defaultTarget:a}),this):(a.labels=new Dict,this.currentLabels.forEach(function(b){a.labels.set(b,!0)}),this.update({currentLabels:new Stack,labeledTargets:this.labeledTargets.push(a),defaultLoopTarget:b?a:this.defaultLoopTarget,defaultTarget:c?a:this.defaultTarget}))},nest:function(){return this.topLevel?this.update({topLevel:!1}):this},canImport:function(){return this.topLevel&&!this.inFunction},canExport:function(){return this.inModule&&this.topLevel&&!this.inFunction},banWith:function(){return this.strictMode||this.inModule},modulesAllowed:function(){return this.topLevel&&!this.inFunction}};var Pp=Parser.prototype;Pp.mozillaMode=!1,Pp.parenFreeMode=!1,Pp.withContext=function(a,b){var c=this.x;this.x=a;var d=b.call(this);return this.x=c,d},Pp.newNode=function(b){return new Node(this.t,b)},Pp.fail=function(b){throw this.t.newSyntaxError(b)},Pp.match=function(b,c,d){return this.t.match(b,c,d)},Pp.mustMatch=function(b,c){return this.t.mustMatch(b,c)},Pp.peek=function(b){return this.t.peek(b)},Pp.peekOnSameLine=function(b){return this.t.peekOnSameLine(b)},Pp.done=function(){return this.t.done},Pp.Script=function(b,c,d){var e=this.newNode(scriptInit()),f=new StaticContext(e,e,b,c);return this.withContext(f,function(){this.Statements(e,!0)}),d&&!this.done()&&this.fail("expected end of input"),e};var Np=Node.prototype=SyntheticNode.prototype={};Np.constructor=Node;var TO_SOURCE_SKIP={type:!0,value:!0,lineno:!0,start:!0,end:!0,tokenizer:!0,assignOp:!0};Np.toSource=function(){var b={},c=this;b.type=unevalableConst(this.type);if(this.generatingSource)return b.toSource();this.generatingSource=!0,"value"in this&&(b.value=this.value),"lineno"in this&&(b.lineno=this.lineno),"start"in this&&(b.start=this.start),"end"in this&&(b.end=this.end),this.assignOp&&(b.assignOp=unevalableConst(this.assignOp));for(var d in this)this.hasOwnProperty(d)&&!(d in TO_SOURCE_SKIP)&&(b[d]=this[d]);try{return b.toSource()}finally{delete this.generatingSource}},Np.push=function(a){return a!==null&&(a.start<this.start&&(this.start=a.start),this.end<a.end&&(this.end=a.end)),this.children.push(a)},Node.indentLevel=0,Np.toString=function(){var a=[];for(var b in this)this.hasOwnProperty(b)&&b!=="type"&&b!=="target"&&a.push({id:b,value:this[b]});a.sort(function(a,b){return a.id<b.id?-1:1});var c="    ",d=++Node.indentLevel,e="{\n"+c.repeat(d)+"type: "+tokenString(this.type);for(b=0;b<a.length;b++)e+=",\n"+c.repeat(d)+a[b].id+": "+a[b].value;return d=--Node.indentLevel,e+="\n"+c.repeat(d)+"}",e},Np.synth=function(a){var b=new SyntheticNode(a);return b.filename=this.filename,b.lineno=this.lineno,b.start=this.start,b.end=this.end,b};var LOOP_INIT={isLoop:!0};definitions.defineGetter(Np,"length",function(){throw new Error("Node.prototype.length is gone; use n.children.length instead")}),definitions.defineProperty(String.prototype,"repeat",function(a){var b="",c=this+b;while(--a>=0)b+=c;return b},!1,!1,!0),Pp.MaybeLeftParen=function(){return this.parenFreeMode?this.match(LEFT_PAREN)?LEFT_PAREN:END:this.mustMatch(LEFT_PAREN).type},Pp.MaybeRightParen=function(b){b===LEFT_PAREN&&this.mustMatch(RIGHT_PAREN)},Pp.Statements=function(b,c){var d=!!c;try{while(!this.done()&&this.peek(!0)!==RIGHT_CURLY){var e=this.Statement();b.push(e),d&&Pragma(e)?(this.x.strictMode=!0,b.strict=!0):d=!1}}catch(f){try{this.done()&&(this.unexpectedEOF=!0)}catch(f){}throw f}},Pp.Block=function(){this.mustMatch(LEFT_CURLY);var b=this.newNode(blockInit()),c=this.x.update({parentBlock:b}).pushTarget(b);return this.withContext(c,function(){this.Statements(b)}),this.mustMatch(RIGHT_CURLY),b};var DECLARED_FORM=0,EXPRESSED_FORM=1,STATEMENT_FORM=2;Pp.Statement=function(){var b,c,d,e,f,g,h,i=this.t.get(!0),j,k,l,m,n=this.t.blockComments;switch(i){case IMPORT:this.x.canImport()||this.fail("illegal context for import statement"),d=this.newNode(),d.pathList=this.ImportPathList(),this.x.parentScript.impDecls.push(d);break;case EXPORT:this.x.canExport()||this.fail("export statement not in module top level");switch(this.peek()){case MODULE:case FUNCTION:case LET:case VAR:case CONST:return d=this.Statement(),d.blockComments=n,d.exported=!0,this.x.parentScript.expDecls.push(d),registerExport(this.x.parentScript.exports,d),d}d=this.newNode(),d.pathList=this.ExportPathList(),this.x.parentScript.expDecls.push(d),registerExport(this.x.parentScript.exports,d);break;case FUNCTION:return this.FunctionDefinition(!0,this.x.topLevel?DECLARED_FORM:STATEMENT_FORM,n);case LEFT_CURLY:return d=this.newNode(blockInit()),l=this.x.update({parentBlock:d}).pushTarget(d).nest(),this.withContext(l,function(){this.Statements(d)}),this.mustMatch(RIGHT_CURLY),d;case IF:return d=this.newNode(),d.condition=this.HeadExpression(),l=this.x.pushTarget(d).nest(),this.withContext(l,function(){d.thenPart=this.Statement(),d.elsePart=this.match(ELSE,!0)?this.Statement():null}),d;case SWITCH:return d=this.newNode({cases:[],defaultIndex:-1}),d.discriminant=this.HeadExpression(),l=this.x.pushTarget(d).nest(),this.withContext(l,function(){this.mustMatch(LEFT_CURLY);while((i=this.t.get())!==RIGHT_CURLY){switch(i){case DEFAULT:d.defaultIndex>=0&&this.fail("More than one switch default");case CASE:e=this.newNode(),i===DEFAULT?d.defaultIndex=d.cases.length:e.caseLabel=this.Expression(COLON);break;default:this.fail("Invalid switch case")}this.mustMatch(COLON),e.statements=this.newNode(blockInit());while((i=this.peek(!0))!==CASE&&i!==DEFAULT&&i!==RIGHT_CURLY)e.statements.push(this.Statement());d.cases.push(e)}}),d;case FOR:return d=this.newNode(LOOP_INIT),d.blockComments=n,this.match(IDENTIFIER)&&(this.t.token.value==="each"?d.isEach=!0:this.t.unget()),this.parenFreeMode||this.mustMatch(LEFT_PAREN),l=this.x.pushTarget(d).nest(),m=this.x.update({inForLoopInit:!0}),e=null,(i=this.peek(!0))!==SEMICOLON&&this.withContext(m,function(){i===VAR||i===CONST?(this.t.get(),e=this.Variables()):i===LET?(this.t.get(),this.peek()===LEFT_PAREN?e=this.LetBlock(!1):(this.x.parentBlock=d,d.varDecls=[],e=this.Variables())):e=this.Expression()}),e&&this.match(IN)?(d.type=FOR_IN,this.withContext(m,function(){d.object=this.Expression();if(e.type===VAR||e.type===LET){g=e.children;if(g.length!==1&&e.destructurings.length!==1)throw new SyntaxError("Invalid for..in left-hand side",this.filename,e.lineno);e.destructurings.length>0?d.iterator=e.destructurings[0]:d.iterator=g[0],d.varDecl=e}else{if(e.type===ARRAY_INIT||e.type===OBJECT_INIT)e.destructuredNames=this.checkDestructuring(e);d.iterator=e}})):(m.inForLoopInit=!1,d.setup=e,this.mustMatch(SEMICOLON),d.isEach&&this.fail("Invalid for each..in loop"),this.withContext(m,function(){d.condition=this.peek(!0)===SEMICOLON?null:this.Expression(),this.mustMatch(SEMICOLON),j=this.peek(!0),d.update=(this.parenFreeMode?j===LEFT_CURLY||definitions.isStatementStartCode[j]:j===RIGHT_PAREN)?null:this.Expression()})),this.parenFreeMode||this.mustMatch(RIGHT_PAREN),this.withContext(l,function(){d.body=this.Statement()}),d;case WHILE:return d=this.newNode({isLoop:!0}),d.blockComments=n,d.condition=this.HeadExpression(),l=this.x.pushTarget(d).nest(),this.withContext(l,function(){d.body=this.Statement()}),d;case DO:return d=this.newNode({isLoop:!0}),d.blockComments=n,l=this.x.pushTarget(d).next(),this.withContext(l,function(){d.body=this.Statement()}),this.mustMatch(WHILE),d.condition=this.HeadExpression(),this.match(SEMICOLON),d;case BREAK:case CONTINUE:d=this.newNode(),d.blockComments=n,l=this.x.pushTarget(d),this.peekOnSameLine()===IDENTIFIER&&(this.t.get(),d.label=this.t.token.value),d.label?d.target=l.labeledTargets.find(function(a){return a.labels.has(d.label)}):i===CONTINUE?d.target=l.defaultLoopTarget:d.target=l.defaultTarget,d.target||this.fail("Invalid "+(i===BREAK?"break":"continue")),!d.target.isLoop&&i===CONTINUE&&this.fail("Invalid continue");break;case TRY:d=this.newNode({catchClauses:[]}),d.blockComments=n,d.tryBlock=this.Block();while(this.match(CATCH)){e=this.newNode(),f=this.MaybeLeftParen();switch(this.t.get()){case LEFT_BRACKET:case LEFT_CURLY:this.t.unget(),e.varName=this.DestructuringExpression(!0);break;case IDENTIFIER:e.varName=this.t.token.value;break;default:this.fail("missing identifier in catch")}this.match(IF)&&(this.mozillaMode||this.fail("Illegal catch guard"),d.catchClauses.length&&!d.catchClauses.top().guard&&this.fail("Guarded catch after unguarded"),e.guard=this.Expression()),this.MaybeRightParen(f),e.block=this.Block(),d.catchClauses.push(e)}return this.match(FINALLY)&&(d.finallyBlock=this.Block()),!d.catchClauses.length&&!d.finallyBlock&&this.fail("Invalid try statement"),d;case CATCH:case FINALLY:this.fail(definitions.tokens[i]+" without preceding try");case THROW:d=this.newNode(),d.exception=this.Expression();break;case RETURN:d=this.ReturnOrYield();break;case WITH:return this.x.banWith()&&this.fail("with statements not allowed in strict code or modules"),d=this.newNode(),d.blockComments=n,d.object=this.HeadExpression(),l=this.x.pushTarget(d).next(),this.withContext(l,function(){d.body=this.Statement()}),d;case VAR:case CONST:d=this.Variables();break;case LET:if(this.peek()===LEFT_PAREN)return d=this.LetBlock(!0),d;d=this.Variables();break;case DEBUGGER:d=this.newNode();break;case NEWLINE:case SEMICOLON:return d=this.newNode({type:SEMICOLON}),d.blockComments=n,d.expression=null,d;case IDENTIFIER:case USE:case MODULE:switch(this.t.token.value){case"use":if(!isPragmaToken(this.peekOnSameLine())){this.t.unget();break}return this.newNode({type:USE,params:this.Pragmas()});case"module":this.x.modulesAllowed()||this.fail("module declaration not at top level"),this.x.parentScript.hasModules=!0,i=this.peekOnSameLine();if(i!==IDENTIFIER&&i!==LEFT_CURLY){this.t.unget();break}d=this.newNode({type:MODULE}),d.blockComments=n,this.mustMatch(IDENTIFIER),c=this.t.token.value;if(this.match(LEFT_CURLY))return d.name=c,d.body=this.Script(!0,!1),d.module=new Module(d),this.mustMatch(RIGHT_CURLY),this.x.parentScript.modDefns.set(d.name,d),d;return this.t.unget(),this.ModuleVariables(d),d;default:i=this.peek();if(i===COLON)return c=this.t.token.value,this.x.allLabels.has(c)&&this.fail("Duplicate label: "+c),this.t.get(),d=this.newNode({type:LABEL,label:c}),d.blockComments=n,l=this.x.pushLabel(c).nest(),this.withContext(l,function(){d.statement=this.Statement()}),d.target=d.statement.type===LABEL?d.statement.target:d.statement,d};default:d=this.newNode({type:SEMICOLON}),this.t.unget(),d.blockComments=n,d.expression=this.Expression(),d.end=d.expression.end}return d.blockComments=n,this.MagicalSemicolon(),d},Pp.Pragmas=function(){var b=[];do b.push(this.Pragma());while(this.match(COMMA));return this.MagicalSemicolon(),b},Pp.Pragma=function(){var b=[],c;do c=this.t.get(!0),b.push(this.t.token);while(isPragmaToken(this.peek()));return b},Pp.MagicalSemicolon=function(){var b;this.t.lineno===this.t.token.lineno&&(b=this.peekOnSameLine(),b!==END&&b!==NEWLINE&&b!==SEMICOLON&&b!==RIGHT_CURLY&&this.fail("missing ; before statement")),this.match(SEMICOLON)},Pp.ReturnOrYield=function(){var b,c,d=this.t.token.type,e,f=this.x.parentScript;return d===RETURN?this.x.inFunction||this.fail("Return not in function"):(this.x.inFunction||this.fail("Yield not in function"),f.hasYield=!0),b=this.newNode({value:undefined}),e=d===RETURN?this.peekOnSameLine(!0):this.peek(!0),e!==END&&e!==NEWLINE&&e!==SEMICOLON&&e!==RIGHT_CURLY&&(d!==YIELD||e!==d&&e!==RIGHT_BRACKET&&e!==RIGHT_PAREN&&e!==COLON&&e!==COMMA)?d===RETURN?(b.value=this.Expression(),f.hasReturnWithValue=!0):b.value=this.AssignExpression():d===RETURN&&(f.hasEmptyReturn=!0),b},Pp.ModuleExpression=function(){return this.match(STRING)?this.newNode():this.QualifiedPath()},Pp.ImportPathList=function(){var b=[];do b.push(this.ImportPath());while(this.match(COMMA));return b},Pp.ImportPath=function(){var b=this.QualifiedPath();if(!this.match(DOT))return b.type===IDENTIFIER&&this.fail("cannot import local variable"),b;var c=this.newNode();return c.push(b),c.push(this.ImportSpecifierSet()),c},Pp.ExplicitSpecifierSet=function(b){var c,d,e,f;c=this.newNode({type:OBJECT_INIT}),this.mustMatch(LEFT_CURLY);if(!this.match(RIGHT_CURLY))do e=this.Identifier(),this.match(COLON)?(d=this.newNode({type:PROPERTY_INIT}),d.push(e),d.push(b()),c.push(d)):c.push(e);while(!this.match(RIGHT_CURLY)&&this.mustMatch(COMMA));return c},Pp.ImportSpecifierSet=function(){var b=this;return this.match(MUL)?this.newNode({type:IDENTIFIER,name:"*"}):ExplicitSpecifierSet(function(){return b.Identifier()})},Pp.Identifier=function(){return this.mustMatch(IDENTIFIER),this.newNode({type:IDENTIFIER})},Pp.IdentifierName=function(){return this.mustMatch(IDENTIFIER,!0),this.newNode({type:IDENTIFIER})},Pp.QualifiedPath=function(){var b,c;b=this.Identifier();while(this.match(DOT)){if(this.peek()!==IDENTIFIER){this.t.unget();break}c=this.newNode(),c.push(b),c.push(this.Identifier()),b=c}return b},Pp.ExportPath=function(){var b=this;return this.peek()===LEFT_CURLY?this.ExplicitSpecifierSet(function(){return b.QualifiedPath()}):this.QualifiedPath()},Pp.ExportPathList=function(){var b=[];do b.push(this.ExportPath());while(this.match(COMMA));return b},Pp.FunctionDefinition=function(b,c,d){var e,f=this.newNode({params:[],paramComments:[]});typeof d=="undefined"&&(d=null),f.blockComments=d,f.type!==FUNCTION&&(f.type=f.value==="get"?GETTER:SETTER),this.match(MUL)&&(f.isExplicitGenerator=!0),this.match(IDENTIFIER,!1,!0)?f.name=this.t.token.value:b&&this.fail("missing function identifier");var g=this.x.inModule;x2=new StaticContext(null,null,g,!0,this.x.strictMode),this.withContext(x2,function(){this.mustMatch(LEFT_PAREN);if(!this.match(RIGHT_PAREN)){do{e=this.t.get(),f.paramComments.push(this.t.lastBlockComment());switch(e){case LEFT_BRACKET:case LEFT_CURLY:this.t.unget(),f.params.push(this.DestructuringExpression());break;case IDENTIFIER:f.params.push(this.t.token.value);break;default:this.fail("missing formal parameter")}}while(this.match(COMMA));this.mustMatch(RIGHT_PAREN)}e=this.t.get(!0),e!==LEFT_CURLY&&this.t.unget(),e!==LEFT_CURLY?f.body=this.AssignExpression():f.body=this.Script(g,!0)}),e===LEFT_CURLY&&this.mustMatch(RIGHT_CURLY),f.end=this.t.token.end,f.functionForm=c,c===DECLARED_FORM&&this.x.parentScript.funDecls.push(f),this.x.inModule&&!f.isExplicitGenerator&&f.body.hasYield&&this.fail("yield in non-generator function");if(f.isExplicitGenerator||f.body.hasYield)f.body=this.newNode({type:GENERATOR,body:f.body});return f},Pp.ModuleVariables=function(b){var c,d;do c=this.Identifier(),this.match(ASSIGN)&&(d=this.ModuleExpression(),c.initializer=d,d.type===STRING?this.x.parentScript.modLoads.set(c.value,d.value):this.x.parentScript.modAssns.set(c.value,c)),b.push(c);while(this.match(COMMA))},Pp.Variables=function(b){var c,d,e,f,g,h;h=this.t.token.type;switch(h){case VAR:case CONST:g=this.x.parentScript;break;case LET:g=this.x.parentBlock;break;case LEFT_PAREN:h=LET,g=b}c=this.newNode({type:h,destructurings:[]});do{h=this.t.get();if(h===LEFT_BRACKET||h===LEFT_CURLY){this.t.unget();var i=this.DestructuringExpression(!0);d=this.newNode({type:IDENTIFIER,name:i,readOnly:c.type===CONST}),c.push(d),pushDestructuringVarDecls(d.name.destructuredNames,g),c.destructurings.push({exp:i,decl:d});if(this.x.inForLoopInit&&this.peek()===IN)continue;this.mustMatch(ASSIGN),this.t.token.assignOp&&this.fail("Invalid variable initialization"),d.blockComment=this.t.lastBlockComment(),d.initializer=this.AssignExpression();continue}h!==IDENTIFIER&&this.fail("missing variable name"),d=this.newNode({type:IDENTIFIER,name:this.t.token.value,readOnly:c.type===CONST}),c.push(d),g.varDecls.push(d);if(this.match(ASSIGN)){var j=this.t.lastBlockComment();this.t.token.assignOp&&this.fail("Invalid variable initialization"),d.initializer=this.AssignExpression()}else var j=this.t.lastBlockComment();d.blockComment=j}while(this.match(COMMA));return c},Pp.LetBlock=function(b){var c,d;return c=this.newNode({type:LET_BLOCK,varDecls:[]}),this.mustMatch(LEFT_PAREN),c.variables=this.Variables(c),this.mustMatch(RIGHT_PAREN),b&&this.peek()!==LEFT_CURLY&&(d=this.newNode({type:SEMICOLON,expression:c}),b=!1),b?c.block=this.Block():c.expression=this.AssignExpression(),c},Pp.checkDestructuring=function(b,c){b.type===ARRAY_COMP&&this.fail("Invalid array comprehension left-hand side");if(b.type!==ARRAY_INIT&&b.type!==OBJECT_INIT)return;var d={},e,f,g,h,i,j=b.children;for(var k=0,l=j.length;k<l;k++){if(!(e=j[k]))continue;e.type===PROPERTY_INIT?(i=e.children,h=i[1],g=i[0].value):b.type===OBJECT_INIT?(h=e,g=e.value):(h=e,g=k),h.type===ARRAY_INIT||h.type===OBJECT_INIT?d[g]=this.checkDestructuring(h,c):(c&&h.type!==IDENTIFIER&&this.fail("missing name in pattern"),d[g]=h)}return d},Pp.DestructuringExpression=function(b){var c=this.PrimaryExpression();return c.destructuredNames=this.checkDestructuring(c,b),c},Pp.GeneratorExpression=function(b){return this.newNode({type:GENERATOR,expression:b,tail:this.ComprehensionTail()})},Pp.ComprehensionTail=function(){var b,c,d,e,f;b=this.newNode({type:COMP_TAIL});do{c=this.newNode({type:FOR_IN,isLoop:!0}),this.match(IDENTIFIER)&&(this.mozillaMode&&this.t.token.value==="each"?c.isEach=!0:this.t.unget()),f=this.MaybeLeftParen();switch(this.t.get()){case LEFT_BRACKET:case LEFT_CURLY:this.t.unget(),c.iterator=this.DestructuringExpression();break;case IDENTIFIER:c.iterator=e=this.newNode({type:IDENTIFIER}),e.name=e.value,c.varDecl=d=this.newNode({type:VAR}),d.push(e),this.x.parentScript.varDecls.push(e);break;default:this.fail("missing identifier")}this.mustMatch(IN),c.object=this.Expression(),this.MaybeRightParen(f),b.push(c)}while(this.match(FOR));return this.match(IF)&&(b.guard=this.HeadExpression()),b},Pp.HeadExpression=function(){var b=this.MaybeLeftParen(),c=this.ParenExpression();this.MaybeRightParen(b);if(b===END&&!c.parenthesized){var d=this.peek();d!==LEFT_CURLY&&!definitions.isStatementStartCode[d]&&this.fail("Unparenthesized head followed by unbraced body")}return c},Pp.ParenExpression=function(){var b=this.x.update({inForLoopInit:this.x.inForLoopInit&&this.t.token.type===LEFT_PAREN}),c=this.withContext(b,function(){return this.Expression()});return this.match(FOR)&&(c.type===YIELD&&!c.parenthesized&&this.fail("Yield expression must be parenthesized"),c.type===COMMA&&!c.parenthesized&&this.fail("Generator expression must be parenthesized"),c=this.GeneratorExpression(c)),c},Pp.Expression=function(){var b,c;b=this.AssignExpression();if(this.match(COMMA)){c=this.newNode({type:COMMA}),c.push(b),b=c;do c=b.children[b.children.length-1],c.type===YIELD&&!c.parenthesized&&this.fail("Yield expression must be parenthesized"),b.push(this.AssignExpression());while(this.match(COMMA))}return b},Pp.AssignExpression=function(){var b,c;if(this.match(YIELD,!0))return this.ReturnOrYield();b=this.newNode({type:ASSIGN}),c=this.ConditionalExpression();if(!this.match(ASSIGN))return c;b.blockComment=this.t.lastBlockComment();switch(c.type){case OBJECT_INIT:case ARRAY_INIT:c.destructuredNames=this.checkDestructuring(c);case IDENTIFIER:case DOT:case INDEX:case CALL:break;default:this.fail("Bad left-hand side of assignment")}return b.assignOp=c.assignOp=this.t.token.assignOp,b.push(c),b.push(this.AssignExpression()),b},Pp.ConditionalExpression=function(){var b,c;b=this.OrExpression();if(this.match(HOOK)){c=b,b=this.newNode({type:HOOK}),b.push(c);var d=this.x.update({inForLoopInit:!1});this.withContext(d,function(){b.push(this.AssignExpression())}),this.match(COLON)||this.fail("missing : after ?"),b.push(this.AssignExpression())}return b},Pp.OrExpression=function(){var b,c;b=this.AndExpression();while(this.match(OR))c=this.newNode(),c.push(b),c.push(this.AndExpression()),b=c;return b},Pp.AndExpression=function(){var b,c;b=this.BitwiseOrExpression();while(this.match(AND))c=this.newNode(),c.push(b),c.push(this.BitwiseOrExpression()),b=c;return b},Pp.BitwiseOrExpression=function(){var b,c;b=this.BitwiseXorExpression();while(this.match(BITWISE_OR))c=this.newNode(),c.push(b),c.push(this.BitwiseXorExpression()),b=c;return b},Pp.BitwiseXorExpression=function(){var b,c;b=this.BitwiseAndExpression();while(this.match(BITWISE_XOR))c=this.newNode(),c.push(b),c.push(this.BitwiseAndExpression()),b=c;return b},Pp.BitwiseAndExpression=function(){var b,c;b=this.EqualityExpression();while(this.match(BITWISE_AND))c=this.newNode(),c.push(b),c.push(this.EqualityExpression()),b=c;return b},Pp.EqualityExpression=function(){var b,c;b=this.RelationalExpression();while(this.match(EQ)||this.match(NE)||this.match(STRICT_EQ)||this.match(STRICT_NE))c=this.newNode(),c.push(b),c.push(this.RelationalExpression()),b=c;return b},Pp.RelationalExpression=function(){var b,c,d=this.x.update({inForLoopInit:!1});return this.withContext(d,function(){b=this.ShiftExpression();while(this.match(LT)||this.match(LE)||this.match(GE)||this.match(GT)||!this.x.inForLoopInit&&this.match(IN)||this.match(INSTANCEOF))c=this.newNode(),c.push(b),c.push(this.ShiftExpression()),b=c}),b},Pp.ShiftExpression=function(){var b,c;b=this.AddExpression();while(this.match(LSH)||this.match(RSH)||this.match(URSH))c=this.newNode(),c.push(b),c.push(this.AddExpression()),b=c;return b},Pp.AddExpression=function(){var b,c;b=this.MultiplyExpression();while(this.match(PLUS)||this.match(MINUS))c=this.newNode(),c.push(b),c.push(this.MultiplyExpression()),b=c;return b},Pp.MultiplyExpression=function(){var b,c;b=this.UnaryExpression();while(this.match(MUL)||this.match(DIV)||this.match(MOD))c=this.newNode(),c.push(b),c.push(this.UnaryExpression()),b=c;return b},Pp.UnaryExpression=function(){var b,c,d;switch(d=this.t.get(!0)){case DELETE:case VOID:case TYPEOF:case NOT:case BITWISE_NOT:case PLUS:case MINUS:d===PLUS?b=this.newNode({type:UNARY_PLUS}):d===MINUS?b=this.newNode({type:UNARY_MINUS}):b=this.newNode(),b.push(this.UnaryExpression());break;case INCREMENT:case DECREMENT:b=this.newNode(),b.push(this.MemberExpression(!0));break;default:this.t.unget(),b=this.MemberExpression(!0),this.t.tokens[this.t.tokenIndex+this.t.lookahead-1&3].lineno===this.t.lineno&&(this.match(INCREMENT)||this.match(DECREMENT))&&(c=this.newNode({postfix:!0}),c.push(b),b=c)}return b},Pp.MemberExpression=function(b){var c,d,e,f;this.match(NEW)?(c=this.newNode(),c.push(this.MemberExpression(!1)),this.match(LEFT_PAREN)&&(c.type=NEW_WITH_ARGS,c.push(this.ArgumentList()))):c=this.PrimaryExpression();while((f=this.t.get())!==END){switch(f){case DOT:d=this.newNode(),d.push(c),d.push(this.IdentifierName());break;case LEFT_BRACKET:d=this.newNode({type:INDEX}),d.push(c),d.push(this.Expression()),this.mustMatch(RIGHT_BRACKET);break;case LEFT_PAREN:if(b){d=this.newNode({type:CALL}),d.push(c),d.push(this.ArgumentList());break};default:return this.t.unget(),c}c=d}return c},Pp.ArgumentList=function(){var b,c;b=this.newNode({type:LIST});if(this.match(RIGHT_PAREN,!0))return b;do c=this.AssignExpression(),c.type===YIELD&&!c.parenthesized&&this.peek()===COMMA&&this.fail("Yield expression must be parenthesized"),this.match(FOR)&&(c=this.GeneratorExpression(c),(b.children.length>1||this.peek(!0)===COMMA)&&this.fail("Generator expression must be parenthesized")),b.push(c);while(this.match(COMMA));return this.mustMatch(RIGHT_PAREN),b},Pp.PrimaryExpression=function(){var b,c,d=this.t.get(!0);switch(d){case FUNCTION:b=this.FunctionDefinition(!1,EXPRESSED_FORM);break;case LEFT_BRACKET:b=this.newNode({type:ARRAY_INIT});while((d=this.peek(!0))!==RIGHT_BRACKET){if(d===COMMA){this.t.get(),b.push(null);continue}b.push(this.AssignExpression());if(d!==COMMA&&!this.match(COMMA))break}b.children.length===1&&this.match(FOR)&&(c=this.newNode({type:ARRAY_COMP,expression:b.children[0],tail:this.ComprehensionTail()}),b=c),this.mustMatch(RIGHT_BRACKET);break;case LEFT_CURLY:var e,f;b=this.newNode({type:OBJECT_INIT});a:if(!this.match(RIGHT_CURLY)){do{d=this.t.get();if(this.t.token.value!=="get"&&this.t.token.value!=="set"||this.peek()!==IDENTIFIER){var g=this.t.blockComments;switch(d){case IDENTIFIER:case NUMBER:case STRING:e=this.newNode({type:IDENTIFIER});break;case RIGHT_CURLY:break a;default:if(this.t.token.value in definitions.keywords){e=this.newNode({type:IDENTIFIER});break}this.fail("Invalid property name")}this.match(COLON)?(c=this.newNode({type:PROPERTY_INIT}),c.push(e),c.push(this.AssignExpression()),c.blockComments=g,b.push(c)):(this.peek()!==COMMA&&this.peek()!==RIGHT_CURLY&&this.fail("missing : after property"),b.push(e))}else b.push(this.FunctionDefinition(!0,EXPRESSED_FORM))}while(this.match(COMMA));this.mustMatch(RIGHT_CURLY)}break;case LEFT_PAREN:b=this.ParenExpression(),this.mustMatch(RIGHT_PAREN),b.parenthesized=!0;break;case LET:b=this.LetBlock(!1);break;case NULL:case THIS:case TRUE:case FALSE:case IDENTIFIER:case NUMBER:case STRING:case REGEXP:b=this.newNode();break;default:this.fail("missing operand; found "+definitions.tokens[d])}return b},exports.parse=parse,exports.parseStdin=parseStdin,exports.parseFunction=parseFunction,exports.Node=Node,exports.DECLARED_FORM=DECLARED_FORM,exports.EXPRESSED_FORM=EXPRESSED_FORM,exports.STATEMENT_FORM=STATEMENT_FORM,exports.Tokenizer=Tokenizer,exports.Parser=Parser,exports.Module=Module,exports.Export=Export}),define("ace/narcissus/lexer",["require","exports","module","ace/narcissus/definitions"],function(require,exports,module){function isValidIdentifierChar(a,b){if(a<="")return a>="a"&&a<="z"||a>="A"&&a<="Z"||a==="$"||a==="_"||!b&&a>="0"&&a<="9"?!0:!1;var c={};c["x"+a]=!0,c[a]=!0;var d=!1;try{d=Function("x","return (x."+(b?"":"x")+a+");")(c)===!0}catch(e){}return d}function isIdentifier(a){if(typeof a!="string")return!1;if(a.length===0)return!1;if(!isValidIdentifierChar(a[0],!0))return!1;for(var b=1;b<a.length;b++)if(!isValidIdentifierChar(a[b],!1))return!1;return!0}function Tokenizer(a,b,c,d){this.cursor=0,this.source=String(a),this.tokens=[],this.tokenIndex=0,this.lookahead=0,this.scanNewlines=!1,this.filename=b||"",this.lineno=c||1,this.allowHTMLComments=d,this.blockComments=null}var definitions=require("./definitions");eval(definitions.consts);var opTokens={};for(var op in definitions.opTypeNames){if(op==="\n"||op===".")continue;var node=opTokens;for(var i=0;i<op.length;i++){var ch=op[i];ch in node||(node[ch]={}),node=node[ch],node.op=op}}Tokenizer.prototype={get done(){return this.peek(!0)===END},get token(){return this.tokens[this.tokenIndex]},match:function(a,b,c){return this.get(b,c)===a||this.unget()},mustMatch:function(a,b){if(!this.match(a,!1,b))throw this.newSyntaxError("Missing "+definitions.tokens[a].toLowerCase());return this.token},peek:function(a){var b,c;return this.lookahead?(c=this.tokens[this.tokenIndex+this.lookahead&3],b=this.scanNewlines&&c.lineno!==this.lineno?NEWLINE:c.type):(b=this.get(a),this.unget()),b},peekOnSameLine:function(a){this.scanNewlines=!0;var b=this.peek(a);return this.scanNewlines=!1,b},lastBlockComment:function(){var a=this.blockComments.length;return a?this.blockComments[a-1]:null},skip:function(){var a=this.source;this.blockComments=[];for(;;){var b=a[this.cursor++],c=a[this.cursor];if(b==="\r"){if(c==="\n")continue;b="\n"}if(b==="\n"&&!this.scanNewlines)this.lineno++;else if(b==="/"&&c==="*"){var d=++this.cursor;for(;;){b=a[this.cursor++];if(b===undefined)throw this.newSyntaxError("Unterminated comment");if(b==="*"){c=a[this.cursor];if(c==="/"){var e=this.cursor-1;this.cursor++;break}}else b==="\n"&&this.lineno++}this.blockComments.push(a.substring(d,e))}else if(b==="/"&&c==="/"||this.allowHTMLComments&&b==="<"&&c==="!"&&a[this.cursor+1]==="-"&&a[this.cursor+2]==="-"&&(this.cursor+=2)){this.cursor++;for(;;){b=a[this.cursor++],c=a[this.cursor];if(b===undefined)return;b==="\r"&&c!=="\n"&&(b="\n");if(b==="\n"){this.scanNewlines?this.cursor--:this.lineno++;break}}}else if(!(b in definitions.whitespace)){this.cursor--;return}}},lexExponent:function(){var a=this.source,b=a[this.cursor];if(b==="e"||b==="E"){this.cursor++,ch=a[this.cursor++];if(ch==="+"||ch==="-")ch=a[this.cursor++];if(ch<"0"||ch>"9")throw this.newSyntaxError("Missing exponent");do ch=a[this.cursor++];while(ch>="0"&&ch<="9");return this.cursor--,!0}return!1},lexZeroNumber:function(a){var b=this.token,c=this.source;b.type=NUMBER,a=c[this.cursor++];if(a==="."){do a=c[this.cursor++];while(a>="0"&&a<="9");this.cursor--,this.lexExponent(),b.value=parseFloat(c.substring(b.start,this.cursor))}else if(a==="x"||a==="X"){do a=c[this.cursor++];while(a>="0"&&a<="9"||a>="a"&&a<="f"||a>="A"&&a<="F");this.cursor--,b.value=parseInt(c.substring(b.start,this.cursor))}else if(a>="0"&&a<="7"){do a=c[this.cursor++];while(a>="0"&&a<="7");this.cursor--,b.value=parseInt(c.substring(b.start,this.cursor))}else this.cursor--,this.lexExponent(),b.value=0},lexNumber:function(a){var b=this.token,c=this.source;b.type=NUMBER;var d=!1;do a=c[this.cursor++],a==="."&&!d&&(d=!0,a=c[this.cursor++]);while(a>="0"&&a<="9");this.cursor--;var e=this.lexExponent();d=d||e;var f=c.substring(b.start,this.cursor);b.value=d?parseFloat(f):parseInt(f)},lexDot:function(a){var b=this.token,c=this.source,d=c[this.cursor];if(d>="0"&&d<="9"){do a=c[this.cursor++];while(a>="0"&&a<="9");this.cursor--,this.lexExponent(),b.type=NUMBER,b.value=parseFloat(c.substring(b.start,this.cursor))}else b.type=DOT,b.assignOp=null,b.value="."},lexString:function(ch){var token=this.token,input=this.source;token.type=STRING;var hasEscapes=!1,delim=ch;if(input.length<=this.cursor)throw this.newSyntaxError("Unterminated string literal");while((ch=input[this.cursor++])!==delim){if(ch=="\n"||ch=="\r")throw this.newSyntaxError("Unterminated string literal");if(this.cursor==input.length)throw this.newSyntaxError("Unterminated string literal");if(ch==="\\"){hasEscapes=!0;if(++this.cursor==input.length)throw this.newSyntaxError("Unterminated string literal")}}token.value=hasEscapes?eval(input.substring(token.start,this.cursor)):input.substring(token.start+1,this.cursor-1)},lexRegExp:function(ch){var token=this.token,input=this.source;token.type=REGEXP;do{ch=input[this.cursor++];if(ch==="\\")this.cursor++;else if(ch==="["){do{if(ch===undefined)throw this.newSyntaxError("Unterminated character class");ch==="\\"&&this.cursor++,ch=input[this.cursor++]}while(ch!=="]")}else if(ch===undefined)throw this.newSyntaxError("Unterminated regex")}while(ch!=="/");do ch=input[this.cursor++];while(ch>="a"&&ch<="z");this.cursor--,token.value=eval(input.substring(token.start,this.cursor))},lexOp:function(a){var b=this.token,c=this.source,d=opTokens[a],e=c[this.cursor];e in d&&(d=d[e],this.cursor++,e=c[this.cursor],e in d&&(d=d[e],this.cursor++,e=c[this.cursor]));var f=d.op;definitions.assignOps[f]&&c[this.cursor]==="="?(this.cursor++,b.type=ASSIGN,b.assignOp=definitions.tokenIds[definitions.opTypeNames[f]],f+="="):(b.type=definitions.tokenIds[definitions.opTypeNames[f]],b.assignOp=null),b.value=f},lexIdent:function(a,b){var c=this.token,d=a;while((a=this.getValidIdentifierChar(!1))!==null)d+=a;c.type=IDENTIFIER,c.value=d;if(b)return;var e;if(this.parser.mozillaMode){e=definitions.mozillaKeywords[d];if(e){c.type=e;return}}if(this.parser.x.strictMode){e=definitions.strictKeywords[d];if(e){c.type=e;return}}e=definitions.keywords[d],e&&(c.type=e)},get:function(a,b){var c;while(this.lookahead){--this.lookahead,this.tokenIndex=this.tokenIndex+1&3,c=this.tokens[this.tokenIndex];if(c.type!==NEWLINE||this.scanNewlines)return c.type}this.skip(),this.tokenIndex=this.tokenIndex+1&3,c=this.tokens[this.tokenIndex],c||(this.tokens[this.tokenIndex]=c={});var d=this.source;if(this.cursor>=d.length)return c.type=END;c.start=this.cursor,c.lineno=this.lineno;var e=this.getValidIdentifierChar(!0),f=e===null?d[this.cursor++]:null;if(e!==null)this.lexIdent(e,b);else if(a&&f==="/")this.lexRegExp(f);else if(f in opTokens)this.lexOp(f);else if(f===".")this.lexDot(f);else if(f>="1"&&f<="9")this.lexNumber(f);else if(f==="0")this.lexZeroNumber(f);else if(f==='"'||f==="'")this.lexString(f);else{if(!this.scanNewlines||f!=="\n"&&f!=="\r")throw this.newSyntaxError("Illegal token");f==="\r"&&d[this.cursor]==="\n"&&this.cursor++,c.type=NEWLINE,c.value="\n",this.lineno++}return c.end=this.cursor,c.type},unget:function(){if(++this.lookahead===4)throw"PANIC: too much lookahead!";this.tokenIndex=this.tokenIndex-1&3},newSyntaxError:function(a){a=(this.filename?this.filename+":":"")+this.lineno+": "+a;var b=new SyntaxError(a,this.filename,this.lineno);return b.source=this.source,b.cursor=this.lookahead?this.tokens[this.tokenIndex+this.lookahead&3].start:this.cursor,b},getValidIdentifierChar:function(a){var b=this.source;if(this.cursor>=b.length)return null;var c=b[this.cursor];if(c==="\\"&&b[this.cursor+1]==="u"){try{c=String.fromCharCode(parseInt(b.substring(this.cursor+2,this.cursor+6),16))}catch(d){return null}this.cursor+=5}var e=isValidIdentifierChar(c,a);return e&&this.cursor++,e?c:null}},exports.isIdentifier=isIdentifier,exports.Tokenizer=Tokenizer}),define("ace/narcissus/definitions",["require","exports","module"],function(require,exports,module){function defineGetter(a,b,c,d,e){Object.defineProperty(a,b,{get:c,configurable:!d,enumerable:!e})}function defineGetterSetter(a,b,c,d,e,f){Object.defineProperty(a,b,{get:c,set:d,configurable:!e,enumerable:!f})}function defineMemoGetter(a,b,c,d,e){Object.defineProperty(a,b,{get:function(){var f=c();return defineProperty(a,b,f,d,!0,e),f},configurable:!0,enumerable:!e})}function defineProperty(a,b,c,d,e,f){Object.defineProperty(a,b,{value:c,writable:!e,configurable:!d,enumerable:!f})}function isNativeCode(a){return typeof a=="function"&&a.toString().match(/\[native code\]/)}function apply(a,b,c){return Fpapply.call(a,[b].concat(c))}function getPropertyDescriptor(a,b){while(a){if({}.hasOwnProperty.call(a,b))return Object.getOwnPropertyDescriptor(a,b);a=Object.getPrototypeOf(a)}}function getPropertyNames(a){var b=Object.create(null,{});while(a){var c=Object.getOwnPropertyNames(a);for(var d=0,e=c.length;d<e;d++)b[c[d]]=!0;a=Object.getPrototypeOf(a)}return Object.keys(b)}function getOwnProperties(a){var b={};for(var c in Object.getOwnPropertyNames(a))b[c]=Object.getOwnPropertyDescriptor(a,c);return b}function blacklistHandler(a,b){var c=Object.create(null,{}),d=Dict.create(b).mapObject(function(a){return c});return mixinHandler(d,a)}function whitelistHandler(a,b){var c=Object.create(null,{}),d=Dict.create(b).mapObject(function(b){return a});return mixinHandler(d,c)}function mixinHandler(a,b){function c(c){return hasOwn(a,c)?a[c]:b}function d(a){var b=getPropertyDescriptor(c(a),a);return b&&(b.configurable=!0),b}function e(){var c=Object.getOwnPropertyNames(a).filter(function(b){return b in a[b]}),d=getPropertyNames(b).filter(function(b){return!hasOwn(a,b)});return c.concat(d)}function f(){var c=Object.getOwnPropertyNames(a).filter(function(b){return b in a[b]});for(name in b)hasOwn(a,name)||c.push(name);return c}function g(a){return a in c(a)}return{getOwnPropertyDescriptor:d,getPropertyDescriptor:d,getOwnPropertyNames:e,defineProperty:function(a,b){Object.defineProperty(c(a),a,b)},"delete":function(a){var b=c(a);return delete b[a]},fix:function(){},has:g,hasOwn:g,get:function(a,b){var d=c(b);return d[b]},set:function(a,b,d){var e=c(b);return e[b]=d,!0},enumerate:f,keys:f}}function makePassthruHandler(a){return{getOwnPropertyDescriptor:function(b){var c=Object.getOwnPropertyDescriptor(a,b);return c.configurable=!0,c},getPropertyDescriptor:function(b){var c=getPropertyDescriptor(a,b);return c.configurable=!0,c},getOwnPropertyNames:function(){return Object.getOwnPropertyNames(a)},defineProperty:function(b,c){Object.defineProperty(a,b,c)},"delete":function(b){return delete a[b]},fix:function(){return Object.isFrozen(a)?getOwnProperties(a):undefined},has:function(b){return b in a},hasOwn:function(b){return{}.hasOwnProperty.call(a,b)},get:function(b,c){return a[c]},set:function(b,c,d){return a[c]=d,!0},enumerate:function(){var b=[];for(name in a)b.push(name);return b},keys:function(){return Object.keys(a)}}}function hasOwn(a,b){return hasOwnProperty.call(a,b)}function Dict(a,b){this.table=a||Object.create(null,{}),this.size=b||0}function Stack(a){this.elts=a||null}var tokens=["END","\n",";",",","=","?",":","CONDITIONAL","||","&&","|","^","&","==","!=","===","!==","<","<=",">=",">","<<",">>",">>>","+","-","*","/","%","!","~","UNARY_PLUS","UNARY_MINUS","++","--",".","[","]","{","}","(",")","SCRIPT","BLOCK","LABEL","FOR_IN","CALL","NEW_WITH_ARGS","INDEX","ARRAY_INIT","OBJECT_INIT","PROPERTY_INIT","GETTER","SETTER","GROUP","LIST","LET_BLOCK","ARRAY_COMP","GENERATOR","COMP_TAIL","IMPLEMENTS","INTERFACE","LET","MODULE","PACKAGE","PRIVATE","PROTECTED","PUBLIC","STATIC","USE","YIELD","IDENTIFIER","NUMBER","STRING","REGEXP","break","case","catch","const","continue","debugger","default","delete","do","else","export","false","finally","for","function","if","import","in","instanceof","new","null","return","switch","this","throw","true","try","typeof","var","void","while","with"],strictKeywords={__proto__:null,"implements":!0,"interface":!0,let:!0,"package":!0,"private":!0,"protected":!0,"public":!0,"static":!0,use:!0,yield:!0},statementStartTokens=["break","const","continue","debugger","do","for","if","let","return","switch","throw","try","var","yield","while","with"],whitespaceChars=["	","","\f"," "," ","﻿"," ","᠎"," "," "," "," "," "," "," "," "," "," "," "," "," ","　"],whitespace={};for(var i=0;i<whitespaceChars.length;i++)whitespace[whitespaceChars[i]]=!0;var opTypeNames={"\n":"NEWLINE",";":"SEMICOLON",",":"COMMA","?":"HOOK",":":"COLON","||":"OR","&&":"AND","|":"BITWISE_OR","^":"BITWISE_XOR","&":"BITWISE_AND","===":"STRICT_EQ","==":"EQ","=":"ASSIGN","!==":"STRICT_NE","!=":"NE","<<":"LSH","<=":"LE","<":"LT",">>>":"URSH",">>":"RSH",">=":"GE",">":"GT","++":"INCREMENT","--":"DECREMENT","+":"PLUS","-":"MINUS","*":"MUL","/":"DIV","%":"MOD","!":"NOT","~":"BITWISE_NOT",".":"DOT","[":"LEFT_BRACKET","]":"RIGHT_BRACKET","{":"LEFT_CURLY","}":"RIGHT_CURLY","(":"LEFT_PAREN",")":"RIGHT_PAREN"},keywords={__proto__:null},mozillaKeywords={__proto__:null},tokenIds={},hostSupportsEvalConst=function(){try{return eval("(function(s) { eval(s); return x })('const x = true;')")}catch(e){return!1}}(),consts=hostSupportsEvalConst?"const ":"var ";for(var i=0,j=tokens.length;i<j;i++){i>0&&(consts+=", ");var t=tokens[i],name;if(/^[a-z]/.test(t)){name=t.toUpperCase();if(name==="LET"||name==="YIELD")mozillaKeywords[name]=i;strictKeywords[name]&&(strictKeywords[name]=i),keywords[t]=i}else name=/^\W/.test(t)?opTypeNames[t]:t;consts+=name+" = "+i,tokenIds[name]=i,tokens[t]=i}consts+=";";var isStatementStartCode={__proto__:null};for(i=0,j=statementStartTokens.length;i<j;i++)isStatementStartCode[keywords[statementStartTokens[i]]]=!0;var assignOps=["|","^","&","<<",">>",">>>","+","-","*","/","%"];for(i=0,j=assignOps.length;i<j;i++)t=assignOps[i],assignOps[t]=tokens[t];var Fpapply=Function.prototype.apply,applyNew;Function.prototype.bind?applyNew=function(b,c){return new(b.bind.apply(b,[,].concat(Array.prototype.slice.call(c))))}:applyNew=function applyNew(f,a){switch(a.length){case 0:return new f;case 1:return new f(a[0]);case 2:return new f(a[0],a[1]);case 3:return new f(a[0],a[1],a[2]);default:var argStr="a[0]";for(var i=1,n=a.length;i<n;i++)argStr+=",a["+i+"]";return eval("new f("+argStr+")")}};var hasOwnProperty={}.hasOwnProperty;Dict.create=function(a){var b=Object.create(null,{}),c=0,d=Object.getOwnPropertyNames(a);for(var e=0,f=d.length;e<f;e++){var g=d[e];b[g]=a[g],c++}return new Dict(b,c)},Dict.prototype={has:function(a){return hasOwnProperty.call(this.table,a)},set:function(a,b){hasOwnProperty.call(this.table,a)||this.size++,this.table[a]=b},get:function(a){return this.table[a]},getDef:function(a,b){return hasOwnProperty.call(this.table,a)||(this.size++,this.table[a]=b()),this.table[a]},forEach:function(a){var b=this.table;for(var c in b)a.call(this,c,b[c])},map:function(a){var b=this.table,c=Object.create(null,{});return this.forEach(function(b,d){c[b]=a.call(this,d,b)}),new Dict(c,this.size)},mapObject:function(a){var b=this.table,c=Object.create(null,{});return this.forEach(function(b,d){c[b]=a.call(this,d,b)}),c},toObject:function(){return this.mapObject(function(a){return a})},choose:function(){return Object.getOwnPropertyNames(this.table)[0]},remove:function(a){hasOwnProperty.call(this.table,a)&&(this.size--,delete this.table[a])},copy:function(){var a=Object.create(null,{});for(var b in this.table)a[b]=this.table[b];return new Dict(a,this.size)},keys:function(){return Object.keys(this.table)},toString:function(){return"[object Dict]"}};var _WeakMap=typeof WeakMap=="function"?WeakMap:function(){function a(a){this.array=a||[]}function b(a,b,c,d){var e=a.array;for(var f=0,g=e.length;f<g;f++){var h=e[f];if(h.key===b)return c(h,f)}return d()}return a.prototype={has:function(a){return b(this,a,function(){return!0},function(){return!1})},set:function(a,c){var d=this.array;b(this,a,function(a){a.value=c},function(){d.push({key:a,value:c})})},get:function(a){return b(this,a,function(a){return a.value},function(){return null})},"delete":function(a){var c=this.array;b(this,a,function(a,b){c.splice(b,1)},function(){})},toString:function(){return"[object WeakMap]"}},a}();Stack.prototype={push:function(a){return new Stack({top:a,rest:this.elts})},top:function(){if(!this.elts)throw new Error("empty stack");return this.elts.top},isEmpty:function(){return this.top===null},find:function(a){for(var b=this.elts;b;b=b.rest)if(a(b.top))return b.top;return null},has:function(a){return Boolean(this.find(function(b){return b===a}))},forEach:function(a){for(var b=this.elts;b;b=b.rest)a(b.top)}},Array.prototype.copy||defineProperty(Array.prototype,"copy",function(){var a=[];for(var b=0,c=this.length;b<c;b++)a[b]=this[b];return a},!1,!1,!0),Array.prototype.top||defineProperty(Array.prototype,"top",function(){return this.length&&this[this.length-1]},!1,!1,!0),exports.tokens=tokens,exports.whitespace=whitespace,exports.opTypeNames=opTypeNames,exports.keywords=keywords,exports.mozillaKeywords=mozillaKeywords,exports.strictKeywords=strictKeywords,exports.isStatementStartCode=isStatementStartCode,exports.tokenIds=tokenIds,exports.consts=consts,exports.assignOps=assignOps,exports.defineGetter=defineGetter,exports.defineGetterSetter=defineGetterSetter,exports.defineMemoGetter=defineMemoGetter,exports.defineProperty=defineProperty,exports.isNativeCode=isNativeCode,exports.apply=apply,exports.applyNew=applyNew,exports.mixinHandler=mixinHandler,exports.whitelistHandler=whitelistHandler,exports.blacklistHandler=blacklistHandler,exports.makePassthruHandler=makePassthruHandler,exports.Dict=Dict,exports.WeakMap=_WeakMap,exports.Stack=Stack}),define("ace/narcissus/options",["require","exports","module"],function(a,b,c){b.hiddenHostGlobals={Narcissus:!0},b.desugarExtensions=!1,b.allowHTMLComments=!1,b.mozillaMode=!0,b.parenFreeMode=!1})
+"no use strict";
+;(function(window) {
+if (typeof window.window != "undefined" && window.document)
+    return;
+if (window.require && window.define)
+    return;
+
+if (!window.console) {
+    window.console = function() {
+        var msgs = Array.prototype.slice.call(arguments, 0);
+        postMessage({type: "log", data: msgs});
+    };
+    window.console.error =
+    window.console.warn = 
+    window.console.log =
+    window.console.trace = window.console;
+}
+window.window = window;
+window.ace = window;
+
+window.onerror = function(message, file, line, col, err) {
+    postMessage({type: "error", data: {
+        message: message,
+        data: err.data,
+        file: file,
+        line: line, 
+        col: col,
+        stack: err.stack
+    }});
+};
+
+window.normalizeModule = function(parentId, moduleName) {
+    // normalize plugin requires
+    if (moduleName.indexOf("!") !== -1) {
+        var chunks = moduleName.split("!");
+        return window.normalizeModule(parentId, chunks[0]) + "!" + window.normalizeModule(parentId, chunks[1]);
+    }
+    // normalize relative requires
+    if (moduleName.charAt(0) == ".") {
+        var base = parentId.split("/").slice(0, -1).join("/");
+        moduleName = (base ? base + "/" : "") + moduleName;
+        
+        while (moduleName.indexOf(".") !== -1 && previous != moduleName) {
+            var previous = moduleName;
+            moduleName = moduleName.replace(/^\.\//, "").replace(/\/\.\//, "/").replace(/[^\/]+\/\.\.\//, "");
+        }
+    }
+    
+    return moduleName;
+};
+
+window.require = function require(parentId, id) {
+    if (!id) {
+        id = parentId;
+        parentId = null;
+    }
+    if (!id.charAt)
+        throw new Error("worker.js require() accepts only (parentId, id) as arguments");
+
+    id = window.normalizeModule(parentId, id);
+
+    var module = window.require.modules[id];
+    if (module) {
+        if (!module.initialized) {
+            module.initialized = true;
+            module.exports = module.factory().exports;
+        }
+        return module.exports;
+    }
+   
+    if (!window.require.tlns)
+        return console.log("unable to load " + id);
+    
+    var path = resolveModuleId(id, window.require.tlns);
+    if (path.slice(-3) != ".js") path += ".js";
+    
+    window.require.id = id;
+    window.require.modules[id] = {}; // prevent infinite loop on broken modules
+    importScripts(path);
+    return window.require(parentId, id);
+};
+function resolveModuleId(id, paths) {
+    var testPath = id, tail = "";
+    while (testPath) {
+        var alias = paths[testPath];
+        if (typeof alias == "string") {
+            return alias + tail;
+        } else if (alias) {
+            return  alias.location.replace(/\/*$/, "/") + (tail || alias.main || alias.name);
+        } else if (alias === false) {
+            return "";
+        }
+        var i = testPath.lastIndexOf("/");
+        if (i === -1) break;
+        tail = testPath.substr(i) + tail;
+        testPath = testPath.slice(0, i);
+    }
+    return id;
+}
+window.require.modules = {};
+window.require.tlns = {};
+
+window.define = function(id, deps, factory) {
+    if (arguments.length == 2) {
+        factory = deps;
+        if (typeof id != "string") {
+            deps = id;
+            id = window.require.id;
+        }
+    } else if (arguments.length == 1) {
+        factory = id;
+        deps = [];
+        id = window.require.id;
+    }
+    
+    if (typeof factory != "function") {
+        window.require.modules[id] = {
+            exports: factory,
+            initialized: true
+        };
+        return;
+    }
+
+    if (!deps.length)
+        // If there is no dependencies, we inject "require", "exports" and
+        // "module" as dependencies, to provide CommonJS compatibility.
+        deps = ["require", "exports", "module"];
+
+    var req = function(childId) {
+        return window.require(id, childId);
+    };
+
+    window.require.modules[id] = {
+        exports: {},
+        factory: function() {
+            var module = this;
+            var returnExports = factory.apply(this, deps.map(function(dep) {
+                switch (dep) {
+                    // Because "require", "exports" and "module" aren't actual
+                    // dependencies, we must handle them seperately.
+                    case "require": return req;
+                    case "exports": return module.exports;
+                    case "module":  return module;
+                    // But for all other dependencies, we can just go ahead and
+                    // require them.
+                    default:        return req(dep);
+                }
+            }));
+            if (returnExports)
+                module.exports = returnExports;
+            return module;
+        }
+    };
+};
+window.define.amd = {};
+require.tlns = {};
+window.initBaseUrls  = function initBaseUrls(topLevelNamespaces) {
+    for (var i in topLevelNamespaces)
+        require.tlns[i] = topLevelNamespaces[i];
+};
+
+window.initSender = function initSender() {
+
+    var EventEmitter = window.require("ace/lib/event_emitter").EventEmitter;
+    var oop = window.require("ace/lib/oop");
+    
+    var Sender = function() {};
+    
+    (function() {
+        
+        oop.implement(this, EventEmitter);
+                
+        this.callback = function(data, callbackId) {
+            postMessage({
+                type: "call",
+                id: callbackId,
+                data: data
+            });
+        };
+    
+        this.emit = function(name, data) {
+            postMessage({
+                type: "event",
+                name: name,
+                data: data
+            });
+        };
+        
+    }).call(Sender.prototype);
+    
+    return new Sender();
+};
+
+var main = window.main = null;
+var sender = window.sender = null;
+
+window.onmessage = function(e) {
+    var msg = e.data;
+    if (msg.event && sender) {
+        sender._signal(msg.event, msg.data);
+    }
+    else if (msg.command) {
+        if (main[msg.command])
+            main[msg.command].apply(main, msg.args);
+        else if (window[msg.command])
+            window[msg.command].apply(window, msg.args);
+        else
+            throw new Error("Unknown command:" + msg.command);
+    }
+    else if (msg.init) {
+        window.initBaseUrls(msg.tlns);
+        require("ace/lib/es5-shim");
+        sender = window.sender = window.initSender();
+        var clazz = require(msg.module)[msg.classname];
+        main = window.main = new clazz(sender);
+    }
+};
+})(this);
+
+define("ace/lib/oop",["require","exports","module"], function(require, exports, module) {
+"use strict";
+
+exports.inherits = function(ctor, superCtor) {
+    ctor.super_ = superCtor;
+    ctor.prototype = Object.create(superCtor.prototype, {
+        constructor: {
+            value: ctor,
+            enumerable: false,
+            writable: true,
+            configurable: true
+        }
+    });
+};
+
+exports.mixin = function(obj, mixin) {
+    for (var key in mixin) {
+        obj[key] = mixin[key];
+    }
+    return obj;
+};
+
+exports.implement = function(proto, mixin) {
+    exports.mixin(proto, mixin);
+};
+
+});
+
+define("ace/range",["require","exports","module"], function(require, exports, module) {
+"use strict";
+var comparePoints = function(p1, p2) {
+    return p1.row - p2.row || p1.column - p2.column;
+};
+var Range = function(startRow, startColumn, endRow, endColumn) {
+    this.start = {
+        row: startRow,
+        column: startColumn
+    };
+
+    this.end = {
+        row: endRow,
+        column: endColumn
+    };
+};
+
+(function() {
+    this.isEqual = function(range) {
+        return this.start.row === range.start.row &&
+            this.end.row === range.end.row &&
+            this.start.column === range.start.column &&
+            this.end.column === range.end.column;
+    };
+    this.toString = function() {
+        return ("Range: [" + this.start.row + "/" + this.start.column +
+            "] -> [" + this.end.row + "/" + this.end.column + "]");
+    };
+
+    this.contains = function(row, column) {
+        return this.compare(row, column) == 0;
+    };
+    this.compareRange = function(range) {
+        var cmp,
+            end = range.end,
+            start = range.start;
+
+        cmp = this.compare(end.row, end.column);
+        if (cmp == 1) {
+            cmp = this.compare(start.row, start.column);
+            if (cmp == 1) {
+                return 2;
+            } else if (cmp == 0) {
+                return 1;
+            } else {
+                return 0;
+            }
+        } else if (cmp == -1) {
+            return -2;
+        } else {
+            cmp = this.compare(start.row, start.column);
+            if (cmp == -1) {
+                return -1;
+            } else if (cmp == 1) {
+                return 42;
+            } else {
+                return 0;
+            }
+        }
+    };
+    this.comparePoint = function(p) {
+        return this.compare(p.row, p.column);
+    };
+    this.containsRange = function(range) {
+        return this.comparePoint(range.start) == 0 && this.comparePoint(range.end) == 0;
+    };
+    this.intersects = function(range) {
+        var cmp = this.compareRange(range);
+        return (cmp == -1 || cmp == 0 || cmp == 1);
+    };
+    this.isEnd = function(row, column) {
+        return this.end.row == row && this.end.column == column;
+    };
+    this.isStart = function(row, column) {
+        return this.start.row == row && this.start.column == column;
+    };
+    this.setStart = function(row, column) {
+        if (typeof row == "object") {
+            this.start.column = row.column;
+            this.start.row = row.row;
+        } else {
+            this.start.row = row;
+            this.start.column = column;
+        }
+    };
+    this.setEnd = function(row, column) {
+        if (typeof row == "object") {
+            this.end.column = row.column;
+            this.end.row = row.row;
+        } else {
+            this.end.row = row;
+            this.end.column = column;
+        }
+    };
+    this.inside = function(row, column) {
+        if (this.compare(row, column) == 0) {
+            if (this.isEnd(row, column) || this.isStart(row, column)) {
+                return false;
+            } else {
+                return true;
+            }
+        }
+        return false;
+    };
+    this.insideStart = function(row, column) {
+        if (this.compare(row, column) == 0) {
+            if (this.isEnd(row, column)) {
+                return false;
+            } else {
+                return true;
+            }
+        }
+        return false;
+    };
+    this.insideEnd = function(row, column) {
+        if (this.compare(row, column) == 0) {
+            if (this.isStart(row, column)) {
+                return false;
+            } else {
+                return true;
+            }
+        }
+        return false;
+    };
+    this.compare = function(row, column) {
+        if (!this.isMultiLine()) {
+            if (row === this.start.row) {
+                return column < this.start.column ? -1 : (column > this.end.column ? 1 : 0);
+            }
+        }
+
+        if (row < this.start.row)
+            return -1;
+
+        if (row > this.end.row)
+            return 1;
+
+        if (this.start.row === row)
+            return column >= this.start.column ? 0 : -1;
+
+        if (this.end.row === row)
+            return column <= this.end.column ? 0 : 1;
+
+        return 0;
+    };
+    this.compareStart = function(row, column) {
+        if (this.start.row == row && this.start.column == column) {
+            return -1;
+        } else {
+            return this.compare(row, column);
+        }
+    };
+    this.compareEnd = function(row, column) {
+        if (this.end.row == row && this.end.column == column) {
+            return 1;
+        } else {
+            return this.compare(row, column);
+        }
+    };
+    this.compareInside = function(row, column) {
+        if (this.end.row == row && this.end.column == column) {
+            return 1;
+        } else if (this.start.row == row && this.start.column == column) {
+            return -1;
+        } else {
+            return this.compare(row, column);
+        }
+    };
+    this.clipRows = function(firstRow, lastRow) {
+        if (this.end.row > lastRow)
+            var end = {row: lastRow + 1, column: 0};
+        else if (this.end.row < firstRow)
+            var end = {row: firstRow, column: 0};
+
+        if (this.start.row > lastRow)
+            var start = {row: lastRow + 1, column: 0};
+        else if (this.start.row < firstRow)
+            var start = {row: firstRow, column: 0};
+
+        return Range.fromPoints(start || this.start, end || this.end);
+    };
+    this.extend = function(row, column) {
+        var cmp = this.compare(row, column);
+
+        if (cmp == 0)
+            return this;
+        else if (cmp == -1)
+            var start = {row: row, column: column};
+        else
+            var end = {row: row, column: column};
+
+        return Range.fromPoints(start || this.start, end || this.end);
+    };
+
+    this.isEmpty = function() {
+        return (this.start.row === this.end.row && this.start.column === this.end.column);
+    };
+    this.isMultiLine = function() {
+        return (this.start.row !== this.end.row);
+    };
+    this.clone = function() {
+        return Range.fromPoints(this.start, this.end);
+    };
+    this.collapseRows = function() {
+        if (this.end.column == 0)
+            return new Range(this.start.row, 0, Math.max(this.start.row, this.end.row-1), 0)
+        else
+            return new Range(this.start.row, 0, this.end.row, 0)
+    };
+    this.toScreenRange = function(session) {
+        var screenPosStart = session.documentToScreenPosition(this.start);
+        var screenPosEnd = session.documentToScreenPosition(this.end);
+
+        return new Range(
+            screenPosStart.row, screenPosStart.column,
+            screenPosEnd.row, screenPosEnd.column
+        );
+    };
+    this.moveBy = function(row, column) {
+        this.start.row += row;
+        this.start.column += column;
+        this.end.row += row;
+        this.end.column += column;
+    };
+
+}).call(Range.prototype);
+Range.fromPoints = function(start, end) {
+    return new Range(start.row, start.column, end.row, end.column);
+};
+Range.comparePoints = comparePoints;
+
+Range.comparePoints = function(p1, p2) {
+    return p1.row - p2.row || p1.column - p2.column;
+};
+
+
+exports.Range = Range;
+});
+
+define("ace/apply_delta",["require","exports","module"], function(require, exports, module) {
+"use strict";
+
+function throwDeltaError(delta, errorText){
+    console.log("Invalid Delta:", delta);
+    throw "Invalid Delta: " + errorText;
+}
+
+function positionInDocument(docLines, position) {
+    return position.row    >= 0 && position.row    <  docLines.length &&
+           position.column >= 0 && position.column <= docLines[position.row].length;
+}
+
+function validateDelta(docLines, delta) {
+    if (delta.action != "insert" && delta.action != "remove")
+        throwDeltaError(delta, "delta.action must be 'insert' or 'remove'");
+    if (!(delta.lines instanceof Array))
+        throwDeltaError(delta, "delta.lines must be an Array");
+    if (!delta.start || !delta.end)
+       throwDeltaError(delta, "delta.start/end must be an present");
+    var start = delta.start;
+    if (!positionInDocument(docLines, delta.start))
+        throwDeltaError(delta, "delta.start must be contained in document");
+    var end = delta.end;
+    if (delta.action == "remove" && !positionInDocument(docLines, end))
+        throwDeltaError(delta, "delta.end must contained in document for 'remove' actions");
+    var numRangeRows = end.row - start.row;
+    var numRangeLastLineChars = (end.column - (numRangeRows == 0 ? start.column : 0));
+    if (numRangeRows != delta.lines.length - 1 || delta.lines[numRangeRows].length != numRangeLastLineChars)
+        throwDeltaError(delta, "delta.range must match delta lines");
+}
+
+exports.applyDelta = function(docLines, delta, doNotValidate) {
+    
+    var row = delta.start.row;
+    var startColumn = delta.start.column;
+    var line = docLines[row] || "";
+    switch (delta.action) {
+        case "insert":
+            var lines = delta.lines;
+            if (lines.length === 1) {
+                docLines[row] = line.substring(0, startColumn) + delta.lines[0] + line.substring(startColumn);
+            } else {
+                var args = [row, 1].concat(delta.lines);
+                docLines.splice.apply(docLines, args);
+                docLines[row] = line.substring(0, startColumn) + docLines[row];
+                docLines[row + delta.lines.length - 1] += line.substring(startColumn);
+            }
+            break;
+        case "remove":
+            var endColumn = delta.end.column;
+            var endRow = delta.end.row;
+            if (row === endRow) {
+                docLines[row] = line.substring(0, startColumn) + line.substring(endColumn);
+            } else {
+                docLines.splice(
+                    row, endRow - row + 1,
+                    line.substring(0, startColumn) + docLines[endRow].substring(endColumn)
+                );
+            }
+            break;
+    }
+}
+});
+
+define("ace/lib/event_emitter",["require","exports","module"], function(require, exports, module) {
+"use strict";
+
+var EventEmitter = {};
+var stopPropagation = function() { this.propagationStopped = true; };
+var preventDefault = function() { this.defaultPrevented = true; };
+
+EventEmitter._emit =
+EventEmitter._dispatchEvent = function(eventName, e) {
+    this._eventRegistry || (this._eventRegistry = {});
+    this._defaultHandlers || (this._defaultHandlers = {});
+
+    var listeners = this._eventRegistry[eventName] || [];
+    var defaultHandler = this._defaultHandlers[eventName];
+    if (!listeners.length && !defaultHandler)
+        return;
+
+    if (typeof e != "object" || !e)
+        e = {};
+
+    if (!e.type)
+        e.type = eventName;
+    if (!e.stopPropagation)
+        e.stopPropagation = stopPropagation;
+    if (!e.preventDefault)
+        e.preventDefault = preventDefault;
+
+    listeners = listeners.slice();
+    for (var i=0; i<listeners.length; i++) {
+        listeners[i](e, this);
+        if (e.propagationStopped)
+            break;
+    }
+    
+    if (defaultHandler && !e.defaultPrevented)
+        return defaultHandler(e, this);
+};
+
+
+EventEmitter._signal = function(eventName, e) {
+    var listeners = (this._eventRegistry || {})[eventName];
+    if (!listeners)
+        return;
+    listeners = listeners.slice();
+    for (var i=0; i<listeners.length; i++)
+        listeners[i](e, this);
+};
+
+EventEmitter.once = function(eventName, callback) {
+    var _self = this;
+    callback && this.addEventListener(eventName, function newCallback() {
+        _self.removeEventListener(eventName, newCallback);
+        callback.apply(null, arguments);
+    });
+};
+
+
+EventEmitter.setDefaultHandler = function(eventName, callback) {
+    var handlers = this._defaultHandlers
+    if (!handlers)
+        handlers = this._defaultHandlers = {_disabled_: {}};
+    
+    if (handlers[eventName]) {
+        var old = handlers[eventName];
+        var disabled = handlers._disabled_[eventName];
+        if (!disabled)
+            handlers._disabled_[eventName] = disabled = [];
+        disabled.push(old);
+        var i = disabled.indexOf(callback);
+        if (i != -1) 
+            disabled.splice(i, 1);
+    }
+    handlers[eventName] = callback;
+};
+EventEmitter.removeDefaultHandler = function(eventName, callback) {
+    var handlers = this._defaultHandlers
+    if (!handlers)
+        return;
+    var disabled = handlers._disabled_[eventName];
+    
+    if (handlers[eventName] == callback) {
+        var old = handlers[eventName];
+        if (disabled)
+            this.setDefaultHandler(eventName, disabled.pop());
+    } else if (disabled) {
+        var i = disabled.indexOf(callback);
+        if (i != -1)
+            disabled.splice(i, 1);
+    }
+};
+
+EventEmitter.on =
+EventEmitter.addEventListener = function(eventName, callback, capturing) {
+    this._eventRegistry = this._eventRegistry || {};
+
+    var listeners = this._eventRegistry[eventName];
+    if (!listeners)
+        listeners = this._eventRegistry[eventName] = [];
+
+    if (listeners.indexOf(callback) == -1)
+        listeners[capturing ? "unshift" : "push"](callback);
+    return callback;
+};
+
+EventEmitter.off =
+EventEmitter.removeListener =
+EventEmitter.removeEventListener = function(eventName, callback) {
+    this._eventRegistry = this._eventRegistry || {};
+
+    var listeners = this._eventRegistry[eventName];
+    if (!listeners)
+        return;
+
+    var index = listeners.indexOf(callback);
+    if (index !== -1)
+        listeners.splice(index, 1);
+};
+
+EventEmitter.removeAllListeners = function(eventName) {
+    if (this._eventRegistry) this._eventRegistry[eventName] = [];
+};
+
+exports.EventEmitter = EventEmitter;
+
+});
+
+define("ace/anchor",["require","exports","module","ace/lib/oop","ace/lib/event_emitter"], function(require, exports, module) {
+"use strict";
+
+var oop = require("./lib/oop");
+var EventEmitter = require("./lib/event_emitter").EventEmitter;
+
+var Anchor = exports.Anchor = function(doc, row, column) {
+    this.$onChange = this.onChange.bind(this);
+    this.attach(doc);
+    
+    if (typeof column == "undefined")
+        this.setPosition(row.row, row.column);
+    else
+        this.setPosition(row, column);
+};
+
+(function() {
+
+    oop.implement(this, EventEmitter);
+    this.getPosition = function() {
+        return this.$clipPositionToDocument(this.row, this.column);
+    };
+    this.getDocument = function() {
+        return this.document;
+    };
+    this.$insertRight = false;
+    this.onChange = function(delta) {
+        if (delta.start.row == delta.end.row && delta.start.row != this.row)
+            return;
+
+        if (delta.start.row > this.row)
+            return;
+            
+        var point = $getTransformedPoint(delta, {row: this.row, column: this.column}, this.$insertRight);
+        this.setPosition(point.row, point.column, true);
+    };
+    
+    function $pointsInOrder(point1, point2, equalPointsInOrder) {
+        var bColIsAfter = equalPointsInOrder ? point1.column <= point2.column : point1.column < point2.column;
+        return (point1.row < point2.row) || (point1.row == point2.row && bColIsAfter);
+    }
+            
+    function $getTransformedPoint(delta, point, moveIfEqual) {
+        var deltaIsInsert = delta.action == "insert";
+        var deltaRowShift = (deltaIsInsert ? 1 : -1) * (delta.end.row    - delta.start.row);
+        var deltaColShift = (deltaIsInsert ? 1 : -1) * (delta.end.column - delta.start.column);
+        var deltaStart = delta.start;
+        var deltaEnd = deltaIsInsert ? deltaStart : delta.end; // Collapse insert range.
+        if ($pointsInOrder(point, deltaStart, moveIfEqual)) {
+            return {
+                row: point.row,
+                column: point.column
+            };
+        }
+        if ($pointsInOrder(deltaEnd, point, !moveIfEqual)) {
+            return {
+                row: point.row + deltaRowShift,
+                column: point.column + (point.row == deltaEnd.row ? deltaColShift : 0)
+            };
+        }
+        
+        return {
+            row: deltaStart.row,
+            column: deltaStart.column
+        };
+    }
+    this.setPosition = function(row, column, noClip) {
+        var pos;
+        if (noClip) {
+            pos = {
+                row: row,
+                column: column
+            };
+        } else {
+            pos = this.$clipPositionToDocument(row, column);
+        }
+
+        if (this.row == pos.row && this.column == pos.column)
+            return;
+
+        var old = {
+            row: this.row,
+            column: this.column
+        };
+
+        this.row = pos.row;
+        this.column = pos.column;
+        this._signal("change", {
+            old: old,
+            value: pos
+        });
+    };
+    this.detach = function() {
+        this.document.removeEventListener("change", this.$onChange);
+    };
+    this.attach = function(doc) {
+        this.document = doc || this.document;
+        this.document.on("change", this.$onChange);
+    };
+    this.$clipPositionToDocument = function(row, column) {
+        var pos = {};
+
+        if (row >= this.document.getLength()) {
+            pos.row = Math.max(0, this.document.getLength() - 1);
+            pos.column = this.document.getLine(pos.row).length;
+        }
+        else if (row < 0) {
+            pos.row = 0;
+            pos.column = 0;
+        }
+        else {
+            pos.row = row;
+            pos.column = Math.min(this.document.getLine(pos.row).length, Math.max(0, column));
+        }
+
+        if (column < 0)
+            pos.column = 0;
+
+        return pos;
+    };
+
+}).call(Anchor.prototype);
+
+});
+
+define("ace/document",["require","exports","module","ace/lib/oop","ace/apply_delta","ace/lib/event_emitter","ace/range","ace/anchor"], function(require, exports, module) {
+"use strict";
+
+var oop = require("./lib/oop");
+var applyDelta = require("./apply_delta").applyDelta;
+var EventEmitter = require("./lib/event_emitter").EventEmitter;
+var Range = require("./range").Range;
+var Anchor = require("./anchor").Anchor;
+
+var Document = function(textOrLines) {
+    this.$lines = [""];
+    if (textOrLines.length === 0) {
+        this.$lines = [""];
+    } else if (Array.isArray(textOrLines)) {
+        this.insertMergedLines({row: 0, column: 0}, textOrLines);
+    } else {
+        this.insert({row: 0, column:0}, textOrLines);
+    }
+};
+
+(function() {
+
+    oop.implement(this, EventEmitter);
+    this.setValue = function(text) {
+        var len = this.getLength() - 1;
+        this.remove(new Range(0, 0, len, this.getLine(len).length));
+        this.insert({row: 0, column: 0}, text);
+    };
+    this.getValue = function() {
+        return this.getAllLines().join(this.getNewLineCharacter());
+    };
+    this.createAnchor = function(row, column) {
+        return new Anchor(this, row, column);
+    };
+    if ("aaa".split(/a/).length === 0) {
+        this.$split = function(text) {
+            return text.replace(/\r\n|\r/g, "\n").split("\n");
+        };
+    } else {
+        this.$split = function(text) {
+            return text.split(/\r\n|\r|\n/);
+        };
+    }
+
+
+    this.$detectNewLine = function(text) {
+        var match = text.match(/^.*?(\r\n|\r|\n)/m);
+        this.$autoNewLine = match ? match[1] : "\n";
+        this._signal("changeNewLineMode");
+    };
+    this.getNewLineCharacter = function() {
+        switch (this.$newLineMode) {
+          case "windows":
+            return "\r\n";
+          case "unix":
+            return "\n";
+          default:
+            return this.$autoNewLine || "\n";
+        }
+    };
+
+    this.$autoNewLine = "";
+    this.$newLineMode = "auto";
+    this.setNewLineMode = function(newLineMode) {
+        if (this.$newLineMode === newLineMode)
+            return;
+
+        this.$newLineMode = newLineMode;
+        this._signal("changeNewLineMode");
+    };
+    this.getNewLineMode = function() {
+        return this.$newLineMode;
+    };
+    this.isNewLine = function(text) {
+        return (text == "\r\n" || text == "\r" || text == "\n");
+    };
+    this.getLine = function(row) {
+        return this.$lines[row] || "";
+    };
+    this.getLines = function(firstRow, lastRow) {
+        return this.$lines.slice(firstRow, lastRow + 1);
+    };
+    this.getAllLines = function() {
+        return this.getLines(0, this.getLength());
+    };
+    this.getLength = function() {
+        return this.$lines.length;
+    };
+    this.getTextRange = function(range) {
+        return this.getLinesForRange(range).join(this.getNewLineCharacter());
+    };
+    this.getLinesForRange = function(range) {
+        var lines;
+        if (range.start.row === range.end.row) {
+            lines = [this.getLine(range.start.row).substring(range.start.column, range.end.column)];
+        } else {
+            lines = this.getLines(range.start.row, range.end.row);
+            lines[0] = (lines[0] || "").substring(range.start.column);
+            var l = lines.length - 1;
+            if (range.end.row - range.start.row == l)
+                lines[l] = lines[l].substring(0, range.end.column);
+        }
+        return lines;
+    };
+    this.insertLines = function(row, lines) {
+        console.warn("Use of document.insertLines is deprecated. Use the insertFullLines method instead.");
+        return this.insertFullLines(row, lines);
+    };
+    this.removeLines = function(firstRow, lastRow) {
+        console.warn("Use of document.removeLines is deprecated. Use the removeFullLines method instead.");
+        return this.removeFullLines(firstRow, lastRow);
+    };
+    this.insertNewLine = function(position) {
+        console.warn("Use of document.insertNewLine is deprecated. Use insertMergedLines(position, ['', '']) instead.");
+        return this.insertMergedLines(position, ["", ""]);
+    };
+    this.insert = function(position, text) {
+        if (this.getLength() <= 1)
+            this.$detectNewLine(text);
+        
+        return this.insertMergedLines(position, this.$split(text));
+    };
+    this.insertInLine = function(position, text) {
+        var start = this.clippedPos(position.row, position.column);
+        var end = this.pos(position.row, position.column + text.length);
+        
+        this.applyDelta({
+            start: start,
+            end: end,
+            action: "insert",
+            lines: [text]
+        }, true);
+        
+        return this.clonePos(end);
+    };
+    
+    this.clippedPos = function(row, column) {
+        var length = this.getLength();
+        if (row === undefined) {
+            row = length;
+        } else if (row < 0) {
+            row = 0;
+        } else if (row >= length) {
+            row = length - 1;
+            column = undefined;
+        }
+        var line = this.getLine(row);
+        if (column == undefined)
+            column = line.length;
+        column = Math.min(Math.max(column, 0), line.length);
+        return {row: row, column: column};
+    };
+    
+    this.clonePos = function(pos) {
+        return {row: pos.row, column: pos.column};
+    };
+    
+    this.pos = function(row, column) {
+        return {row: row, column: column};
+    };
+    
+    this.$clipPosition = function(position) {
+        var length = this.getLength();
+        if (position.row >= length) {
+            position.row = Math.max(0, length - 1);
+            position.column = this.getLine(length - 1).length;
+        } else {
+            position.row = Math.max(0, position.row);
+            position.column = Math.min(Math.max(position.column, 0), this.getLine(position.row).length);
+        }
+        return position;
+    };
+    this.insertFullLines = function(row, lines) {
+        row = Math.min(Math.max(row, 0), this.getLength());
+        var column = 0;
+        if (row < this.getLength()) {
+            lines = lines.concat([""]);
+            column = 0;
+        } else {
+            lines = [""].concat(lines);
+            row--;
+            column = this.$lines[row].length;
+        }
+        this.insertMergedLines({row: row, column: column}, lines);
+    };    
+    this.insertMergedLines = function(position, lines) {
+        var start = this.clippedPos(position.row, position.column);
+        var end = {
+            row: start.row + lines.length - 1,
+            column: (lines.length == 1 ? start.column : 0) + lines[lines.length - 1].length
+        };
+        
+        this.applyDelta({
+            start: start,
+            end: end,
+            action: "insert",
+            lines: lines
+        });
+        
+        return this.clonePos(end);
+    };
+    this.remove = function(range) {
+        var start = this.clippedPos(range.start.row, range.start.column);
+        var end = this.clippedPos(range.end.row, range.end.column);
+        this.applyDelta({
+            start: start,
+            end: end,
+            action: "remove",
+            lines: this.getLinesForRange({start: start, end: end})
+        });
+        return this.clonePos(start);
+    };
+    this.removeInLine = function(row, startColumn, endColumn) {
+        var start = this.clippedPos(row, startColumn);
+        var end = this.clippedPos(row, endColumn);
+        
+        this.applyDelta({
+            start: start,
+            end: end,
+            action: "remove",
+            lines: this.getLinesForRange({start: start, end: end})
+        }, true);
+        
+        return this.clonePos(start);
+    };
+    this.removeFullLines = function(firstRow, lastRow) {
+        firstRow = Math.min(Math.max(0, firstRow), this.getLength() - 1);
+        lastRow  = Math.min(Math.max(0, lastRow ), this.getLength() - 1);
+        var deleteFirstNewLine = lastRow == this.getLength() - 1 && firstRow > 0;
+        var deleteLastNewLine  = lastRow  < this.getLength() - 1;
+        var startRow = ( deleteFirstNewLine ? firstRow - 1                  : firstRow                    );
+        var startCol = ( deleteFirstNewLine ? this.getLine(startRow).length : 0                           );
+        var endRow   = ( deleteLastNewLine  ? lastRow + 1                   : lastRow                     );
+        var endCol   = ( deleteLastNewLine  ? 0                             : this.getLine(endRow).length ); 
+        var range = new Range(startRow, startCol, endRow, endCol);
+        var deletedLines = this.$lines.slice(firstRow, lastRow + 1);
+        
+        this.applyDelta({
+            start: range.start,
+            end: range.end,
+            action: "remove",
+            lines: this.getLinesForRange(range)
+        });
+        return deletedLines;
+    };
+    this.removeNewLine = function(row) {
+        if (row < this.getLength() - 1 && row >= 0) {
+            this.applyDelta({
+                start: this.pos(row, this.getLine(row).length),
+                end: this.pos(row + 1, 0),
+                action: "remove",
+                lines: ["", ""]
+            });
+        }
+    };
+    this.replace = function(range, text) {
+        if (!(range instanceof Range))
+            range = Range.fromPoints(range.start, range.end);
+        if (text.length === 0 && range.isEmpty())
+            return range.start;
+        if (text == this.getTextRange(range))
+            return range.end;
+
+        this.remove(range);
+        var end;
+        if (text) {
+            end = this.insert(range.start, text);
+        }
+        else {
+            end = range.start;
+        }
+        
+        return end;
+    };
+    this.applyDeltas = function(deltas) {
+        for (var i=0; i<deltas.length; i++) {
+            this.applyDelta(deltas[i]);
+        }
+    };
+    this.revertDeltas = function(deltas) {
+        for (var i=deltas.length-1; i>=0; i--) {
+            this.revertDelta(deltas[i]);
+        }
+    };
+    this.applyDelta = function(delta, doNotValidate) {
+        var isInsert = delta.action == "insert";
+        if (isInsert ? delta.lines.length <= 1 && !delta.lines[0]
+            : !Range.comparePoints(delta.start, delta.end)) {
+            return;
+        }
+        
+        if (isInsert && delta.lines.length > 20000)
+            this.$splitAndapplyLargeDelta(delta, 20000);
+        applyDelta(this.$lines, delta, doNotValidate);
+        this._signal("change", delta);
+    };
+    
+    this.$splitAndapplyLargeDelta = function(delta, MAX) {
+        var lines = delta.lines;
+        var l = lines.length;
+        var row = delta.start.row; 
+        var column = delta.start.column;
+        var from = 0, to = 0;
+        do {
+            from = to;
+            to += MAX - 1;
+            var chunk = lines.slice(from, to);
+            if (to > l) {
+                delta.lines = chunk;
+                delta.start.row = row + from;
+                delta.start.column = column;
+                break;
+            }
+            chunk.push("");
+            this.applyDelta({
+                start: this.pos(row + from, column),
+                end: this.pos(row + to, column = 0),
+                action: delta.action,
+                lines: chunk
+            }, true);
+        } while(true);
+    };
+    this.revertDelta = function(delta) {
+        this.applyDelta({
+            start: this.clonePos(delta.start),
+            end: this.clonePos(delta.end),
+            action: (delta.action == "insert" ? "remove" : "insert"),
+            lines: delta.lines.slice()
+        });
+    };
+    this.indexToPosition = function(index, startRow) {
+        var lines = this.$lines || this.getAllLines();
+        var newlineLength = this.getNewLineCharacter().length;
+        for (var i = startRow || 0, l = lines.length; i < l; i++) {
+            index -= lines[i].length + newlineLength;
+            if (index < 0)
+                return {row: i, column: index + lines[i].length + newlineLength};
+        }
+        return {row: l-1, column: lines[l-1].length};
+    };
+    this.positionToIndex = function(pos, startRow) {
+        var lines = this.$lines || this.getAllLines();
+        var newlineLength = this.getNewLineCharacter().length;
+        var index = 0;
+        var row = Math.min(pos.row, lines.length);
+        for (var i = startRow || 0; i < row; ++i)
+            index += lines[i].length + newlineLength;
+
+        return index + pos.column;
+    };
+
+}).call(Document.prototype);
+
+exports.Document = Document;
+});
+
+define("ace/lib/lang",["require","exports","module"], function(require, exports, module) {
+"use strict";
+
+exports.last = function(a) {
+    return a[a.length - 1];
+};
+
+exports.stringReverse = function(string) {
+    return string.split("").reverse().join("");
+};
+
+exports.stringRepeat = function (string, count) {
+    var result = '';
+    while (count > 0) {
+        if (count & 1)
+            result += string;
+
+        if (count >>= 1)
+            string += string;
+    }
+    return result;
+};
+
+var trimBeginRegexp = /^\s\s*/;
+var trimEndRegexp = /\s\s*$/;
+
+exports.stringTrimLeft = function (string) {
+    return string.replace(trimBeginRegexp, '');
+};
+
+exports.stringTrimRight = function (string) {
+    return string.replace(trimEndRegexp, '');
+};
+
+exports.copyObject = function(obj) {
+    var copy = {};
+    for (var key in obj) {
+        copy[key] = obj[key];
+    }
+    return copy;
+};
+
+exports.copyArray = function(array){
+    var copy = [];
+    for (var i=0, l=array.length; i<l; i++) {
+        if (array[i] && typeof array[i] == "object")
+            copy[i] = this.copyObject(array[i]);
+        else 
+            copy[i] = array[i];
+    }
+    return copy;
+};
+
+exports.deepCopy = function deepCopy(obj) {
+    if (typeof obj !== "object" || !obj)
+        return obj;
+    var copy;
+    if (Array.isArray(obj)) {
+        copy = [];
+        for (var key = 0; key < obj.length; key++) {
+            copy[key] = deepCopy(obj[key]);
+        }
+        return copy;
+    }
+    if (Object.prototype.toString.call(obj) !== "[object Object]")
+        return obj;
+    
+    copy = {};
+    for (var key in obj)
+        copy[key] = deepCopy(obj[key]);
+    return copy;
+};
+
+exports.arrayToMap = function(arr) {
+    var map = {};
+    for (var i=0; i<arr.length; i++) {
+        map[arr[i]] = 1;
+    }
+    return map;
+
+};
+
+exports.createMap = function(props) {
+    var map = Object.create(null);
+    for (var i in props) {
+        map[i] = props[i];
+    }
+    return map;
+};
+exports.arrayRemove = function(array, value) {
+  for (var i = 0; i <= array.length; i++) {
+    if (value === array[i]) {
+      array.splice(i, 1);
+    }
+  }
+};
+
+exports.escapeRegExp = function(str) {
+    return str.replace(/([.*+?^${}()|[\]\/\\])/g, '\\$1');
+};
+
+exports.escapeHTML = function(str) {
+    return str.replace(/&/g, "&#38;").replace(/"/g, "&#34;").replace(/'/g, "&#39;").replace(/</g, "&#60;");
+};
+
+exports.getMatchOffsets = function(string, regExp) {
+    var matches = [];
+
+    string.replace(regExp, function(str) {
+        matches.push({
+            offset: arguments[arguments.length-2],
+            length: str.length
+        });
+    });
+
+    return matches;
+};
+exports.deferredCall = function(fcn) {
+    var timer = null;
+    var callback = function() {
+        timer = null;
+        fcn();
+    };
+
+    var deferred = function(timeout) {
+        deferred.cancel();
+        timer = setTimeout(callback, timeout || 0);
+        return deferred;
+    };
+
+    deferred.schedule = deferred;
+
+    deferred.call = function() {
+        this.cancel();
+        fcn();
+        return deferred;
+    };
+
+    deferred.cancel = function() {
+        clearTimeout(timer);
+        timer = null;
+        return deferred;
+    };
+    
+    deferred.isPending = function() {
+        return timer;
+    };
+
+    return deferred;
+};
+
+
+exports.delayedCall = function(fcn, defaultTimeout) {
+    var timer = null;
+    var callback = function() {
+        timer = null;
+        fcn();
+    };
+
+    var _self = function(timeout) {
+        if (timer == null)
+            timer = setTimeout(callback, timeout || defaultTimeout);
+    };
+
+    _self.delay = function(timeout) {
+        timer && clearTimeout(timer);
+        timer = setTimeout(callback, timeout || defaultTimeout);
+    };
+    _self.schedule = _self;
+
+    _self.call = function() {
+        this.cancel();
+        fcn();
+    };
+
+    _self.cancel = function() {
+        timer && clearTimeout(timer);
+        timer = null;
+    };
+
+    _self.isPending = function() {
+        return timer;
+    };
+
+    return _self;
+};
+});
+
+define("ace/worker/mirror",["require","exports","module","ace/range","ace/document","ace/lib/lang"], function(require, exports, module) {
+"use strict";
+
+var Range = require("../range").Range;
+var Document = require("../document").Document;
+var lang = require("../lib/lang");
+    
+var Mirror = exports.Mirror = function(sender) {
+    this.sender = sender;
+    var doc = this.doc = new Document("");
+    
+    var deferredUpdate = this.deferredUpdate = lang.delayedCall(this.onUpdate.bind(this));
+    
+    var _self = this;
+    sender.on("change", function(e) {
+        var data = e.data;
+        if (data[0].start) {
+            doc.applyDeltas(data);
+        } else {
+            for (var i = 0; i < data.length; i += 2) {
+                if (Array.isArray(data[i+1])) {
+                    var d = {action: "insert", start: data[i], lines: data[i+1]};
+                } else {
+                    var d = {action: "remove", start: data[i], end: data[i+1]};
+                }
+                doc.applyDelta(d, true);
+            }
+        }
+        if (_self.$timeout)
+            return deferredUpdate.schedule(_self.$timeout);
+        _self.onUpdate();
+    });
+};
+
+(function() {
+    
+    this.$timeout = 500;
+    
+    this.setTimeout = function(timeout) {
+        this.$timeout = timeout;
+    };
+    
+    this.setValue = function(value) {
+        this.doc.setValue(value);
+        this.deferredUpdate.schedule(this.$timeout);
+    };
+    
+    this.getValue = function(callbackId) {
+        this.sender.callback(this.doc.getValue(), callbackId);
+    };
+    
+    this.onUpdate = function() {
+    };
+    
+    this.isPending = function() {
+        return this.deferredUpdate.isPending();
+    };
+    
+}).call(Mirror.prototype);
+
+});
+
+define("ace/mode/javascript/jshint",["require","exports","module"], function(require, exports, module) {
+module.exports = (function outer (modules, cache, entry) {
+    var previousRequire = typeof require == "function" && require;
+    function newRequire(name, jumped){
+        if(!cache[name]) {
+            if(!modules[name]) {
+                var currentRequire = typeof require == "function" && require;
+                if (!jumped && currentRequire) return currentRequire(name, true);
+                if (previousRequire) return previousRequire(name, true);
+                var err = new Error('Cannot find module \'' + name + '\'');
+                err.code = 'MODULE_NOT_FOUND';
+                throw err;
+            }
+            var m = cache[name] = {exports:{}};
+            modules[name][0].call(m.exports, function(x){
+                var id = modules[name][1][x];
+                return newRequire(id ? id : x);
+            },m,m.exports,outer,modules,cache,entry);
+        }
+        return cache[name].exports;
+    }
+    for(var i=0;i<entry.length;i++) newRequire(entry[i]);
+    return newRequire(entry[0]);
+})
+({"/node_modules/browserify/node_modules/events/events.js":[function(_dereq_,module,exports){
+
+function EventEmitter() {
+  this._events = this._events || {};
+  this._maxListeners = this._maxListeners || undefined;
+}
+module.exports = EventEmitter;
+EventEmitter.EventEmitter = EventEmitter;
+
+EventEmitter.prototype._events = undefined;
+EventEmitter.prototype._maxListeners = undefined;
+EventEmitter.defaultMaxListeners = 10;
+EventEmitter.prototype.setMaxListeners = function(n) {
+  if (!isNumber(n) || n < 0 || isNaN(n))
+    throw TypeError('n must be a positive number');
+  this._maxListeners = n;
+  return this;
+};
+
+EventEmitter.prototype.emit = function(type) {
+  var er, handler, len, args, i, listeners;
+
+  if (!this._events)
+    this._events = {};
+  if (type === 'error') {
+    if (!this._events.error ||
+        (isObject(this._events.error) && !this._events.error.length)) {
+      er = arguments[1];
+      if (er instanceof Error) {
+        throw er; // Unhandled 'error' event
+      }
+      throw TypeError('Uncaught, unspecified "error" event.');
+    }
+  }
+
+  handler = this._events[type];
+
+  if (isUndefined(handler))
+    return false;
+
+  if (isFunction(handler)) {
+    switch (arguments.length) {
+      case 1:
+        handler.call(this);
+        break;
+      case 2:
+        handler.call(this, arguments[1]);
+        break;
+      case 3:
+        handler.call(this, arguments[1], arguments[2]);
+        break;
+      default:
+        len = arguments.length;
+        args = new Array(len - 1);
+        for (i = 1; i < len; i++)
+          args[i - 1] = arguments[i];
+        handler.apply(this, args);
+    }
+  } else if (isObject(handler)) {
+    len = arguments.length;
+    args = new Array(len - 1);
+    for (i = 1; i < len; i++)
+      args[i - 1] = arguments[i];
+
+    listeners = handler.slice();
+    len = listeners.length;
+    for (i = 0; i < len; i++)
+      listeners[i].apply(this, args);
+  }
+
+  return true;
+};
+
+EventEmitter.prototype.addListener = function(type, listener) {
+  var m;
+
+  if (!isFunction(listener))
+    throw TypeError('listener must be a function');
+
+  if (!this._events)
+    this._events = {};
+  if (this._events.newListener)
+    this.emit('newListener', type,
+              isFunction(listener.listener) ?
+              listener.listener : listener);
+
+  if (!this._events[type])
+    this._events[type] = listener;
+  else if (isObject(this._events[type]))
+    this._events[type].push(listener);
+  else
+    this._events[type] = [this._events[type], listener];
+  if (isObject(this._events[type]) && !this._events[type].warned) {
+    var m;
+    if (!isUndefined(this._maxListeners)) {
+      m = this._maxListeners;
+    } else {
+      m = EventEmitter.defaultMaxListeners;
+    }
+
+    if (m && m > 0 && this._events[type].length > m) {
+      this._events[type].warned = true;
+      console.error('(node) warning: possible EventEmitter memory ' +
+                    'leak detected. %d listeners added. ' +
+                    'Use emitter.setMaxListeners() to increase limit.',
+                    this._events[type].length);
+      if (typeof console.trace === 'function') {
+        console.trace();
+      }
+    }
+  }
+
+  return this;
+};
+
+EventEmitter.prototype.on = EventEmitter.prototype.addListener;
+
+EventEmitter.prototype.once = function(type, listener) {
+  if (!isFunction(listener))
+    throw TypeError('listener must be a function');
+
+  var fired = false;
+
+  function g() {
+    this.removeListener(type, g);
+
+    if (!fired) {
+      fired = true;
+      listener.apply(this, arguments);
+    }
+  }
+
+  g.listener = listener;
+  this.on(type, g);
+
+  return this;
+};
+EventEmitter.prototype.removeListener = function(type, listener) {
+  var list, position, length, i;
+
+  if (!isFunction(listener))
+    throw TypeError('listener must be a function');
+
+  if (!this._events || !this._events[type])
+    return this;
+
+  list = this._events[type];
+  length = list.length;
+  position = -1;
+
+  if (list === listener ||
+      (isFunction(list.listener) && list.listener === listener)) {
+    delete this._events[type];
+    if (this._events.removeListener)
+      this.emit('removeListener', type, listener);
+
+  } else if (isObject(list)) {
+    for (i = length; i-- > 0;) {
+      if (list[i] === listener ||
+          (list[i].listener && list[i].listener === listener)) {
+        position = i;
+        break;
+      }
+    }
+
+    if (position < 0)
+      return this;
+
+    if (list.length === 1) {
+      list.length = 0;
+      delete this._events[type];
+    } else {
+      list.splice(position, 1);
+    }
+
+    if (this._events.removeListener)
+      this.emit('removeListener', type, listener);
+  }
+
+  return this;
+};
+
+EventEmitter.prototype.removeAllListeners = function(type) {
+  var key, listeners;
+
+  if (!this._events)
+    return this;
+  if (!this._events.removeListener) {
+    if (arguments.length === 0)
+      this._events = {};
+    else if (this._events[type])
+      delete this._events[type];
+    return this;
+  }
+  if (arguments.length === 0) {
+    for (key in this._events) {
+      if (key === 'removeListener') continue;
+      this.removeAllListeners(key);
+    }
+    this.removeAllListeners('removeListener');
+    this._events = {};
+    return this;
+  }
+
+  listeners = this._events[type];
+
+  if (isFunction(listeners)) {
+    this.removeListener(type, listeners);
+  } else {
+    while (listeners.length)
+      this.removeListener(type, listeners[listeners.length - 1]);
+  }
+  delete this._events[type];
+
+  return this;
+};
+
+EventEmitter.prototype.listeners = function(type) {
+  var ret;
+  if (!this._events || !this._events[type])
+    ret = [];
+  else if (isFunction(this._events[type]))
+    ret = [this._events[type]];
+  else
+    ret = this._events[type].slice();
+  return ret;
+};
+
+EventEmitter.listenerCount = function(emitter, type) {
+  var ret;
+  if (!emitter._events || !emitter._events[type])
+    ret = 0;
+  else if (isFunction(emitter._events[type]))
+    ret = 1;
+  else
+    ret = emitter._events[type].length;
+  return ret;
+};
+
+function isFunction(arg) {
+  return typeof arg === 'function';
+}
+
+function isNumber(arg) {
+  return typeof arg === 'number';
+}
+
+function isObject(arg) {
+  return typeof arg === 'object' && arg !== null;
+}
+
+function isUndefined(arg) {
+  return arg === void 0;
+}
+
+},{}],"/node_modules/jshint/data/ascii-identifier-data.js":[function(_dereq_,module,exports){
+var identifierStartTable = [];
+
+for (var i = 0; i < 128; i++) {
+  identifierStartTable[i] =
+    i === 36 ||           // $
+    i >= 65 && i <= 90 || // A-Z
+    i === 95 ||           // _
+    i >= 97 && i <= 122;  // a-z
+}
+
+var identifierPartTable = [];
+
+for (var i = 0; i < 128; i++) {
+  identifierPartTable[i] =
+    identifierStartTable[i] || // $, _, A-Z, a-z
+    i >= 48 && i <= 57;        // 0-9
+}
+
+module.exports = {
+  asciiIdentifierStartTable: identifierStartTable,
+  asciiIdentifierPartTable: identifierPartTable
+};
+
+},{}],"/node_modules/jshint/lodash.js":[function(_dereq_,module,exports){
+(function (global){
+;(function() {
+
+  var undefined;
+
+  var VERSION = '3.7.0';
+
+  var FUNC_ERROR_TEXT = 'Expected a function';
+
+  var argsTag = '[object Arguments]',
+      arrayTag = '[object Array]',
+      boolTag = '[object Boolean]',
+      dateTag = '[object Date]',
+      errorTag = '[object Error]',
+      funcTag = '[object Function]',
+      mapTag = '[object Map]',
+      numberTag = '[object Number]',
+      objectTag = '[object Object]',
+      regexpTag = '[object RegExp]',
+      setTag = '[object Set]',
+      stringTag = '[object String]',
+      weakMapTag = '[object WeakMap]';
+
+  var arrayBufferTag = '[object ArrayBuffer]',
+      float32Tag = '[object Float32Array]',
+      float64Tag = '[object Float64Array]',
+      int8Tag = '[object Int8Array]',
+      int16Tag = '[object Int16Array]',
+      int32Tag = '[object Int32Array]',
+      uint8Tag = '[object Uint8Array]',
+      uint8ClampedTag = '[object Uint8ClampedArray]',
+      uint16Tag = '[object Uint16Array]',
+      uint32Tag = '[object Uint32Array]';
+
+  var reIsDeepProp = /\.|\[(?:[^[\]]+|(["'])(?:(?!\1)[^\n\\]|\\.)*?)\1\]/,
+      reIsPlainProp = /^\w*$/,
+      rePropName = /[^.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\n\\]|\\.)*?)\2)\]/g;
+
+  var reRegExpChars = /[.*+?^${}()|[\]\/\\]/g,
+      reHasRegExpChars = RegExp(reRegExpChars.source);
+
+  var reEscapeChar = /\\(\\)?/g;
+
+  var reFlags = /\w*$/;
+
+  var reIsHostCtor = /^\[object .+?Constructor\]$/;
+
+  var typedArrayTags = {};
+  typedArrayTags[float32Tag] = typedArrayTags[float64Tag] =
+  typedArrayTags[int8Tag] = typedArrayTags[int16Tag] =
+  typedArrayTags[int32Tag] = typedArrayTags[uint8Tag] =
+  typedArrayTags[uint8ClampedTag] = typedArrayTags[uint16Tag] =
+  typedArrayTags[uint32Tag] = true;
+  typedArrayTags[argsTag] = typedArrayTags[arrayTag] =
+  typedArrayTags[arrayBufferTag] = typedArrayTags[boolTag] =
+  typedArrayTags[dateTag] = typedArrayTags[errorTag] =
+  typedArrayTags[funcTag] = typedArrayTags[mapTag] =
+  typedArrayTags[numberTag] = typedArrayTags[objectTag] =
+  typedArrayTags[regexpTag] = typedArrayTags[setTag] =
+  typedArrayTags[stringTag] = typedArrayTags[weakMapTag] = false;
+
+  var cloneableTags = {};
+  cloneableTags[argsTag] = cloneableTags[arrayTag] =
+  cloneableTags[arrayBufferTag] = cloneableTags[boolTag] =
+  cloneableTags[dateTag] = cloneableTags[float32Tag] =
+  cloneableTags[float64Tag] = cloneableTags[int8Tag] =
+  cloneableTags[int16Tag] = cloneableTags[int32Tag] =
+  cloneableTags[numberTag] = cloneableTags[objectTag] =
+  cloneableTags[regexpTag] = cloneableTags[stringTag] =
+  cloneableTags[uint8Tag] = cloneableTags[uint8ClampedTag] =
+  cloneableTags[uint16Tag] = cloneableTags[uint32Tag] = true;
+  cloneableTags[errorTag] = cloneableTags[funcTag] =
+  cloneableTags[mapTag] = cloneableTags[setTag] =
+  cloneableTags[weakMapTag] = false;
+
+  var objectTypes = {
+    'function': true,
+    'object': true
+  };
+
+  var freeExports = objectTypes[typeof exports] && exports && !exports.nodeType && exports;
+
+  var freeModule = objectTypes[typeof module] && module && !module.nodeType && module;
+
+  var freeGlobal = freeExports && freeModule && typeof global == 'object' && global && global.Object && global;
+
+  var freeSelf = objectTypes[typeof self] && self && self.Object && self;
+
+  var freeWindow = objectTypes[typeof window] && window && window.Object && window;
+
+  var moduleExports = freeModule && freeModule.exports === freeExports && freeExports;
+
+  var root = freeGlobal || ((freeWindow !== (this && this.window)) && freeWindow) || freeSelf || this;
+
+  function baseFindIndex(array, predicate, fromRight) {
+    var length = array.length,
+        index = fromRight ? length : -1;
+
+    while ((fromRight ? index-- : ++index < length)) {
+      if (predicate(array[index], index, array)) {
+        return index;
+      }
+    }
+    return -1;
+  }
+
+  function baseIndexOf(array, value, fromIndex) {
+    if (value !== value) {
+      return indexOfNaN(array, fromIndex);
+    }
+    var index = fromIndex - 1,
+        length = array.length;
+
+    while (++index < length) {
+      if (array[index] === value) {
+        return index;
+      }
+    }
+    return -1;
+  }
+
+  function baseIsFunction(value) {
+    return typeof value == 'function' || false;
+  }
+
+  function baseToString(value) {
+    if (typeof value == 'string') {
+      return value;
+    }
+    return value == null ? '' : (value + '');
+  }
+
+  function indexOfNaN(array, fromIndex, fromRight) {
+    var length = array.length,
+        index = fromIndex + (fromRight ? 0 : -1);
+
+    while ((fromRight ? index-- : ++index < length)) {
+      var other = array[index];
+      if (other !== other) {
+        return index;
+      }
+    }
+    return -1;
+  }
+
+  function isObjectLike(value) {
+    return !!value && typeof value == 'object';
+  }
+
+  var arrayProto = Array.prototype,
+      objectProto = Object.prototype;
+
+  var fnToString = Function.prototype.toString;
+
+  var hasOwnProperty = objectProto.hasOwnProperty;
+
+  var objToString = objectProto.toString;
+
+  var reIsNative = RegExp('^' +
+    escapeRegExp(objToString)
+    .replace(/toString|(function).*?(?=\\\()| for .+?(?=\\\])/g, '$1.*?') + '$'
+  );
+
+  var ArrayBuffer = isNative(ArrayBuffer = root.ArrayBuffer) && ArrayBuffer,
+      bufferSlice = isNative(bufferSlice = ArrayBuffer && new ArrayBuffer(0).slice) && bufferSlice,
+      floor = Math.floor,
+      getOwnPropertySymbols = isNative(getOwnPropertySymbols = Object.getOwnPropertySymbols) && getOwnPropertySymbols,
+      getPrototypeOf = isNative(getPrototypeOf = Object.getPrototypeOf) && getPrototypeOf,
+      push = arrayProto.push,
+      preventExtensions = isNative(Object.preventExtensions = Object.preventExtensions) && preventExtensions,
+      propertyIsEnumerable = objectProto.propertyIsEnumerable,
+      Uint8Array = isNative(Uint8Array = root.Uint8Array) && Uint8Array;
+
+  var Float64Array = (function() {
+    try {
+      var func = isNative(func = root.Float64Array) && func,
+          result = new func(new ArrayBuffer(10), 0, 1) && func;
+    } catch(e) {}
+    return result;
+  }());
+
+  var nativeAssign = (function() {
+    var object = { '1': 0 },
+        func = preventExtensions && isNative(func = Object.assign) && func;
+
+    try { func(preventExtensions(object), 'xo'); } catch(e) {}
+    return !object[1] && func;
+  }());
+
+  var nativeIsArray = isNative(nativeIsArray = Array.isArray) && nativeIsArray,
+      nativeKeys = isNative(nativeKeys = Object.keys) && nativeKeys,
+      nativeMax = Math.max,
+      nativeMin = Math.min;
+
+  var NEGATIVE_INFINITY = Number.NEGATIVE_INFINITY;
+
+  var MAX_ARRAY_LENGTH = Math.pow(2, 32) - 1,
+      MAX_ARRAY_INDEX =  MAX_ARRAY_LENGTH - 1,
+      HALF_MAX_ARRAY_LENGTH = MAX_ARRAY_LENGTH >>> 1;
+
+  var FLOAT64_BYTES_PER_ELEMENT = Float64Array ? Float64Array.BYTES_PER_ELEMENT : 0;
+
+  var MAX_SAFE_INTEGER = Math.pow(2, 53) - 1;
+
+  function lodash() {
+  }
+
+  var support = lodash.support = {};
+
+  (function(x) {
+    var Ctor = function() { this.x = x; },
+        object = { '0': x, 'length': x },
+        props = [];
+
+    Ctor.prototype = { 'valueOf': x, 'y': x };
+    for (var key in new Ctor) { props.push(key); }
+
+    support.funcDecomp = /\bthis\b/.test(function() { return this; });
+
+    support.funcNames = typeof Function.name == 'string';
+
+    try {
+      support.nonEnumArgs = !propertyIsEnumerable.call(arguments, 1);
+    } catch(e) {
+      support.nonEnumArgs = true;
+    }
+  }(1, 0));
+
+  function arrayCopy(source, array) {
+    var index = -1,
+        length = source.length;
+
+    array || (array = Array(length));
+    while (++index < length) {
+      array[index] = source[index];
+    }
+    return array;
+  }
+
+  function arrayEach(array, iteratee) {
+    var index = -1,
+        length = array.length;
+
+    while (++index < length) {
+      if (iteratee(array[index], index, array) === false) {
+        break;
+      }
+    }
+    return array;
+  }
+
+  function arrayFilter(array, predicate) {
+    var index = -1,
+        length = array.length,
+        resIndex = -1,
+        result = [];
+
+    while (++index < length) {
+      var value = array[index];
+      if (predicate(value, index, array)) {
+        result[++resIndex] = value;
+      }
+    }
+    return result;
+  }
+
+  function arrayMap(array, iteratee) {
+    var index = -1,
+        length = array.length,
+        result = Array(length);
+
+    while (++index < length) {
+      result[index] = iteratee(array[index], index, array);
+    }
+    return result;
+  }
+
+  function arrayMax(array) {
+    var index = -1,
+        length = array.length,
+        result = NEGATIVE_INFINITY;
+
+    while (++index < length) {
+      var value = array[index];
+      if (value > result) {
+        result = value;
+      }
+    }
+    return result;
+  }
+
+  function arraySome(array, predicate) {
+    var index = -1,
+        length = array.length;
+
+    while (++index < length) {
+      if (predicate(array[index], index, array)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  function assignWith(object, source, customizer) {
+    var props = keys(source);
+    push.apply(props, getSymbols(source));
+
+    var index = -1,
+        length = props.length;
+
+    while (++index < length) {
+      var key = props[index],
+          value = object[key],
+          result = customizer(value, source[key], key, object, source);
+
+      if ((result === result ? (result !== value) : (value === value)) ||
+          (value === undefined && !(key in object))) {
+        object[key] = result;
+      }
+    }
+    return object;
+  }
+
+  var baseAssign = nativeAssign || function(object, source) {
+    return source == null
+      ? object
+      : baseCopy(source, getSymbols(source), baseCopy(source, keys(source), object));
+  };
+
+  function baseCopy(source, props, object) {
+    object || (object = {});
+
+    var index = -1,
+        length = props.length;
+
+    while (++index < length) {
+      var key = props[index];
+      object[key] = source[key];
+    }
+    return object;
+  }
+
+  function baseCallback(func, thisArg, argCount) {
+    var type = typeof func;
+    if (type == 'function') {
+      return thisArg === undefined
+        ? func
+        : bindCallback(func, thisArg, argCount);
+    }
+    if (func == null) {
+      return identity;
+    }
+    if (type == 'object') {
+      return baseMatches(func);
+    }
+    return thisArg === undefined
+      ? property(func)
+      : baseMatchesProperty(func, thisArg);
+  }
+
+  function baseClone(value, isDeep, customizer, key, object, stackA, stackB) {
+    var result;
+    if (customizer) {
+      result = object ? customizer(value, key, object) : customizer(value);
+    }
+    if (result !== undefined) {
+      return result;
+    }
+    if (!isObject(value)) {
+      return value;
+    }
+    var isArr = isArray(value);
+    if (isArr) {
+      result = initCloneArray(value);
+      if (!isDeep) {
+        return arrayCopy(value, result);
+      }
+    } else {
+      var tag = objToString.call(value),
+          isFunc = tag == funcTag;
+
+      if (tag == objectTag || tag == argsTag || (isFunc && !object)) {
+        result = initCloneObject(isFunc ? {} : value);
+        if (!isDeep) {
+          return baseAssign(result, value);
+        }
+      } else {
+        return cloneableTags[tag]
+          ? initCloneByTag(value, tag, isDeep)
+          : (object ? value : {});
+      }
+    }
+    stackA || (stackA = []);
+    stackB || (stackB = []);
+
+    var length = stackA.length;
+    while (length--) {
+      if (stackA[length] == value) {
+        return stackB[length];
+      }
+    }
+    stackA.push(value);
+    stackB.push(result);
+
+    (isArr ? arrayEach : baseForOwn)(value, function(subValue, key) {
+      result[key] = baseClone(subValue, isDeep, customizer, key, value, stackA, stackB);
+    });
+    return result;
+  }
+
+  var baseEach = createBaseEach(baseForOwn);
+
+  function baseFilter(collection, predicate) {
+    var result = [];
+    baseEach(collection, function(value, index, collection) {
+      if (predicate(value, index, collection)) {
+        result.push(value);
+      }
+    });
+    return result;
+  }
+
+  var baseFor = createBaseFor();
+
+  function baseForIn(object, iteratee) {
+    return baseFor(object, iteratee, keysIn);
+  }
+
+  function baseForOwn(object, iteratee) {
+    return baseFor(object, iteratee, keys);
+  }
+
+  function baseGet(object, path, pathKey) {
+    if (object == null) {
+      return;
+    }
+    if (pathKey !== undefined && pathKey in toObject(object)) {
+      path = [pathKey];
+    }
+    var index = -1,
+        length = path.length;
+
+    while (object != null && ++index < length) {
+      var result = object = object[path[index]];
+    }
+    return result;
+  }
+
+  function baseIsEqual(value, other, customizer, isLoose, stackA, stackB) {
+    if (value === other) {
+      return value !== 0 || (1 / value == 1 / other);
+    }
+    var valType = typeof value,
+        othType = typeof other;
+
+    if ((valType != 'function' && valType != 'object' && othType != 'function' && othType != 'object') ||
+        value == null || other == null) {
+      return value !== value && other !== other;
+    }
+    return baseIsEqualDeep(value, other, baseIsEqual, customizer, isLoose, stackA, stackB);
+  }
+
+  function baseIsEqualDeep(object, other, equalFunc, customizer, isLoose, stackA, stackB) {
+    var objIsArr = isArray(object),
+        othIsArr = isArray(other),
+        objTag = arrayTag,
+        othTag = arrayTag;
+
+    if (!objIsArr) {
+      objTag = objToString.call(object);
+      if (objTag == argsTag) {
+        objTag = objectTag;
+      } else if (objTag != objectTag) {
+        objIsArr = isTypedArray(object);
+      }
+    }
+    if (!othIsArr) {
+      othTag = objToString.call(other);
+      if (othTag == argsTag) {
+        othTag = objectTag;
+      } else if (othTag != objectTag) {
+        othIsArr = isTypedArray(other);
+      }
+    }
+    var objIsObj = objTag == objectTag,
+        othIsObj = othTag == objectTag,
+        isSameTag = objTag == othTag;
+
+    if (isSameTag && !(objIsArr || objIsObj)) {
+      return equalByTag(object, other, objTag);
+    }
+    if (!isLoose) {
+      var valWrapped = objIsObj && hasOwnProperty.call(object, '__wrapped__'),
+          othWrapped = othIsObj && hasOwnProperty.call(other, '__wrapped__');
+
+      if (valWrapped || othWrapped) {
+        return equalFunc(valWrapped ? object.value() : object, othWrapped ? other.value() : other, customizer, isLoose, stackA, stackB);
+      }
+    }
+    if (!isSameTag) {
+      return false;
+    }
+    stackA || (stackA = []);
+    stackB || (stackB = []);
+
+    var length = stackA.length;
+    while (length--) {
+      if (stackA[length] == object) {
+        return stackB[length] == other;
+      }
+    }
+    stackA.push(object);
+    stackB.push(other);
+
+    var result = (objIsArr ? equalArrays : equalObjects)(object, other, equalFunc, customizer, isLoose, stackA, stackB);
+
+    stackA.pop();
+    stackB.pop();
+
+    return result;
+  }
+
+  function baseIsMatch(object, props, values, strictCompareFlags, customizer) {
+    var index = -1,
+        length = props.length,
+        noCustomizer = !customizer;
+
+    while (++index < length) {
+      if ((noCustomizer && strictCompareFlags[index])
+            ? values[index] !== object[props[index]]
+            : !(props[index] in object)
+          ) {
+        return false;
+      }
+    }
+    index = -1;
+    while (++index < length) {
+      var key = props[index],
+          objValue = object[key],
+          srcValue = values[index];
+
+      if (noCustomizer && strictCompareFlags[index]) {
+        var result = objValue !== undefined || (key in object);
+      } else {
+        result = customizer ? customizer(objValue, srcValue, key) : undefined;
+        if (result === undefined) {
+          result = baseIsEqual(srcValue, objValue, customizer, true);
+        }
+      }
+      if (!result) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  function baseMatches(source) {
+    var props = keys(source),
+        length = props.length;
+
+    if (!length) {
+      return constant(true);
+    }
+    if (length == 1) {
+      var key = props[0],
+          value = source[key];
+
+      if (isStrictComparable(value)) {
+        return function(object) {
+          if (object == null) {
+            return false;
+          }
+          return object[key] === value && (value !== undefined || (key in toObject(object)));
+        };
+      }
+    }
+    var values = Array(length),
+        strictCompareFlags = Array(length);
+
+    while (length--) {
+      value = source[props[length]];
+      values[length] = value;
+      strictCompareFlags[length] = isStrictComparable(value);
+    }
+    return function(object) {
+      return object != null && baseIsMatch(toObject(object), props, values, strictCompareFlags);
+    };
+  }
+
+  function baseMatchesProperty(path, value) {
+    var isArr = isArray(path),
+        isCommon = isKey(path) && isStrictComparable(value),
+        pathKey = (path + '');
+
+    path = toPath(path);
+    return function(object) {
+      if (object == null) {
+        return false;
+      }
+      var key = pathKey;
+      object = toObject(object);
+      if ((isArr || !isCommon) && !(key in object)) {
+        object = path.length == 1 ? object : baseGet(object, baseSlice(path, 0, -1));
+        if (object == null) {
+          return false;
+        }
+        key = last(path);
+        object = toObject(object);
+      }
+      return object[key] === value
+        ? (value !== undefined || (key in object))
+        : baseIsEqual(value, object[key], null, true);
+    };
+  }
+
+  function baseMerge(object, source, customizer, stackA, stackB) {
+    if (!isObject(object)) {
+      return object;
+    }
+    var isSrcArr = isLength(source.length) && (isArray(source) || isTypedArray(source));
+    if (!isSrcArr) {
+      var props = keys(source);
+      push.apply(props, getSymbols(source));
+    }
+    arrayEach(props || source, function(srcValue, key) {
+      if (props) {
+        key = srcValue;
+        srcValue = source[key];
+      }
+      if (isObjectLike(srcValue)) {
+        stackA || (stackA = []);
+        stackB || (stackB = []);
+        baseMergeDeep(object, source, key, baseMerge, customizer, stackA, stackB);
+      }
+      else {
+        var value = object[key],
+            result = customizer ? customizer(value, srcValue, key, object, source) : undefined,
+            isCommon = result === undefined;
+
+        if (isCommon) {
+          result = srcValue;
+        }
+        if ((isSrcArr || result !== undefined) &&
+            (isCommon || (result === result ? (result !== value) : (value === value)))) {
+          object[key] = result;
+        }
+      }
+    });
+    return object;
+  }
+
+  function baseMergeDeep(object, source, key, mergeFunc, customizer, stackA, stackB) {
+    var length = stackA.length,
+        srcValue = source[key];
+
+    while (length--) {
+      if (stackA[length] == srcValue) {
+        object[key] = stackB[length];
+        return;
+      }
+    }
+    var value = object[key],
+        result = customizer ? customizer(value, srcValue, key, object, source) : undefined,
+        isCommon = result === undefined;
+
+    if (isCommon) {
+      result = srcValue;
+      if (isLength(srcValue.length) && (isArray(srcValue) || isTypedArray(srcValue))) {
+        result = isArray(value)
+          ? value
+          : (getLength(value) ? arrayCopy(value) : []);
+      }
+      else if (isPlainObject(srcValue) || isArguments(srcValue)) {
+        result = isArguments(value)
+          ? toPlainObject(value)
+          : (isPlainObject(value) ? value : {});
+      }
+      else {
+        isCommon = false;
+      }
+    }
+    stackA.push(srcValue);
+    stackB.push(result);
+
+    if (isCommon) {
+      object[key] = mergeFunc(result, srcValue, customizer, stackA, stackB);
+    } else if (result === result ? (result !== value) : (value === value)) {
+      object[key] = result;
+    }
+  }
+
+  function baseProperty(key) {
+    return function(object) {
+      return object == null ? undefined : object[key];
+    };
+  }
+
+  function basePropertyDeep(path) {
+    var pathKey = (path + '');
+    path = toPath(path);
+    return function(object) {
+      return baseGet(object, path, pathKey);
+    };
+  }
+
+  function baseSlice(array, start, end) {
+    var index = -1,
+        length = array.length;
+
+    start = start == null ? 0 : (+start || 0);
+    if (start < 0) {
+      start = -start > length ? 0 : (length + start);
+    }
+    end = (end === undefined || end > length) ? length : (+end || 0);
+    if (end < 0) {
+      end += length;
+    }
+    length = start > end ? 0 : ((end - start) >>> 0);
+    start >>>= 0;
+
+    var result = Array(length);
+    while (++index < length) {
+      result[index] = array[index + start];
+    }
+    return result;
+  }
+
+  function baseSome(collection, predicate) {
+    var result;
+
+    baseEach(collection, function(value, index, collection) {
+      result = predicate(value, index, collection);
+      return !result;
+    });
+    return !!result;
+  }
+
+  function baseValues(object, props) {
+    var index = -1,
+        length = props.length,
+        result = Array(length);
+
+    while (++index < length) {
+      result[index] = object[props[index]];
+    }
+    return result;
+  }
+
+  function binaryIndex(array, value, retHighest) {
+    var low = 0,
+        high = array ? array.length : low;
+
+    if (typeof value == 'number' && value === value && high <= HALF_MAX_ARRAY_LENGTH) {
+      while (low < high) {
+        var mid = (low + high) >>> 1,
+            computed = array[mid];
+
+        if (retHighest ? (computed <= value) : (computed < value)) {
+          low = mid + 1;
+        } else {
+          high = mid;
+        }
+      }
+      return high;
+    }
+    return binaryIndexBy(array, value, identity, retHighest);
+  }
+
+  function binaryIndexBy(array, value, iteratee, retHighest) {
+    value = iteratee(value);
+
+    var low = 0,
+        high = array ? array.length : 0,
+        valIsNaN = value !== value,
+        valIsUndef = value === undefined;
+
+    while (low < high) {
+      var mid = floor((low + high) / 2),
+          computed = iteratee(array[mid]),
+          isReflexive = computed === computed;
+
+      if (valIsNaN) {
+        var setLow = isReflexive || retHighest;
+      } else if (valIsUndef) {
+        setLow = isReflexive && (retHighest || computed !== undefined);
+      } else {
+        setLow = retHighest ? (computed <= value) : (computed < value);
+      }
+      if (setLow) {
+        low = mid + 1;
+      } else {
+        high = mid;
+      }
+    }
+    return nativeMin(high, MAX_ARRAY_INDEX);
+  }
+
+  function bindCallback(func, thisArg, argCount) {
+    if (typeof func != 'function') {
+      return identity;
+    }
+    if (thisArg === undefined) {
+      return func;
+    }
+    switch (argCount) {
+      case 1: return function(value) {
+        return func.call(thisArg, value);
+      };
+      case 3: return function(value, index, collection) {
+        return func.call(thisArg, value, index, collection);
+      };
+      case 4: return function(accumulator, value, index, collection) {
+        return func.call(thisArg, accumulator, value, index, collection);
+      };
+      case 5: return function(value, other, key, object, source) {
+        return func.call(thisArg, value, other, key, object, source);
+      };
+    }
+    return function() {
+      return func.apply(thisArg, arguments);
+    };
+  }
+
+  function bufferClone(buffer) {
+    return bufferSlice.call(buffer, 0);
+  }
+  if (!bufferSlice) {
+    bufferClone = !(ArrayBuffer && Uint8Array) ? constant(null) : function(buffer) {
+      var byteLength = buffer.byteLength,
+          floatLength = Float64Array ? floor(byteLength / FLOAT64_BYTES_PER_ELEMENT) : 0,
+          offset = floatLength * FLOAT64_BYTES_PER_ELEMENT,
+          result = new ArrayBuffer(byteLength);
+
+      if (floatLength) {
+        var view = new Float64Array(result, 0, floatLength);
+        view.set(new Float64Array(buffer, 0, floatLength));
+      }
+      if (byteLength != offset) {
+        view = new Uint8Array(result, offset);
+        view.set(new Uint8Array(buffer, offset));
+      }
+      return result;
+    };
+  }
+
+  function createAssigner(assigner) {
+    return restParam(function(object, sources) {
+      var index = -1,
+          length = object == null ? 0 : sources.length,
+          customizer = length > 2 && sources[length - 2],
+          guard = length > 2 && sources[2],
+          thisArg = length > 1 && sources[length - 1];
+
+      if (typeof customizer == 'function') {
+        customizer = bindCallback(customizer, thisArg, 5);
+        length -= 2;
+      } else {
+        customizer = typeof thisArg == 'function' ? thisArg : null;
+        length -= (customizer ? 1 : 0);
+      }
+      if (guard && isIterateeCall(sources[0], sources[1], guard)) {
+        customizer = length < 3 ? null : customizer;
+        length = 1;
+      }
+      while (++index < length) {
+        var source = sources[index];
+        if (source) {
+          assigner(object, source, customizer);
+        }
+      }
+      return object;
+    });
+  }
+
+  function createBaseEach(eachFunc, fromRight) {
+    return function(collection, iteratee) {
+      var length = collection ? getLength(collection) : 0;
+      if (!isLength(length)) {
+        return eachFunc(collection, iteratee);
+      }
+      var index = fromRight ? length : -1,
+          iterable = toObject(collection);
+
+      while ((fromRight ? index-- : ++index < length)) {
+        if (iteratee(iterable[index], index, iterable) === false) {
+          break;
+        }
+      }
+      return collection;
+    };
+  }
+
+  function createBaseFor(fromRight) {
+    return function(object, iteratee, keysFunc) {
+      var iterable = toObject(object),
+          props = keysFunc(object),
+          length = props.length,
+          index = fromRight ? length : -1;
+
+      while ((fromRight ? index-- : ++index < length)) {
+        var key = props[index];
+        if (iteratee(iterable[key], key, iterable) === false) {
+          break;
+        }
+      }
+      return object;
+    };
+  }
+
+  function createFindIndex(fromRight) {
+    return function(array, predicate, thisArg) {
+      if (!(array && array.length)) {
+        return -1;
+      }
+      predicate = getCallback(predicate, thisArg, 3);
+      return baseFindIndex(array, predicate, fromRight);
+    };
+  }
+
+  function createForEach(arrayFunc, eachFunc) {
+    return function(collection, iteratee, thisArg) {
+      return (typeof iteratee == 'function' && thisArg === undefined && isArray(collection))
+        ? arrayFunc(collection, iteratee)
+        : eachFunc(collection, bindCallback(iteratee, thisArg, 3));
+    };
+  }
+
+  function equalArrays(array, other, equalFunc, customizer, isLoose, stackA, stackB) {
+    var index = -1,
+        arrLength = array.length,
+        othLength = other.length,
+        result = true;
+
+    if (arrLength != othLength && !(isLoose && othLength > arrLength)) {
+      return false;
+    }
+    while (result && ++index < arrLength) {
+      var arrValue = array[index],
+          othValue = other[index];
+
+      result = undefined;
+      if (customizer) {
+        result = isLoose
+          ? customizer(othValue, arrValue, index)
+          : customizer(arrValue, othValue, index);
+      }
+      if (result === undefined) {
+        if (isLoose) {
+          var othIndex = othLength;
+          while (othIndex--) {
+            othValue = other[othIndex];
+            result = (arrValue && arrValue === othValue) || equalFunc(arrValue, othValue, customizer, isLoose, stackA, stackB);
+            if (result) {
+              break;
+            }
+          }
+        } else {
+          result = (arrValue && arrValue === othValue) || equalFunc(arrValue, othValue, customizer, isLoose, stackA, stackB);
+        }
+      }
+    }
+    return !!result;
+  }
+
+  function equalByTag(object, other, tag) {
+    switch (tag) {
+      case boolTag:
+      case dateTag:
+        return +object == +other;
+
+      case errorTag:
+        return object.name == other.name && object.message == other.message;
+
+      case numberTag:
+        return (object != +object)
+          ? other != +other
+          : (object == 0 ? ((1 / object) == (1 / other)) : object == +other);
+
+      case regexpTag:
+      case stringTag:
+        return object == (other + '');
+    }
+    return false;
+  }
+
+  function equalObjects(object, other, equalFunc, customizer, isLoose, stackA, stackB) {
+    var objProps = keys(object),
+        objLength = objProps.length,
+        othProps = keys(other),
+        othLength = othProps.length;
+
+    if (objLength != othLength && !isLoose) {
+      return false;
+    }
+    var skipCtor = isLoose,
+        index = -1;
+
+    while (++index < objLength) {
+      var key = objProps[index],
+          result = isLoose ? key in other : hasOwnProperty.call(other, key);
+
+      if (result) {
+        var objValue = object[key],
+            othValue = other[key];
+
+        result = undefined;
+        if (customizer) {
+          result = isLoose
+            ? customizer(othValue, objValue, key)
+            : customizer(objValue, othValue, key);
+        }
+        if (result === undefined) {
+          result = (objValue && objValue === othValue) || equalFunc(objValue, othValue, customizer, isLoose, stackA, stackB);
+        }
+      }
+      if (!result) {
+        return false;
+      }
+      skipCtor || (skipCtor = key == 'constructor');
+    }
+    if (!skipCtor) {
+      var objCtor = object.constructor,
+          othCtor = other.constructor;
+
+      if (objCtor != othCtor &&
+          ('constructor' in object && 'constructor' in other) &&
+          !(typeof objCtor == 'function' && objCtor instanceof objCtor &&
+            typeof othCtor == 'function' && othCtor instanceof othCtor)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  function getCallback(func, thisArg, argCount) {
+    var result = lodash.callback || callback;
+    result = result === callback ? baseCallback : result;
+    return argCount ? result(func, thisArg, argCount) : result;
+  }
+
+  function getIndexOf(collection, target, fromIndex) {
+    var result = lodash.indexOf || indexOf;
+    result = result === indexOf ? baseIndexOf : result;
+    return collection ? result(collection, target, fromIndex) : result;
+  }
+
+  var getLength = baseProperty('length');
+
+  var getSymbols = !getOwnPropertySymbols ? constant([]) : function(object) {
+    return getOwnPropertySymbols(toObject(object));
+  };
+
+  function initCloneArray(array) {
+    var length = array.length,
+        result = new array.constructor(length);
+
+    if (length && typeof array[0] == 'string' && hasOwnProperty.call(array, 'index')) {
+      result.index = array.index;
+      result.input = array.input;
+    }
+    return result;
+  }
+
+  function initCloneObject(object) {
+    var Ctor = object.constructor;
+    if (!(typeof Ctor == 'function' && Ctor instanceof Ctor)) {
+      Ctor = Object;
+    }
+    return new Ctor;
+  }
+
+  function initCloneByTag(object, tag, isDeep) {
+    var Ctor = object.constructor;
+    switch (tag) {
+      case arrayBufferTag:
+        return bufferClone(object);
+
+      case boolTag:
+      case dateTag:
+        return new Ctor(+object);
+
+      case float32Tag: case float64Tag:
+      case int8Tag: case int16Tag: case int32Tag:
+      case uint8Tag: case uint8ClampedTag: case uint16Tag: case uint32Tag:
+        var buffer = object.buffer;
+        return new Ctor(isDeep ? bufferClone(buffer) : buffer, object.byteOffset, object.length);
+
+      case numberTag:
+      case stringTag:
+        return new Ctor(object);
+
+      case regexpTag:
+        var result = new Ctor(object.source, reFlags.exec(object));
+        result.lastIndex = object.lastIndex;
+    }
+    return result;
+  }
+
+  function isIndex(value, length) {
+    value = +value;
+    length = length == null ? MAX_SAFE_INTEGER : length;
+    return value > -1 && value % 1 == 0 && value < length;
+  }
+
+  function isIterateeCall(value, index, object) {
+    if (!isObject(object)) {
+      return false;
+    }
+    var type = typeof index;
+    if (type == 'number') {
+      var length = getLength(object),
+          prereq = isLength(length) && isIndex(index, length);
+    } else {
+      prereq = type == 'string' && index in object;
+    }
+    if (prereq) {
+      var other = object[index];
+      return value === value ? (value === other) : (other !== other);
+    }
+    return false;
+  }
+
+  function isKey(value, object) {
+    var type = typeof value;
+    if ((type == 'string' && reIsPlainProp.test(value)) || type == 'number') {
+      return true;
+    }
+    if (isArray(value)) {
+      return false;
+    }
+    var result = !reIsDeepProp.test(value);
+    return result || (object != null && value in toObject(object));
+  }
+
+  function isLength(value) {
+    return typeof value == 'number' && value > -1 && value % 1 == 0 && value <= MAX_SAFE_INTEGER;
+  }
+
+  function isStrictComparable(value) {
+    return value === value && (value === 0 ? ((1 / value) > 0) : !isObject(value));
+  }
+
+  function shimIsPlainObject(value) {
+    var Ctor,
+        support = lodash.support;
+
+    if (!(isObjectLike(value) && objToString.call(value) == objectTag) ||
+        (!hasOwnProperty.call(value, 'constructor') &&
+          (Ctor = value.constructor, typeof Ctor == 'function' && !(Ctor instanceof Ctor)))) {
+      return false;
+    }
+    var result;
+    baseForIn(value, function(subValue, key) {
+      result = key;
+    });
+    return result === undefined || hasOwnProperty.call(value, result);
+  }
+
+  function shimKeys(object) {
+    var props = keysIn(object),
+        propsLength = props.length,
+        length = propsLength && object.length,
+        support = lodash.support;
+
+    var allowIndexes = length && isLength(length) &&
+      (isArray(object) || (support.nonEnumArgs && isArguments(object)));
+
+    var index = -1,
+        result = [];
+
+    while (++index < propsLength) {
+      var key = props[index];
+      if ((allowIndexes && isIndex(key, length)) || hasOwnProperty.call(object, key)) {
+        result.push(key);
+      }
+    }
+    return result;
+  }
+
+  function toObject(value) {
+    return isObject(value) ? value : Object(value);
+  }
+
+  function toPath(value) {
+    if (isArray(value)) {
+      return value;
+    }
+    var result = [];
+    baseToString(value).replace(rePropName, function(match, number, quote, string) {
+      result.push(quote ? string.replace(reEscapeChar, '$1') : (number || match));
+    });
+    return result;
+  }
+
+  var findLastIndex = createFindIndex(true);
+
+  function indexOf(array, value, fromIndex) {
+    var length = array ? array.length : 0;
+    if (!length) {
+      return -1;
+    }
+    if (typeof fromIndex == 'number') {
+      fromIndex = fromIndex < 0 ? nativeMax(length + fromIndex, 0) : fromIndex;
+    } else if (fromIndex) {
+      var index = binaryIndex(array, value),
+          other = array[index];
+
+      if (value === value ? (value === other) : (other !== other)) {
+        return index;
+      }
+      return -1;
+    }
+    return baseIndexOf(array, value, fromIndex || 0);
+  }
+
+  function last(array) {
+    var length = array ? array.length : 0;
+    return length ? array[length - 1] : undefined;
+  }
+
+  function slice(array, start, end) {
+    var length = array ? array.length : 0;
+    if (!length) {
+      return [];
+    }
+    if (end && typeof end != 'number' && isIterateeCall(array, start, end)) {
+      start = 0;
+      end = length;
+    }
+    return baseSlice(array, start, end);
+  }
+
+  function unzip(array) {
+    var index = -1,
+        length = (array && array.length && arrayMax(arrayMap(array, getLength))) >>> 0,
+        result = Array(length);
+
+    while (++index < length) {
+      result[index] = arrayMap(array, baseProperty(index));
+    }
+    return result;
+  }
+
+  var zip = restParam(unzip);
+
+  var forEach = createForEach(arrayEach, baseEach);
+
+  function includes(collection, target, fromIndex, guard) {
+    var length = collection ? getLength(collection) : 0;
+    if (!isLength(length)) {
+      collection = values(collection);
+      length = collection.length;
+    }
+    if (!length) {
+      return false;
+    }
+    if (typeof fromIndex != 'number' || (guard && isIterateeCall(target, fromIndex, guard))) {
+      fromIndex = 0;
+    } else {
+      fromIndex = fromIndex < 0 ? nativeMax(length + fromIndex, 0) : (fromIndex || 0);
+    }
+    return (typeof collection == 'string' || !isArray(collection) && isString(collection))
+      ? (fromIndex < length && collection.indexOf(target, fromIndex) > -1)
+      : (getIndexOf(collection, target, fromIndex) > -1);
+  }
+
+  function reject(collection, predicate, thisArg) {
+    var func = isArray(collection) ? arrayFilter : baseFilter;
+    predicate = getCallback(predicate, thisArg, 3);
+    return func(collection, function(value, index, collection) {
+      return !predicate(value, index, collection);
+    });
+  }
+
+  function some(collection, predicate, thisArg) {
+    var func = isArray(collection) ? arraySome : baseSome;
+    if (thisArg && isIterateeCall(collection, predicate, thisArg)) {
+      predicate = null;
+    }
+    if (typeof predicate != 'function' || thisArg !== undefined) {
+      predicate = getCallback(predicate, thisArg, 3);
+    }
+    return func(collection, predicate);
+  }
+
+  function restParam(func, start) {
+    if (typeof func != 'function') {
+      throw new TypeError(FUNC_ERROR_TEXT);
+    }
+    start = nativeMax(start === undefined ? (func.length - 1) : (+start || 0), 0);
+    return function() {
+      var args = arguments,
+          index = -1,
+          length = nativeMax(args.length - start, 0),
+          rest = Array(length);
+
+      while (++index < length) {
+        rest[index] = args[start + index];
+      }
+      switch (start) {
+        case 0: return func.call(this, rest);
+        case 1: return func.call(this, args[0], rest);
+        case 2: return func.call(this, args[0], args[1], rest);
+      }
+      var otherArgs = Array(start + 1);
+      index = -1;
+      while (++index < start) {
+        otherArgs[index] = args[index];
+      }
+      otherArgs[start] = rest;
+      return func.apply(this, otherArgs);
+    };
+  }
+
+  function clone(value, isDeep, customizer, thisArg) {
+    if (isDeep && typeof isDeep != 'boolean' && isIterateeCall(value, isDeep, customizer)) {
+      isDeep = false;
+    }
+    else if (typeof isDeep == 'function') {
+      thisArg = customizer;
+      customizer = isDeep;
+      isDeep = false;
+    }
+    customizer = typeof customizer == 'function' && bindCallback(customizer, thisArg, 1);
+    return baseClone(value, isDeep, customizer);
+  }
+
+  function isArguments(value) {
+    var length = isObjectLike(value) ? value.length : undefined;
+    return isLength(length) && objToString.call(value) == argsTag;
+  }
+
+  var isArray = nativeIsArray || function(value) {
+    return isObjectLike(value) && isLength(value.length) && objToString.call(value) == arrayTag;
+  };
+
+  function isEmpty(value) {
+    if (value == null) {
+      return true;
+    }
+    var length = getLength(value);
+    if (isLength(length) && (isArray(value) || isString(value) || isArguments(value) ||
+        (isObjectLike(value) && isFunction(value.splice)))) {
+      return !length;
+    }
+    return !keys(value).length;
+  }
+
+  var isFunction = !(baseIsFunction(/x/) || (Uint8Array && !baseIsFunction(Uint8Array))) ? baseIsFunction : function(value) {
+    return objToString.call(value) == funcTag;
+  };
+
+  function isObject(value) {
+    var type = typeof value;
+    return type == 'function' || (!!value && type == 'object');
+  }
+
+  function isNative(value) {
+    if (value == null) {
+      return false;
+    }
+    if (objToString.call(value) == funcTag) {
+      return reIsNative.test(fnToString.call(value));
+    }
+    return isObjectLike(value) && reIsHostCtor.test(value);
+  }
+
+  function isNumber(value) {
+    return typeof value == 'number' || (isObjectLike(value) && objToString.call(value) == numberTag);
+  }
+
+  var isPlainObject = !getPrototypeOf ? shimIsPlainObject : function(value) {
+    if (!(value && objToString.call(value) == objectTag)) {
+      return false;
+    }
+    var valueOf = value.valueOf,
+        objProto = isNative(valueOf) && (objProto = getPrototypeOf(valueOf)) && getPrototypeOf(objProto);
+
+    return objProto
+      ? (value == objProto || getPrototypeOf(value) == objProto)
+      : shimIsPlainObject(value);
+  };
+
+  function isString(value) {
+    return typeof value == 'string' || (isObjectLike(value) && objToString.call(value) == stringTag);
+  }
+
+  function isTypedArray(value) {
+    return isObjectLike(value) && isLength(value.length) && !!typedArrayTags[objToString.call(value)];
+  }
+
+  function toPlainObject(value) {
+    return baseCopy(value, keysIn(value));
+  }
+
+  var assign = createAssigner(function(object, source, customizer) {
+    return customizer
+      ? assignWith(object, source, customizer)
+      : baseAssign(object, source);
+  });
+
+  function has(object, path) {
+    if (object == null) {
+      return false;
+    }
+    var result = hasOwnProperty.call(object, path);
+    if (!result && !isKey(path)) {
+      path = toPath(path);
+      object = path.length == 1 ? object : baseGet(object, baseSlice(path, 0, -1));
+      path = last(path);
+      result = object != null && hasOwnProperty.call(object, path);
+    }
+    return result;
+  }
+
+  var keys = !nativeKeys ? shimKeys : function(object) {
+    if (object) {
+      var Ctor = object.constructor,
+          length = object.length;
+    }
+    if ((typeof Ctor == 'function' && Ctor.prototype === object) ||
+        (typeof object != 'function' && isLength(length))) {
+      return shimKeys(object);
+    }
+    return isObject(object) ? nativeKeys(object) : [];
+  };
+
+  function keysIn(object) {
+    if (object == null) {
+      return [];
+    }
+    if (!isObject(object)) {
+      object = Object(object);
+    }
+    var length = object.length;
+    length = (length && isLength(length) &&
+      (isArray(object) || (support.nonEnumArgs && isArguments(object))) && length) || 0;
+
+    var Ctor = object.constructor,
+        index = -1,
+        isProto = typeof Ctor == 'function' && Ctor.prototype === object,
+        result = Array(length),
+        skipIndexes = length > 0;
+
+    while (++index < length) {
+      result[index] = (index + '');
+    }
+    for (var key in object) {
+      if (!(skipIndexes && isIndex(key, length)) &&
+          !(key == 'constructor' && (isProto || !hasOwnProperty.call(object, key)))) {
+        result.push(key);
+      }
+    }
+    return result;
+  }
+
+  var merge = createAssigner(baseMerge);
+
+  function values(object) {
+    return baseValues(object, keys(object));
+  }
+
+  function escapeRegExp(string) {
+    string = baseToString(string);
+    return (string && reHasRegExpChars.test(string))
+      ? string.replace(reRegExpChars, '\\$&')
+      : string;
+  }
+
+  function callback(func, thisArg, guard) {
+    if (guard && isIterateeCall(func, thisArg, guard)) {
+      thisArg = null;
+    }
+    return baseCallback(func, thisArg);
+  }
+
+  function constant(value) {
+    return function() {
+      return value;
+    };
+  }
+
+  function identity(value) {
+    return value;
+  }
+
+  function property(path) {
+    return isKey(path) ? baseProperty(path) : basePropertyDeep(path);
+  }
+  lodash.assign = assign;
+  lodash.callback = callback;
+  lodash.constant = constant;
+  lodash.forEach = forEach;
+  lodash.keys = keys;
+  lodash.keysIn = keysIn;
+  lodash.merge = merge;
+  lodash.property = property;
+  lodash.reject = reject;
+  lodash.restParam = restParam;
+  lodash.slice = slice;
+  lodash.toPlainObject = toPlainObject;
+  lodash.unzip = unzip;
+  lodash.values = values;
+  lodash.zip = zip;
+
+  lodash.each = forEach;
+  lodash.extend = assign;
+  lodash.iteratee = callback;
+  lodash.clone = clone;
+  lodash.escapeRegExp = escapeRegExp;
+  lodash.findLastIndex = findLastIndex;
+  lodash.has = has;
+  lodash.identity = identity;
+  lodash.includes = includes;
+  lodash.indexOf = indexOf;
+  lodash.isArguments = isArguments;
+  lodash.isArray = isArray;
+  lodash.isEmpty = isEmpty;
+  lodash.isFunction = isFunction;
+  lodash.isNative = isNative;
+  lodash.isNumber = isNumber;
+  lodash.isObject = isObject;
+  lodash.isPlainObject = isPlainObject;
+  lodash.isString = isString;
+  lodash.isTypedArray = isTypedArray;
+  lodash.last = last;
+  lodash.some = some;
+
+  lodash.any = some;
+  lodash.contains = includes;
+  lodash.include = includes;
+
+  lodash.VERSION = VERSION;
+  if (freeExports && freeModule) {
+    if (moduleExports) {
+      (freeModule.exports = lodash)._ = lodash;
+    }
+    else {
+      freeExports._ = lodash;
+    }
+  }
+  else {
+    root._ = lodash;
+  }
+}.call(this));
+
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{}],"/node_modules/jshint/src/jshint.js":[function(_dereq_,module,exports){
+
+var _            = _dereq_("../lodash");
+var events       = _dereq_("events");
+var vars         = _dereq_("./vars.js");
+var messages     = _dereq_("./messages.js");
+var Lexer        = _dereq_("./lex.js").Lexer;
+var reg          = _dereq_("./reg.js");
+var state        = _dereq_("./state.js").state;
+var style        = _dereq_("./style.js");
+var options      = _dereq_("./options.js");
+var scopeManager = _dereq_("./scope-manager.js");
+
+var JSHINT = (function() {
+  "use strict";
+
+  var api, // Extension API
+    bang = {
+      "<"  : true,
+      "<=" : true,
+      "==" : true,
+      "===": true,
+      "!==": true,
+      "!=" : true,
+      ">"  : true,
+      ">=" : true,
+      "+"  : true,
+      "-"  : true,
+      "*"  : true,
+      "/"  : true,
+      "%"  : true
+    },
+
+    declared, // Globals that were declared using /*global ... */ syntax.
+
+    functionicity = [
+      "closure", "exception", "global", "label",
+      "outer", "unused", "var"
+    ],
+
+    functions, // All of the functions
+
+    inblock,
+    indent,
+    lookahead,
+    lex,
+    member,
+    membersOnly,
+    predefined,    // Global variables defined by option
+
+    stack,
+    urls,
+
+    extraModules = [],
+    emitter = new events.EventEmitter();
+
+  function checkOption(name, t) {
+    name = name.trim();
+
+    if (/^[+-]W\d{3}$/g.test(name)) {
+      return true;
+    }
+
+    if (options.validNames.indexOf(name) === -1) {
+      if (t.type !== "jslint" && !_.has(options.removed, name)) {
+        error("E001", t, name);
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  function isString(obj) {
+    return Object.prototype.toString.call(obj) === "[object String]";
+  }
+
+  function isIdentifier(tkn, value) {
+    if (!tkn)
+      return false;
+
+    if (!tkn.identifier || tkn.value !== value)
+      return false;
+
+    return true;
+  }
+
+  function isReserved(token) {
+    if (!token.reserved) {
+      return false;
+    }
+    var meta = token.meta;
+
+    if (meta && meta.isFutureReservedWord && state.inES5()) {
+      if (!meta.es5) {
+        return false;
+      }
+      if (meta.strictOnly) {
+        if (!state.option.strict && !state.isStrict()) {
+          return false;
+        }
+      }
+
+      if (token.isProperty) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  function supplant(str, data) {
+    return str.replace(/\{([^{}]*)\}/g, function(a, b) {
+      var r = data[b];
+      return typeof r === "string" || typeof r === "number" ? r : a;
+    });
+  }
+
+  function combine(dest, src) {
+    Object.keys(src).forEach(function(name) {
+      if (_.has(JSHINT.blacklist, name)) return;
+      dest[name] = src[name];
+    });
+  }
+
+  function processenforceall() {
+    if (state.option.enforceall) {
+      for (var enforceopt in options.bool.enforcing) {
+        if (state.option[enforceopt] === undefined &&
+            !options.noenforceall[enforceopt]) {
+          state.option[enforceopt] = true;
+        }
+      }
+      for (var relaxopt in options.bool.relaxing) {
+        if (state.option[relaxopt] === undefined) {
+          state.option[relaxopt] = false;
+        }
+      }
+    }
+  }
+
+  function assume() {
+    processenforceall();
+    if (!state.option.esversion && !state.option.moz) {
+      if (state.option.es3) {
+        state.option.esversion = 3;
+      } else if (state.option.esnext) {
+        state.option.esversion = 6;
+      } else {
+        state.option.esversion = 5;
+      }
+    }
+
+    if (state.inES5()) {
+      combine(predefined, vars.ecmaIdentifiers[5]);
+    }
+
+    if (state.inES6()) {
+      combine(predefined, vars.ecmaIdentifiers[6]);
+    }
+
+    if (state.option.module) {
+      if (state.option.strict === true) {
+        state.option.strict = "global";
+      }
+      if (!state.inES6()) {
+        warning("W134", state.tokens.next, "module", 6);
+      }
+    }
+
+    if (state.option.couch) {
+      combine(predefined, vars.couch);
+    }
+
+    if (state.option.qunit) {
+      combine(predefined, vars.qunit);
+    }
+
+    if (state.option.rhino) {
+      combine(predefined, vars.rhino);
+    }
+
+    if (state.option.shelljs) {
+      combine(predefined, vars.shelljs);
+      combine(predefined, vars.node);
+    }
+    if (state.option.typed) {
+      combine(predefined, vars.typed);
+    }
+
+    if (state.option.phantom) {
+      combine(predefined, vars.phantom);
+      if (state.option.strict === true) {
+        state.option.strict = "global";
+      }
+    }
+
+    if (state.option.prototypejs) {
+      combine(predefined, vars.prototypejs);
+    }
+
+    if (state.option.node) {
+      combine(predefined, vars.node);
+      combine(predefined, vars.typed);
+      if (state.option.strict === true) {
+        state.option.strict = "global";
+      }
+    }
+
+    if (state.option.devel) {
+      combine(predefined, vars.devel);
+    }
+
+    if (state.option.dojo) {
+      combine(predefined, vars.dojo);
+    }
+
+    if (state.option.browser) {
+      combine(predefined, vars.browser);
+      combine(predefined, vars.typed);
+    }
+
+    if (state.option.browserify) {
+      combine(predefined, vars.browser);
+      combine(predefined, vars.typed);
+      combine(predefined, vars.browserify);
+      if (state.option.strict === true) {
+        state.option.strict = "global";
+      }
+    }
+
+    if (state.option.nonstandard) {
+      combine(predefined, vars.nonstandard);
+    }
+
+    if (state.option.jasmine) {
+      combine(predefined, vars.jasmine);
+    }
+
+    if (state.option.jquery) {
+      combine(predefined, vars.jquery);
+    }
+
+    if (state.option.mootools) {
+      combine(predefined, vars.mootools);
+    }
+
+    if (state.option.worker) {
+      combine(predefined, vars.worker);
+    }
+
+    if (state.option.wsh) {
+      combine(predefined, vars.wsh);
+    }
+
+    if (state.option.globalstrict && state.option.strict !== false) {
+      state.option.strict = "global";
+    }
+
+    if (state.option.yui) {
+      combine(predefined, vars.yui);
+    }
+
+    if (state.option.mocha) {
+      combine(predefined, vars.mocha);
+    }
+  }
+  function quit(code, line, chr) {
+    var percentage = Math.floor((line / state.lines.length) * 100);
+    var message = messages.errors[code].desc;
+
+    throw {
+      name: "JSHintError",
+      line: line,
+      character: chr,
+      message: message + " (" + percentage + "% scanned).",
+      raw: message,
+      code: code
+    };
+  }
+
+  function removeIgnoredMessages() {
+    var ignored = state.ignoredLines;
+
+    if (_.isEmpty(ignored)) return;
+    JSHINT.errors = _.reject(JSHINT.errors, function(err) { return ignored[err.line] });
+  }
+
+  function warning(code, t, a, b, c, d) {
+    var ch, l, w, msg;
+
+    if (/^W\d{3}$/.test(code)) {
+      if (state.ignored[code])
+        return;
+
+      msg = messages.warnings[code];
+    } else if (/E\d{3}/.test(code)) {
+      msg = messages.errors[code];
+    } else if (/I\d{3}/.test(code)) {
+      msg = messages.info[code];
+    }
+
+    t = t || state.tokens.next || {};
+    if (t.id === "(end)") {  // `~
+      t = state.tokens.curr;
+    }
+
+    l = t.line || 0;
+    ch = t.from || 0;
+
+    w = {
+      id: "(error)",
+      raw: msg.desc,
+      code: msg.code,
+      evidence: state.lines[l - 1] || "",
+      line: l,
+      character: ch,
+      scope: JSHINT.scope,
+      a: a,
+      b: b,
+      c: c,
+      d: d
+    };
+
+    w.reason = supplant(msg.desc, w);
+    JSHINT.errors.push(w);
+
+    removeIgnoredMessages();
+
+    if (JSHINT.errors.length >= state.option.maxerr)
+      quit("E043", l, ch);
+
+    return w;
+  }
+
+  function warningAt(m, l, ch, a, b, c, d) {
+    return warning(m, {
+      line: l,
+      from: ch
+    }, a, b, c, d);
+  }
+
+  function error(m, t, a, b, c, d) {
+    warning(m, t, a, b, c, d);
+  }
+
+  function errorAt(m, l, ch, a, b, c, d) {
+    return error(m, {
+      line: l,
+      from: ch
+    }, a, b, c, d);
+  }
+  function addInternalSrc(elem, src) {
+    var i;
+    i = {
+      id: "(internal)",
+      elem: elem,
+      value: src
+    };
+    JSHINT.internals.push(i);
+    return i;
+  }
+
+  function doOption() {
+    var nt = state.tokens.next;
+    var body = nt.body.match(/(-\s+)?[^\s,:]+(?:\s*:\s*(-\s+)?[^\s,]+)?/g) || [];
+
+    var predef = {};
+    if (nt.type === "globals") {
+      body.forEach(function(g, idx) {
+        g = g.split(":");
+        var key = (g[0] || "").trim();
+        var val = (g[1] || "").trim();
+
+        if (key === "-" || !key.length) {
+          if (idx > 0 && idx === body.length - 1) {
+            return;
+          }
+          error("E002", nt);
+          return;
+        }
+
+        if (key.charAt(0) === "-") {
+          key = key.slice(1);
+          val = false;
+
+          JSHINT.blacklist[key] = key;
+          delete predefined[key];
+        } else {
+          predef[key] = (val === "true");
+        }
+      });
+
+      combine(predefined, predef);
+
+      for (var key in predef) {
+        if (_.has(predef, key)) {
+          declared[key] = nt;
+        }
+      }
+    }
+
+    if (nt.type === "exported") {
+      body.forEach(function(e, idx) {
+        if (!e.length) {
+          if (idx > 0 && idx === body.length - 1) {
+            return;
+          }
+          error("E002", nt);
+          return;
+        }
+
+        state.funct["(scope)"].addExported(e);
+      });
+    }
+
+    if (nt.type === "members") {
+      membersOnly = membersOnly || {};
+
+      body.forEach(function(m) {
+        var ch1 = m.charAt(0);
+        var ch2 = m.charAt(m.length - 1);
+
+        if (ch1 === ch2 && (ch1 === "\"" || ch1 === "'")) {
+          m = m
+            .substr(1, m.length - 2)
+            .replace("\\\"", "\"");
+        }
+
+        membersOnly[m] = false;
+      });
+    }
+
+    var numvals = [
+      "maxstatements",
+      "maxparams",
+      "maxdepth",
+      "maxcomplexity",
+      "maxerr",
+      "maxlen",
+      "indent"
+    ];
+
+    if (nt.type === "jshint" || nt.type === "jslint") {
+      body.forEach(function(g) {
+        g = g.split(":");
+        var key = (g[0] || "").trim();
+        var val = (g[1] || "").trim();
+
+        if (!checkOption(key, nt)) {
+          return;
+        }
+
+        if (numvals.indexOf(key) >= 0) {
+          if (val !== "false") {
+            val = +val;
+
+            if (typeof val !== "number" || !isFinite(val) || val <= 0 || Math.floor(val) !== val) {
+              error("E032", nt, g[1].trim());
+              return;
+            }
+
+            state.option[key] = val;
+          } else {
+            state.option[key] = key === "indent" ? 4 : false;
+          }
+
+          return;
+        }
+
+        if (key === "validthis") {
+
+          if (state.funct["(global)"])
+            return void error("E009");
+
+          if (val !== "true" && val !== "false")
+            return void error("E002", nt);
+
+          state.option.validthis = (val === "true");
+          return;
+        }
+
+        if (key === "quotmark") {
+          switch (val) {
+          case "true":
+          case "false":
+            state.option.quotmark = (val === "true");
+            break;
+          case "double":
+          case "single":
+            state.option.quotmark = val;
+            break;
+          default:
+            error("E002", nt);
+          }
+          return;
+        }
+
+        if (key === "shadow") {
+          switch (val) {
+          case "true":
+            state.option.shadow = true;
+            break;
+          case "outer":
+            state.option.shadow = "outer";
+            break;
+          case "false":
+          case "inner":
+            state.option.shadow = "inner";
+            break;
+          default:
+            error("E002", nt);
+          }
+          return;
+        }
+
+        if (key === "unused") {
+          switch (val) {
+          case "true":
+            state.option.unused = true;
+            break;
+          case "false":
+            state.option.unused = false;
+            break;
+          case "vars":
+          case "strict":
+            state.option.unused = val;
+            break;
+          default:
+            error("E002", nt);
+          }
+          return;
+        }
+
+        if (key === "latedef") {
+          switch (val) {
+          case "true":
+            state.option.latedef = true;
+            break;
+          case "false":
+            state.option.latedef = false;
+            break;
+          case "nofunc":
+            state.option.latedef = "nofunc";
+            break;
+          default:
+            error("E002", nt);
+          }
+          return;
+        }
+
+        if (key === "ignore") {
+          switch (val) {
+          case "line":
+            state.ignoredLines[nt.line] = true;
+            removeIgnoredMessages();
+            break;
+          default:
+            error("E002", nt);
+          }
+          return;
+        }
+
+        if (key === "strict") {
+          switch (val) {
+          case "true":
+            state.option.strict = true;
+            break;
+          case "false":
+            state.option.strict = false;
+            break;
+          case "func":
+          case "global":
+          case "implied":
+            state.option.strict = val;
+            break;
+          default:
+            error("E002", nt);
+          }
+          return;
+        }
+
+        if (key === "module") {
+          if (!hasParsedCode(state.funct)) {
+            error("E055", state.tokens.next, "module");
+          }
+        }
+        var esversions = {
+          es3   : 3,
+          es5   : 5,
+          esnext: 6
+        };
+        if (_.has(esversions, key)) {
+          switch (val) {
+          case "true":
+            state.option.moz = false;
+            state.option.esversion = esversions[key];
+            break;
+          case "false":
+            if (!state.option.moz) {
+              state.option.esversion = 5;
+            }
+            break;
+          default:
+            error("E002", nt);
+          }
+          return;
+        }
+
+        if (key === "esversion") {
+          switch (val) {
+          case "5":
+            if (state.inES5(true)) {
+              warning("I003");
+            }
+          case "3":
+          case "6":
+            state.option.moz = false;
+            state.option.esversion = +val;
+            break;
+          case "2015":
+            state.option.moz = false;
+            state.option.esversion = 6;
+            break;
+          default:
+            error("E002", nt);
+          }
+          if (!hasParsedCode(state.funct)) {
+            error("E055", state.tokens.next, "esversion");
+          }
+          return;
+        }
+
+        var match = /^([+-])(W\d{3})$/g.exec(key);
+        if (match) {
+          state.ignored[match[2]] = (match[1] === "-");
+          return;
+        }
+
+        var tn;
+        if (val === "true" || val === "false") {
+          if (nt.type === "jslint") {
+            tn = options.renamed[key] || key;
+            state.option[tn] = (val === "true");
+
+            if (options.inverted[tn] !== undefined) {
+              state.option[tn] = !state.option[tn];
+            }
+          } else {
+            state.option[key] = (val === "true");
+          }
+
+          if (key === "newcap") {
+            state.option["(explicitNewcap)"] = true;
+          }
+          return;
+        }
+
+        error("E002", nt);
+      });
+
+      assume();
+    }
+  }
+
+  function peek(p) {
+    var i = p || 0, j = lookahead.length, t;
+
+    if (i < j) {
+      return lookahead[i];
+    }
+
+    while (j <= i) {
+      t = lookahead[j];
+      if (!t) {
+        t = lookahead[j] = lex.token();
+      }
+      j += 1;
+    }
+    if (!t && state.tokens.next.id === "(end)") {
+      return state.tokens.next;
+    }
+
+    return t;
+  }
+
+  function peekIgnoreEOL() {
+    var i = 0;
+    var t;
+    do {
+      t = peek(i++);
+    } while (t.id === "(endline)");
+    return t;
+  }
+
+  function advance(id, t) {
+
+    switch (state.tokens.curr.id) {
+    case "(number)":
+      if (state.tokens.next.id === ".") {
+        warning("W005", state.tokens.curr);
+      }
+      break;
+    case "-":
+      if (state.tokens.next.id === "-" || state.tokens.next.id === "--") {
+        warning("W006");
+      }
+      break;
+    case "+":
+      if (state.tokens.next.id === "+" || state.tokens.next.id === "++") {
+        warning("W007");
+      }
+      break;
+    }
+
+    if (id && state.tokens.next.id !== id) {
+      if (t) {
+        if (state.tokens.next.id === "(end)") {
+          error("E019", t, t.id);
+        } else {
+          error("E020", state.tokens.next, id, t.id, t.line, state.tokens.next.value);
+        }
+      } else if (state.tokens.next.type !== "(identifier)" || state.tokens.next.value !== id) {
+        warning("W116", state.tokens.next, id, state.tokens.next.value);
+      }
+    }
+
+    state.tokens.prev = state.tokens.curr;
+    state.tokens.curr = state.tokens.next;
+    for (;;) {
+      state.tokens.next = lookahead.shift() || lex.token();
+
+      if (!state.tokens.next) { // No more tokens left, give up
+        quit("E041", state.tokens.curr.line);
+      }
+
+      if (state.tokens.next.id === "(end)" || state.tokens.next.id === "(error)") {
+        return;
+      }
+
+      if (state.tokens.next.check) {
+        state.tokens.next.check();
+      }
+
+      if (state.tokens.next.isSpecial) {
+        if (state.tokens.next.type === "falls through") {
+          state.tokens.curr.caseFallsThrough = true;
+        } else {
+          doOption();
+        }
+      } else {
+        if (state.tokens.next.id !== "(endline)") {
+          break;
+        }
+      }
+    }
+  }
+
+  function isInfix(token) {
+    return token.infix || (!token.identifier && !token.template && !!token.led);
+  }
+
+  function isEndOfExpr() {
+    var curr = state.tokens.curr;
+    var next = state.tokens.next;
+    if (next.id === ";" || next.id === "}" || next.id === ":") {
+      return true;
+    }
+    if (isInfix(next) === isInfix(curr) || (curr.id === "yield" && state.inMoz())) {
+      return curr.line !== startLine(next);
+    }
+    return false;
+  }
+
+  function isBeginOfExpr(prev) {
+    return !prev.left && prev.arity !== "unary";
+  }
+
+  function expression(rbp, initial) {
+    var left, isArray = false, isObject = false, isLetExpr = false;
+
+    state.nameStack.push();
+    if (!initial && state.tokens.next.value === "let" && peek(0).value === "(") {
+      if (!state.inMoz()) {
+        warning("W118", state.tokens.next, "let expressions");
+      }
+      isLetExpr = true;
+      state.funct["(scope)"].stack();
+      advance("let");
+      advance("(");
+      state.tokens.prev.fud();
+      advance(")");
+    }
+
+    if (state.tokens.next.id === "(end)")
+      error("E006", state.tokens.curr);
+
+    var isDangerous =
+      state.option.asi &&
+      state.tokens.prev.line !== startLine(state.tokens.curr) &&
+      _.contains(["]", ")"], state.tokens.prev.id) &&
+      _.contains(["[", "("], state.tokens.curr.id);
+
+    if (isDangerous)
+      warning("W014", state.tokens.curr, state.tokens.curr.id);
+
+    advance();
+
+    if (initial) {
+      state.funct["(verb)"] = state.tokens.curr.value;
+      state.tokens.curr.beginsStmt = true;
+    }
+
+    if (initial === true && state.tokens.curr.fud) {
+      left = state.tokens.curr.fud();
+    } else {
+      if (state.tokens.curr.nud) {
+        left = state.tokens.curr.nud();
+      } else {
+        error("E030", state.tokens.curr, state.tokens.curr.id);
+      }
+      while ((rbp < state.tokens.next.lbp || state.tokens.next.type === "(template)") &&
+              !isEndOfExpr()) {
+        isArray = state.tokens.curr.value === "Array";
+        isObject = state.tokens.curr.value === "Object";
+        if (left && (left.value || (left.first && left.first.value))) {
+          if (left.value !== "new" ||
+            (left.first && left.first.value && left.first.value === ".")) {
+            isArray = false;
+            if (left.value !== state.tokens.curr.value) {
+              isObject = false;
+            }
+          }
+        }
+
+        advance();
+
+        if (isArray && state.tokens.curr.id === "(" && state.tokens.next.id === ")") {
+          warning("W009", state.tokens.curr);
+        }
+
+        if (isObject && state.tokens.curr.id === "(" && state.tokens.next.id === ")") {
+          warning("W010", state.tokens.curr);
+        }
+
+        if (left && state.tokens.curr.led) {
+          left = state.tokens.curr.led(left);
+        } else {
+          error("E033", state.tokens.curr, state.tokens.curr.id);
+        }
+      }
+    }
+    if (isLetExpr) {
+      state.funct["(scope)"].unstack();
+    }
+
+    state.nameStack.pop();
+
+    return left;
+  }
+
+  function startLine(token) {
+    return token.startLine || token.line;
+  }
+
+  function nobreaknonadjacent(left, right) {
+    left = left || state.tokens.curr;
+    right = right || state.tokens.next;
+    if (!state.option.laxbreak && left.line !== startLine(right)) {
+      warning("W014", right, right.value);
+    }
+  }
+
+  function nolinebreak(t) {
+    t = t || state.tokens.curr;
+    if (t.line !== startLine(state.tokens.next)) {
+      warning("E022", t, t.value);
+    }
+  }
+
+  function nobreakcomma(left, right) {
+    if (left.line !== startLine(right)) {
+      if (!state.option.laxcomma) {
+        if (comma.first) {
+          warning("I001");
+          comma.first = false;
+        }
+        warning("W014", left, right.value);
+      }
+    }
+  }
+
+  function comma(opts) {
+    opts = opts || {};
+
+    if (!opts.peek) {
+      nobreakcomma(state.tokens.curr, state.tokens.next);
+      advance(",");
+    } else {
+      nobreakcomma(state.tokens.prev, state.tokens.curr);
+    }
+
+    if (state.tokens.next.identifier && !(opts.property && state.inES5())) {
+      switch (state.tokens.next.value) {
+      case "break":
+      case "case":
+      case "catch":
+      case "continue":
+      case "default":
+      case "do":
+      case "else":
+      case "finally":
+      case "for":
+      case "if":
+      case "in":
+      case "instanceof":
+      case "return":
+      case "switch":
+      case "throw":
+      case "try":
+      case "var":
+      case "let":
+      case "while":
+      case "with":
+        error("E024", state.tokens.next, state.tokens.next.value);
+        return false;
+      }
+    }
+
+    if (state.tokens.next.type === "(punctuator)") {
+      switch (state.tokens.next.value) {
+      case "}":
+      case "]":
+      case ",":
+        if (opts.allowTrailing) {
+          return true;
+        }
+      case ")":
+        error("E024", state.tokens.next, state.tokens.next.value);
+        return false;
+      }
+    }
+    return true;
+  }
+
+  function symbol(s, p) {
+    var x = state.syntax[s];
+    if (!x || typeof x !== "object") {
+      state.syntax[s] = x = {
+        id: s,
+        lbp: p,
+        value: s
+      };
+    }
+    return x;
+  }
+
+  function delim(s) {
+    var x = symbol(s, 0);
+    x.delim = true;
+    return x;
+  }
+
+  function stmt(s, f) {
+    var x = delim(s);
+    x.identifier = x.reserved = true;
+    x.fud = f;
+    return x;
+  }
+
+  function blockstmt(s, f) {
+    var x = stmt(s, f);
+    x.block = true;
+    return x;
+  }
+
+  function reserveName(x) {
+    var c = x.id.charAt(0);
+    if ((c >= "a" && c <= "z") || (c >= "A" && c <= "Z")) {
+      x.identifier = x.reserved = true;
+    }
+    return x;
+  }
+
+  function prefix(s, f) {
+    var x = symbol(s, 150);
+    reserveName(x);
+
+    x.nud = (typeof f === "function") ? f : function() {
+      this.arity = "unary";
+      this.right = expression(150);
+
+      if (this.id === "++" || this.id === "--") {
+        if (state.option.plusplus) {
+          warning("W016", this, this.id);
+        } else if (this.right && (!this.right.identifier || isReserved(this.right)) &&
+            this.right.id !== "." && this.right.id !== "[") {
+          warning("W017", this);
+        }
+
+        if (this.right && this.right.isMetaProperty) {
+          error("E031", this);
+        } else if (this.right && this.right.identifier) {
+          state.funct["(scope)"].block.modify(this.right.value, this);
+        }
+      }
+
+      return this;
+    };
+
+    return x;
+  }
+
+  function type(s, f) {
+    var x = delim(s);
+    x.type = s;
+    x.nud = f;
+    return x;
+  }
+
+  function reserve(name, func) {
+    var x = type(name, func);
+    x.identifier = true;
+    x.reserved = true;
+    return x;
+  }
+
+  function FutureReservedWord(name, meta) {
+    var x = type(name, (meta && meta.nud) || function() {
+      return this;
+    });
+
+    meta = meta || {};
+    meta.isFutureReservedWord = true;
+
+    x.value = name;
+    x.identifier = true;
+    x.reserved = true;
+    x.meta = meta;
+
+    return x;
+  }
+
+  function reservevar(s, v) {
+    return reserve(s, function() {
+      if (typeof v === "function") {
+        v(this);
+      }
+      return this;
+    });
+  }
+
+  function infix(s, f, p, w) {
+    var x = symbol(s, p);
+    reserveName(x);
+    x.infix = true;
+    x.led = function(left) {
+      if (!w) {
+        nobreaknonadjacent(state.tokens.prev, state.tokens.curr);
+      }
+      if ((s === "in" || s === "instanceof") && left.id === "!") {
+        warning("W018", left, "!");
+      }
+      if (typeof f === "function") {
+        return f(left, this);
+      } else {
+        this.left = left;
+        this.right = expression(p);
+        return this;
+      }
+    };
+    return x;
+  }
+
+  function application(s) {
+    var x = symbol(s, 42);
+
+    x.led = function(left) {
+      nobreaknonadjacent(state.tokens.prev, state.tokens.curr);
+
+      this.left = left;
+      this.right = doFunction({ type: "arrow", loneArg: left });
+      return this;
+    };
+    return x;
+  }
+
+  function relation(s, f) {
+    var x = symbol(s, 100);
+
+    x.led = function(left) {
+      nobreaknonadjacent(state.tokens.prev, state.tokens.curr);
+      this.left = left;
+      var right = this.right = expression(100);
+
+      if (isIdentifier(left, "NaN") || isIdentifier(right, "NaN")) {
+        warning("W019", this);
+      } else if (f) {
+        f.apply(this, [left, right]);
+      }
+
+      if (!left || !right) {
+        quit("E041", state.tokens.curr.line);
+      }
+
+      if (left.id === "!") {
+        warning("W018", left, "!");
+      }
+
+      if (right.id === "!") {
+        warning("W018", right, "!");
+      }
+
+      return this;
+    };
+    return x;
+  }
+
+  function isPoorRelation(node) {
+    return node &&
+        ((node.type === "(number)" && +node.value === 0) ||
+         (node.type === "(string)" && node.value === "") ||
+         (node.type === "null" && !state.option.eqnull) ||
+        node.type === "true" ||
+        node.type === "false" ||
+        node.type === "undefined");
+  }
+
+  var typeofValues = {};
+  typeofValues.legacy = [
+    "xml",
+    "unknown"
+  ];
+  typeofValues.es3 = [
+    "undefined", "boolean", "number", "string", "function", "object",
+  ];
+  typeofValues.es3 = typeofValues.es3.concat(typeofValues.legacy);
+  typeofValues.es6 = typeofValues.es3.concat("symbol");
+  function isTypoTypeof(left, right, state) {
+    var values;
+
+    if (state.option.notypeof)
+      return false;
+
+    if (!left || !right)
+      return false;
+
+    values = state.inES6() ? typeofValues.es6 : typeofValues.es3;
+
+    if (right.type === "(identifier)" && right.value === "typeof" && left.type === "(string)")
+      return !_.contains(values, left.value);
+
+    return false;
+  }
+
+  function isGlobalEval(left, state) {
+    var isGlobal = false;
+    if (left.type === "this" && state.funct["(context)"] === null) {
+      isGlobal = true;
+    }
+    else if (left.type === "(identifier)") {
+      if (state.option.node && left.value === "global") {
+        isGlobal = true;
+      }
+
+      else if (state.option.browser && (left.value === "window" || left.value === "document")) {
+        isGlobal = true;
+      }
+    }
+
+    return isGlobal;
+  }
+
+  function findNativePrototype(left) {
+    var natives = [
+      "Array", "ArrayBuffer", "Boolean", "Collator", "DataView", "Date",
+      "DateTimeFormat", "Error", "EvalError", "Float32Array", "Float64Array",
+      "Function", "Infinity", "Intl", "Int16Array", "Int32Array", "Int8Array",
+      "Iterator", "Number", "NumberFormat", "Object", "RangeError",
+      "ReferenceError", "RegExp", "StopIteration", "String", "SyntaxError",
+      "TypeError", "Uint16Array", "Uint32Array", "Uint8Array", "Uint8ClampedArray",
+      "URIError"
+    ];
+
+    function walkPrototype(obj) {
+      if (typeof obj !== "object") return;
+      return obj.right === "prototype" ? obj : walkPrototype(obj.left);
+    }
+
+    function walkNative(obj) {
+      while (!obj.identifier && typeof obj.left === "object")
+        obj = obj.left;
+
+      if (obj.identifier && natives.indexOf(obj.value) >= 0)
+        return obj.value;
+    }
+
+    var prototype = walkPrototype(left);
+    if (prototype) return walkNative(prototype);
+  }
+  function checkLeftSideAssign(left, assignToken, options) {
+
+    var allowDestructuring = options && options.allowDestructuring;
+
+    assignToken = assignToken || left;
+
+    if (state.option.freeze) {
+      var nativeObject = findNativePrototype(left);
+      if (nativeObject)
+        warning("W121", left, nativeObject);
+    }
+
+    if (left.identifier && !left.isMetaProperty) {
+      state.funct["(scope)"].block.reassign(left.value, left);
+    }
+
+    if (left.id === ".") {
+      if (!left.left || left.left.value === "arguments" && !state.isStrict()) {
+        warning("E031", assignToken);
+      }
+
+      state.nameStack.set(state.tokens.prev);
+      return true;
+    } else if (left.id === "{" || left.id === "[") {
+      if (allowDestructuring && state.tokens.curr.left.destructAssign) {
+        state.tokens.curr.left.destructAssign.forEach(function(t) {
+          if (t.id) {
+            state.funct["(scope)"].block.modify(t.id, t.token);
+          }
+        });
+      } else {
+        if (left.id === "{" || !left.left) {
+          warning("E031", assignToken);
+        } else if (left.left.value === "arguments" && !state.isStrict()) {
+          warning("E031", assignToken);
+        }
+      }
+
+      if (left.id === "[") {
+        state.nameStack.set(left.right);
+      }
+
+      return true;
+    } else if (left.isMetaProperty) {
+      error("E031", assignToken);
+      return true;
+    } else if (left.identifier && !isReserved(left)) {
+      if (state.funct["(scope)"].labeltype(left.value) === "exception") {
+        warning("W022", left);
+      }
+      state.nameStack.set(left);
+      return true;
+    }
+
+    if (left === state.syntax["function"]) {
+      warning("W023", state.tokens.curr);
+    }
+
+    return false;
+  }
+
+  function assignop(s, f, p) {
+    var x = infix(s, typeof f === "function" ? f : function(left, that) {
+      that.left = left;
+
+      if (left && checkLeftSideAssign(left, that, { allowDestructuring: true })) {
+        that.right = expression(10);
+        return that;
+      }
+
+      error("E031", that);
+    }, p);
+
+    x.exps = true;
+    x.assign = true;
+    return x;
+  }
+
+
+  function bitwise(s, f, p) {
+    var x = symbol(s, p);
+    reserveName(x);
+    x.led = (typeof f === "function") ? f : function(left) {
+      if (state.option.bitwise) {
+        warning("W016", this, this.id);
+      }
+      this.left = left;
+      this.right = expression(p);
+      return this;
+    };
+    return x;
+  }
+
+  function bitwiseassignop(s) {
+    return assignop(s, function(left, that) {
+      if (state.option.bitwise) {
+        warning("W016", that, that.id);
+      }
+
+      if (left && checkLeftSideAssign(left, that)) {
+        that.right = expression(10);
+        return that;
+      }
+      error("E031", that);
+    }, 20);
+  }
+
+  function suffix(s) {
+    var x = symbol(s, 150);
+
+    x.led = function(left) {
+      if (state.option.plusplus) {
+        warning("W016", this, this.id);
+      } else if ((!left.identifier || isReserved(left)) && left.id !== "." && left.id !== "[") {
+        warning("W017", this);
+      }
+
+      if (left.isMetaProperty) {
+        error("E031", this);
+      } else if (left && left.identifier) {
+        state.funct["(scope)"].block.modify(left.value, left);
+      }
+
+      this.left = left;
+      return this;
+    };
+    return x;
+  }
+
+  function optionalidentifier(fnparam, prop, preserve) {
+    if (!state.tokens.next.identifier) {
+      return;
+    }
+
+    if (!preserve) {
+      advance();
+    }
+
+    var curr = state.tokens.curr;
+    var val  = state.tokens.curr.value;
+
+    if (!isReserved(curr)) {
+      return val;
+    }
+
+    if (prop) {
+      if (state.inES5()) {
+        return val;
+      }
+    }
+
+    if (fnparam && val === "undefined") {
+      return val;
+    }
+
+    warning("W024", state.tokens.curr, state.tokens.curr.id);
+    return val;
+  }
+  function identifier(fnparam, prop) {
+    var i = optionalidentifier(fnparam, prop, false);
+    if (i) {
+      return i;
+    }
+    if (state.tokens.next.value === "...") {
+      if (!state.inES6(true)) {
+        warning("W119", state.tokens.next, "spread/rest operator", "6");
+      }
+      advance();
+
+      if (checkPunctuator(state.tokens.next, "...")) {
+        warning("E024", state.tokens.next, "...");
+        while (checkPunctuator(state.tokens.next, "...")) {
+          advance();
+        }
+      }
+
+      if (!state.tokens.next.identifier) {
+        warning("E024", state.tokens.curr, "...");
+        return;
+      }
+
+      return identifier(fnparam, prop);
+    } else {
+      error("E030", state.tokens.next, state.tokens.next.value);
+      if (state.tokens.next.id !== ";") {
+        advance();
+      }
+    }
+  }
+
+
+  function reachable(controlToken) {
+    var i = 0, t;
+    if (state.tokens.next.id !== ";" || controlToken.inBracelessBlock) {
+      return;
+    }
+    for (;;) {
+      do {
+        t = peek(i);
+        i += 1;
+      } while (t.id !== "(end)" && t.id === "(comment)");
+
+      if (t.reach) {
+        return;
+      }
+      if (t.id !== "(endline)") {
+        if (t.id === "function") {
+          if (state.option.latedef === true) {
+            warning("W026", t);
+          }
+          break;
+        }
+
+        warning("W027", t, t.value, controlToken.value);
+        break;
+      }
+    }
+  }
+
+  function parseFinalSemicolon() {
+    if (state.tokens.next.id !== ";") {
+      if (state.tokens.next.isUnclosed) return advance();
+
+      var sameLine = startLine(state.tokens.next) === state.tokens.curr.line &&
+                     state.tokens.next.id !== "(end)";
+      var blockEnd = checkPunctuator(state.tokens.next, "}");
+
+      if (sameLine && !blockEnd) {
+        errorAt("E058", state.tokens.curr.line, state.tokens.curr.character);
+      } else if (!state.option.asi) {
+        if ((blockEnd && !state.option.lastsemic) || !sameLine) {
+          warningAt("W033", state.tokens.curr.line, state.tokens.curr.character);
+        }
+      }
+    } else {
+      advance(";");
+    }
+  }
+
+  function statement() {
+    var i = indent, r, t = state.tokens.next, hasOwnScope = false;
+
+    if (t.id === ";") {
+      advance(";");
+      return;
+    }
+    var res = isReserved(t);
+
+    if (res && t.meta && t.meta.isFutureReservedWord && peek().id === ":") {
+      warning("W024", t, t.id);
+      res = false;
+    }
+
+    if (t.identifier && !res && peek().id === ":") {
+      advance();
+      advance(":");
+
+      hasOwnScope = true;
+      state.funct["(scope)"].stack();
+      state.funct["(scope)"].block.addBreakLabel(t.value, { token: state.tokens.curr });
+
+      if (!state.tokens.next.labelled && state.tokens.next.value !== "{") {
+        warning("W028", state.tokens.next, t.value, state.tokens.next.value);
+      }
+
+      state.tokens.next.label = t.value;
+      t = state.tokens.next;
+    }
+
+    if (t.id === "{") {
+      var iscase = (state.funct["(verb)"] === "case" && state.tokens.curr.value === ":");
+      block(true, true, false, false, iscase);
+      return;
+    }
+
+    r = expression(0, true);
+
+    if (r && !(r.identifier && r.value === "function") &&
+        !(r.type === "(punctuator)" && r.left &&
+          r.left.identifier && r.left.value === "function")) {
+      if (!state.isStrict() &&
+          state.option.strict === "global") {
+        warning("E007");
+      }
+    }
+
+    if (!t.block) {
+      if (!state.option.expr && (!r || !r.exps)) {
+        warning("W030", state.tokens.curr);
+      } else if (state.option.nonew && r && r.left && r.id === "(" && r.left.id === "new") {
+        warning("W031", t);
+      }
+      parseFinalSemicolon();
+    }
+
+    indent = i;
+    if (hasOwnScope) {
+      state.funct["(scope)"].unstack();
+    }
+    return r;
+  }
+
+
+  function statements() {
+    var a = [], p;
+
+    while (!state.tokens.next.reach && state.tokens.next.id !== "(end)") {
+      if (state.tokens.next.id === ";") {
+        p = peek();
+
+        if (!p || (p.id !== "(" && p.id !== "[")) {
+          warning("W032");
+        }
+
+        advance(";");
+      } else {
+        a.push(statement());
+      }
+    }
+    return a;
+  }
+  function directives() {
+    var i, p, pn;
+
+    while (state.tokens.next.id === "(string)") {
+      p = peek(0);
+      if (p.id === "(endline)") {
+        i = 1;
+        do {
+          pn = peek(i++);
+        } while (pn.id === "(endline)");
+        if (pn.id === ";") {
+          p = pn;
+        } else if (pn.value === "[" || pn.value === ".") {
+          break;
+        } else if (!state.option.asi || pn.value === "(") {
+          warning("W033", state.tokens.next);
+        }
+      } else if (p.id === "." || p.id === "[") {
+        break;
+      } else if (p.id !== ";") {
+        warning("W033", p);
+      }
+
+      advance();
+      var directive = state.tokens.curr.value;
+      if (state.directive[directive] ||
+          (directive === "use strict" && state.option.strict === "implied")) {
+        warning("W034", state.tokens.curr, directive);
+      }
+      state.directive[directive] = true;
+
+      if (p.id === ";") {
+        advance(";");
+      }
+    }
+
+    if (state.isStrict()) {
+      if (!state.option["(explicitNewcap)"]) {
+        state.option.newcap = true;
+      }
+      state.option.undef = true;
+    }
+  }
+  function block(ordinary, stmt, isfunc, isfatarrow, iscase) {
+    var a,
+      b = inblock,
+      old_indent = indent,
+      m,
+      t,
+      line,
+      d;
+
+    inblock = ordinary;
+
+    t = state.tokens.next;
+
+    var metrics = state.funct["(metrics)"];
+    metrics.nestedBlockDepth += 1;
+    metrics.verifyMaxNestedBlockDepthPerFunction();
+
+    if (state.tokens.next.id === "{") {
+      advance("{");
+      state.funct["(scope)"].stack();
+
+      line = state.tokens.curr.line;
+      if (state.tokens.next.id !== "}") {
+        indent += state.option.indent;
+        while (!ordinary && state.tokens.next.from > indent) {
+          indent += state.option.indent;
+        }
+
+        if (isfunc) {
+          m = {};
+          for (d in state.directive) {
+            if (_.has(state.directive, d)) {
+              m[d] = state.directive[d];
+            }
+          }
+          directives();
+
+          if (state.option.strict && state.funct["(context)"]["(global)"]) {
+            if (!m["use strict"] && !state.isStrict()) {
+              warning("E007");
+            }
+          }
+        }
+
+        a = statements();
+
+        metrics.statementCount += a.length;
+
+        indent -= state.option.indent;
+      }
+
+      advance("}", t);
+
+      if (isfunc) {
+        state.funct["(scope)"].validateParams();
+        if (m) {
+          state.directive = m;
+        }
+      }
+
+      state.funct["(scope)"].unstack();
+
+      indent = old_indent;
+    } else if (!ordinary) {
+      if (isfunc) {
+        state.funct["(scope)"].stack();
+
+        m = {};
+        if (stmt && !isfatarrow && !state.inMoz()) {
+          error("W118", state.tokens.curr, "function closure expressions");
+        }
+
+        if (!stmt) {
+          for (d in state.directive) {
+            if (_.has(state.directive, d)) {
+              m[d] = state.directive[d];
+            }
+          }
+        }
+        expression(10);
+
+        if (state.option.strict && state.funct["(context)"]["(global)"]) {
+          if (!m["use strict"] && !state.isStrict()) {
+            warning("E007");
+          }
+        }
+
+        state.funct["(scope)"].unstack();
+      } else {
+        error("E021", state.tokens.next, "{", state.tokens.next.value);
+      }
+    } else {
+      state.funct["(noblockscopedvar)"] = state.tokens.next.id !== "for";
+      state.funct["(scope)"].stack();
+
+      if (!stmt || state.option.curly) {
+        warning("W116", state.tokens.next, "{", state.tokens.next.value);
+      }
+
+      state.tokens.next.inBracelessBlock = true;
+      indent += state.option.indent;
+      a = [statement()];
+      indent -= state.option.indent;
+
+      state.funct["(scope)"].unstack();
+      delete state.funct["(noblockscopedvar)"];
+    }
+    switch (state.funct["(verb)"]) {
+    case "break":
+    case "continue":
+    case "return":
+    case "throw":
+      if (iscase) {
+        break;
+      }
+    default:
+      state.funct["(verb)"] = null;
+    }
+
+    inblock = b;
+    if (ordinary && state.option.noempty && (!a || a.length === 0)) {
+      warning("W035", state.tokens.prev);
+    }
+    metrics.nestedBlockDepth -= 1;
+    return a;
+  }
+
+
+  function countMember(m) {
+    if (membersOnly && typeof membersOnly[m] !== "boolean") {
+      warning("W036", state.tokens.curr, m);
+    }
+    if (typeof member[m] === "number") {
+      member[m] += 1;
+    } else {
+      member[m] = 1;
+    }
+  }
+
+  type("(number)", function() {
+    return this;
+  });
+
+  type("(string)", function() {
+    return this;
+  });
+
+  state.syntax["(identifier)"] = {
+    type: "(identifier)",
+    lbp: 0,
+    identifier: true,
+
+    nud: function() {
+      var v = this.value;
+      if (state.tokens.next.id === "=>") {
+        return this;
+      }
+
+      if (!state.funct["(comparray)"].check(v)) {
+        state.funct["(scope)"].block.use(v, state.tokens.curr);
+      }
+      return this;
+    },
+
+    led: function() {
+      error("E033", state.tokens.next, state.tokens.next.value);
+    }
+  };
+
+  var baseTemplateSyntax = {
+    lbp: 0,
+    identifier: false,
+    template: true,
+  };
+  state.syntax["(template)"] = _.extend({
+    type: "(template)",
+    nud: doTemplateLiteral,
+    led: doTemplateLiteral,
+    noSubst: false
+  }, baseTemplateSyntax);
+
+  state.syntax["(template middle)"] = _.extend({
+    type: "(template middle)",
+    middle: true,
+    noSubst: false
+  }, baseTemplateSyntax);
+
+  state.syntax["(template tail)"] = _.extend({
+    type: "(template tail)",
+    tail: true,
+    noSubst: false
+  }, baseTemplateSyntax);
+
+  state.syntax["(no subst template)"] = _.extend({
+    type: "(template)",
+    nud: doTemplateLiteral,
+    led: doTemplateLiteral,
+    noSubst: true,
+    tail: true // mark as tail, since it's always the last component
+  }, baseTemplateSyntax);
+
+  type("(regexp)", function() {
+    return this;
+  });
+
+  delim("(endline)");
+  delim("(begin)");
+  delim("(end)").reach = true;
+  delim("(error)").reach = true;
+  delim("}").reach = true;
+  delim(")");
+  delim("]");
+  delim("\"").reach = true;
+  delim("'").reach = true;
+  delim(";");
+  delim(":").reach = true;
+  delim("#");
+
+  reserve("else");
+  reserve("case").reach = true;
+  reserve("catch");
+  reserve("default").reach = true;
+  reserve("finally");
+  reservevar("arguments", function(x) {
+    if (state.isStrict() && state.funct["(global)"]) {
+      warning("E008", x);
+    }
+  });
+  reservevar("eval");
+  reservevar("false");
+  reservevar("Infinity");
+  reservevar("null");
+  reservevar("this", function(x) {
+    if (state.isStrict() && !isMethod() &&
+        !state.option.validthis && ((state.funct["(statement)"] &&
+        state.funct["(name)"].charAt(0) > "Z") || state.funct["(global)"])) {
+      warning("W040", x);
+    }
+  });
+  reservevar("true");
+  reservevar("undefined");
+
+  assignop("=", "assign", 20);
+  assignop("+=", "assignadd", 20);
+  assignop("-=", "assignsub", 20);
+  assignop("*=", "assignmult", 20);
+  assignop("/=", "assigndiv", 20).nud = function() {
+    error("E014");
+  };
+  assignop("%=", "assignmod", 20);
+
+  bitwiseassignop("&=");
+  bitwiseassignop("|=");
+  bitwiseassignop("^=");
+  bitwiseassignop("<<=");
+  bitwiseassignop(">>=");
+  bitwiseassignop(">>>=");
+  infix(",", function(left, that) {
+    var expr;
+    that.exprs = [left];
+
+    if (state.option.nocomma) {
+      warning("W127");
+    }
+
+    if (!comma({ peek: true })) {
+      return that;
+    }
+    while (true) {
+      if (!(expr = expression(10))) {
+        break;
+      }
+      that.exprs.push(expr);
+      if (state.tokens.next.value !== "," || !comma()) {
+        break;
+      }
+    }
+    return that;
+  }, 10, true);
+
+  infix("?", function(left, that) {
+    increaseComplexityCount();
+    that.left = left;
+    that.right = expression(10);
+    advance(":");
+    that["else"] = expression(10);
+    return that;
+  }, 30);
+
+  var orPrecendence = 40;
+  infix("||", function(left, that) {
+    increaseComplexityCount();
+    that.left = left;
+    that.right = expression(orPrecendence);
+    return that;
+  }, orPrecendence);
+  infix("&&", "and", 50);
+  bitwise("|", "bitor", 70);
+  bitwise("^", "bitxor", 80);
+  bitwise("&", "bitand", 90);
+  relation("==", function(left, right) {
+    var eqnull = state.option.eqnull &&
+      ((left && left.value) === "null" || (right && right.value) === "null");
+
+    switch (true) {
+      case !eqnull && state.option.eqeqeq:
+        this.from = this.character;
+        warning("W116", this, "===", "==");
+        break;
+      case isPoorRelation(left):
+        warning("W041", this, "===", left.value);
+        break;
+      case isPoorRelation(right):
+        warning("W041", this, "===", right.value);
+        break;
+      case isTypoTypeof(right, left, state):
+        warning("W122", this, right.value);
+        break;
+      case isTypoTypeof(left, right, state):
+        warning("W122", this, left.value);
+        break;
+    }
+
+    return this;
+  });
+  relation("===", function(left, right) {
+    if (isTypoTypeof(right, left, state)) {
+      warning("W122", this, right.value);
+    } else if (isTypoTypeof(left, right, state)) {
+      warning("W122", this, left.value);
+    }
+    return this;
+  });
+  relation("!=", function(left, right) {
+    var eqnull = state.option.eqnull &&
+        ((left && left.value) === "null" || (right && right.value) === "null");
+
+    if (!eqnull && state.option.eqeqeq) {
+      this.from = this.character;
+      warning("W116", this, "!==", "!=");
+    } else if (isPoorRelation(left)) {
+      warning("W041", this, "!==", left.value);
+    } else if (isPoorRelation(right)) {
+      warning("W041", this, "!==", right.value);
+    } else if (isTypoTypeof(right, left, state)) {
+      warning("W122", this, right.value);
+    } else if (isTypoTypeof(left, right, state)) {
+      warning("W122", this, left.value);
+    }
+    return this;
+  });
+  relation("!==", function(left, right) {
+    if (isTypoTypeof(right, left, state)) {
+      warning("W122", this, right.value);
+    } else if (isTypoTypeof(left, right, state)) {
+      warning("W122", this, left.value);
+    }
+    return this;
+  });
+  relation("<");
+  relation(">");
+  relation("<=");
+  relation(">=");
+  bitwise("<<", "shiftleft", 120);
+  bitwise(">>", "shiftright", 120);
+  bitwise(">>>", "shiftrightunsigned", 120);
+  infix("in", "in", 120);
+  infix("instanceof", "instanceof", 120);
+  infix("+", function(left, that) {
+    var right;
+    that.left = left;
+    that.right = right = expression(130);
+
+    if (left && right && left.id === "(string)" && right.id === "(string)") {
+      left.value += right.value;
+      left.character = right.character;
+      if (!state.option.scripturl && reg.javascriptURL.test(left.value)) {
+        warning("W050", left);
+      }
+      return left;
+    }
+
+    return that;
+  }, 130);
+  prefix("+", "num");
+  prefix("+++", function() {
+    warning("W007");
+    this.arity = "unary";
+    this.right = expression(150);
+    return this;
+  });
+  infix("+++", function(left) {
+    warning("W007");
+    this.left = left;
+    this.right = expression(130);
+    return this;
+  }, 130);
+  infix("-", "sub", 130);
+  prefix("-", "neg");
+  prefix("---", function() {
+    warning("W006");
+    this.arity = "unary";
+    this.right = expression(150);
+    return this;
+  });
+  infix("---", function(left) {
+    warning("W006");
+    this.left = left;
+    this.right = expression(130);
+    return this;
+  }, 130);
+  infix("*", "mult", 140);
+  infix("/", "div", 140);
+  infix("%", "mod", 140);
+
+  suffix("++");
+  prefix("++", "preinc");
+  state.syntax["++"].exps = true;
+
+  suffix("--");
+  prefix("--", "predec");
+  state.syntax["--"].exps = true;
+  prefix("delete", function() {
+    var p = expression(10);
+    if (!p) {
+      return this;
+    }
+
+    if (p.id !== "." && p.id !== "[") {
+      warning("W051");
+    }
+    this.first = p;
+    if (p.identifier && !state.isStrict()) {
+      p.forgiveUndef = true;
+    }
+    return this;
+  }).exps = true;
+
+  prefix("~", function() {
+    if (state.option.bitwise) {
+      warning("W016", this, "~");
+    }
+    this.arity = "unary";
+    this.right = expression(150);
+    return this;
+  });
+
+  prefix("...", function() {
+    if (!state.inES6(true)) {
+      warning("W119", this, "spread/rest operator", "6");
+    }
+    if (!state.tokens.next.identifier &&
+        state.tokens.next.type !== "(string)" &&
+          !checkPunctuators(state.tokens.next, ["[", "("])) {
+
+      error("E030", state.tokens.next, state.tokens.next.value);
+    }
+    expression(150);
+    return this;
+  });
+
+  prefix("!", function() {
+    this.arity = "unary";
+    this.right = expression(150);
+
+    if (!this.right) { // '!' followed by nothing? Give up.
+      quit("E041", this.line || 0);
+    }
+
+    if (bang[this.right.id] === true) {
+      warning("W018", this, "!");
+    }
+    return this;
+  });
+
+  prefix("typeof", (function() {
+    var p = expression(150);
+    this.first = this.right = p;
+
+    if (!p) { // 'typeof' followed by nothing? Give up.
+      quit("E041", this.line || 0, this.character || 0);
+    }
+    if (p.identifier) {
+      p.forgiveUndef = true;
+    }
+    return this;
+  }));
+  prefix("new", function() {
+    var mp = metaProperty("target", function() {
+      if (!state.inES6(true)) {
+        warning("W119", state.tokens.prev, "new.target", "6");
+      }
+      var inFunction, c = state.funct;
+      while (c) {
+        inFunction = !c["(global)"];
+        if (!c["(arrow)"]) { break; }
+        c = c["(context)"];
+      }
+      if (!inFunction) {
+        warning("W136", state.tokens.prev, "new.target");
+      }
+    });
+    if (mp) { return mp; }
+
+    var c = expression(155), i;
+    if (c && c.id !== "function") {
+      if (c.identifier) {
+        c["new"] = true;
+        switch (c.value) {
+        case "Number":
+        case "String":
+        case "Boolean":
+        case "Math":
+        case "JSON":
+          warning("W053", state.tokens.prev, c.value);
+          break;
+        case "Symbol":
+          if (state.inES6()) {
+            warning("W053", state.tokens.prev, c.value);
+          }
+          break;
+        case "Function":
+          if (!state.option.evil) {
+            warning("W054");
+          }
+          break;
+        case "Date":
+        case "RegExp":
+        case "this":
+          break;
+        default:
+          if (c.id !== "function") {
+            i = c.value.substr(0, 1);
+            if (state.option.newcap && (i < "A" || i > "Z") &&
+              !state.funct["(scope)"].isPredefined(c.value)) {
+              warning("W055", state.tokens.curr);
+            }
+          }
+        }
+      } else {
+        if (c.id !== "." && c.id !== "[" && c.id !== "(") {
+          warning("W056", state.tokens.curr);
+        }
+      }
+    } else {
+      if (!state.option.supernew)
+        warning("W057", this);
+    }
+    if (state.tokens.next.id !== "(" && !state.option.supernew) {
+      warning("W058", state.tokens.curr, state.tokens.curr.value);
+    }
+    this.first = this.right = c;
+    return this;
+  });
+  state.syntax["new"].exps = true;
+
+  prefix("void").exps = true;
+
+  infix(".", function(left, that) {
+    var m = identifier(false, true);
+
+    if (typeof m === "string") {
+      countMember(m);
+    }
+
+    that.left = left;
+    that.right = m;
+
+    if (m && m === "hasOwnProperty" && state.tokens.next.value === "=") {
+      warning("W001");
+    }
+
+    if (left && left.value === "arguments" && (m === "callee" || m === "caller")) {
+      if (state.option.noarg)
+        warning("W059", left, m);
+      else if (state.isStrict())
+        error("E008");
+    } else if (!state.option.evil && left && left.value === "document" &&
+        (m === "write" || m === "writeln")) {
+      warning("W060", left);
+    }
+
+    if (!state.option.evil && (m === "eval" || m === "execScript")) {
+      if (isGlobalEval(left, state)) {
+        warning("W061");
+      }
+    }
+
+    return that;
+  }, 160, true);
+
+  infix("(", function(left, that) {
+    if (state.option.immed && left && !left.immed && left.id === "function") {
+      warning("W062");
+    }
+
+    var n = 0;
+    var p = [];
+
+    if (left) {
+      if (left.type === "(identifier)") {
+        if (left.value.match(/^[A-Z]([A-Z0-9_$]*[a-z][A-Za-z0-9_$]*)?$/)) {
+          if ("Array Number String Boolean Date Object Error Symbol".indexOf(left.value) === -1) {
+            if (left.value === "Math") {
+              warning("W063", left);
+            } else if (state.option.newcap) {
+              warning("W064", left);
+            }
+          }
+        }
+      }
+    }
+
+    if (state.tokens.next.id !== ")") {
+      for (;;) {
+        p[p.length] = expression(10);
+        n += 1;
+        if (state.tokens.next.id !== ",") {
+          break;
+        }
+        comma();
+      }
+    }
+
+    advance(")");
+
+    if (typeof left === "object") {
+      if (!state.inES5() && left.value === "parseInt" && n === 1) {
+        warning("W065", state.tokens.curr);
+      }
+      if (!state.option.evil) {
+        if (left.value === "eval" || left.value === "Function" ||
+            left.value === "execScript") {
+          warning("W061", left);
+
+          if (p[0] && [0].id === "(string)") {
+            addInternalSrc(left, p[0].value);
+          }
+        } else if (p[0] && p[0].id === "(string)" &&
+             (left.value === "setTimeout" ||
+            left.value === "setInterval")) {
+          warning("W066", left);
+          addInternalSrc(left, p[0].value);
+        } else if (p[0] && p[0].id === "(string)" &&
+             left.value === "." &&
+             left.left.value === "window" &&
+             (left.right === "setTimeout" ||
+            left.right === "setInterval")) {
+          warning("W066", left);
+          addInternalSrc(left, p[0].value);
+        }
+      }
+      if (!left.identifier && left.id !== "." && left.id !== "[" && left.id !== "=>" &&
+          left.id !== "(" && left.id !== "&&" && left.id !== "||" && left.id !== "?" &&
+          !(state.inES6() && left["(name)"])) {
+        warning("W067", that);
+      }
+    }
+
+    that.left = left;
+    return that;
+  }, 155, true).exps = true;
+
+  prefix("(", function() {
+    var pn = state.tokens.next, pn1, i = -1;
+    var ret, triggerFnExpr, first, last;
+    var parens = 1;
+    var opening = state.tokens.curr;
+    var preceeding = state.tokens.prev;
+    var isNecessary = !state.option.singleGroups;
+
+    do {
+      if (pn.value === "(") {
+        parens += 1;
+      } else if (pn.value === ")") {
+        parens -= 1;
+      }
+
+      i += 1;
+      pn1 = pn;
+      pn = peek(i);
+    } while (!(parens === 0 && pn1.value === ")") && pn.value !== ";" && pn.type !== "(end)");
+
+    if (state.tokens.next.id === "function") {
+      triggerFnExpr = state.tokens.next.immed = true;
+    }
+    if (pn.value === "=>") {
+      return doFunction({ type: "arrow", parsedOpening: true });
+    }
+
+    var exprs = [];
+
+    if (state.tokens.next.id !== ")") {
+      for (;;) {
+        exprs.push(expression(10));
+
+        if (state.tokens.next.id !== ",") {
+          break;
+        }
+
+        if (state.option.nocomma) {
+          warning("W127");
+        }
+
+        comma();
+      }
+    }
+
+    advance(")", this);
+    if (state.option.immed && exprs[0] && exprs[0].id === "function") {
+      if (state.tokens.next.id !== "(" &&
+        state.tokens.next.id !== "." && state.tokens.next.id !== "[") {
+        warning("W068", this);
+      }
+    }
+
+    if (!exprs.length) {
+      return;
+    }
+    if (exprs.length > 1) {
+      ret = Object.create(state.syntax[","]);
+      ret.exprs = exprs;
+
+      first = exprs[0];
+      last = exprs[exprs.length - 1];
+
+      if (!isNecessary) {
+        isNecessary = preceeding.assign || preceeding.delim;
+      }
+    } else {
+      ret = first = last = exprs[0];
+
+      if (!isNecessary) {
+        isNecessary =
+          (opening.beginsStmt && (ret.id === "{" || triggerFnExpr || isFunctor(ret))) ||
+          (triggerFnExpr &&
+            (!isEndOfExpr() || state.tokens.prev.id !== "}")) ||
+          (isFunctor(ret) && !isEndOfExpr()) ||
+          (ret.id === "{" && preceeding.id === "=>") ||
+          (ret.type === "(number)" &&
+            checkPunctuator(pn, ".") && /^\d+$/.test(ret.value));
+      }
+    }
+
+    if (ret) {
+      if (!isNecessary && (first.left || first.right || ret.exprs)) {
+        isNecessary =
+          (!isBeginOfExpr(preceeding) && first.lbp <= preceeding.lbp) ||
+          (!isEndOfExpr() && last.lbp < state.tokens.next.lbp);
+      }
+
+      if (!isNecessary) {
+        warning("W126", opening);
+      }
+
+      ret.paren = true;
+    }
+
+    return ret;
+  });
+
+  application("=>");
+
+  infix("[", function(left, that) {
+    var e = expression(10), s;
+    if (e && e.type === "(string)") {
+      if (!state.option.evil && (e.value === "eval" || e.value === "execScript")) {
+        if (isGlobalEval(left, state)) {
+          warning("W061");
+        }
+      }
+
+      countMember(e.value);
+      if (!state.option.sub && reg.identifier.test(e.value)) {
+        s = state.syntax[e.value];
+        if (!s || !isReserved(s)) {
+          warning("W069", state.tokens.prev, e.value);
+        }
+      }
+    }
+    advance("]", that);
+
+    if (e && e.value === "hasOwnProperty" && state.tokens.next.value === "=") {
+      warning("W001");
+    }
+
+    that.left = left;
+    that.right = e;
+    return that;
+  }, 160, true);
+
+  function comprehensiveArrayExpression() {
+    var res = {};
+    res.exps = true;
+    state.funct["(comparray)"].stack();
+    var reversed = false;
+    if (state.tokens.next.value !== "for") {
+      reversed = true;
+      if (!state.inMoz()) {
+        warning("W116", state.tokens.next, "for", state.tokens.next.value);
+      }
+      state.funct["(comparray)"].setState("use");
+      res.right = expression(10);
+    }
+
+    advance("for");
+    if (state.tokens.next.value === "each") {
+      advance("each");
+      if (!state.inMoz()) {
+        warning("W118", state.tokens.curr, "for each");
+      }
+    }
+    advance("(");
+    state.funct["(comparray)"].setState("define");
+    res.left = expression(130);
+    if (_.contains(["in", "of"], state.tokens.next.value)) {
+      advance();
+    } else {
+      error("E045", state.tokens.curr);
+    }
+    state.funct["(comparray)"].setState("generate");
+    expression(10);
+
+    advance(")");
+    if (state.tokens.next.value === "if") {
+      advance("if");
+      advance("(");
+      state.funct["(comparray)"].setState("filter");
+      res.filter = expression(10);
+      advance(")");
+    }
+
+    if (!reversed) {
+      state.funct["(comparray)"].setState("use");
+      res.right = expression(10);
+    }
+
+    advance("]");
+    state.funct["(comparray)"].unstack();
+    return res;
+  }
+
+  prefix("[", function() {
+    var blocktype = lookupBlockType();
+    if (blocktype.isCompArray) {
+      if (!state.option.esnext && !state.inMoz()) {
+        warning("W118", state.tokens.curr, "array comprehension");
+      }
+      return comprehensiveArrayExpression();
+    } else if (blocktype.isDestAssign) {
+      this.destructAssign = destructuringPattern({ openingParsed: true, assignment: true });
+      return this;
+    }
+    var b = state.tokens.curr.line !== startLine(state.tokens.next);
+    this.first = [];
+    if (b) {
+      indent += state.option.indent;
+      if (state.tokens.next.from === indent + state.option.indent) {
+        indent += state.option.indent;
+      }
+    }
+    while (state.tokens.next.id !== "(end)") {
+      while (state.tokens.next.id === ",") {
+        if (!state.option.elision) {
+          if (!state.inES5()) {
+            warning("W070");
+          } else {
+            warning("W128");
+            do {
+              advance(",");
+            } while (state.tokens.next.id === ",");
+            continue;
+          }
+        }
+        advance(",");
+      }
+
+      if (state.tokens.next.id === "]") {
+        break;
+      }
+
+      this.first.push(expression(10));
+      if (state.tokens.next.id === ",") {
+        comma({ allowTrailing: true });
+        if (state.tokens.next.id === "]" && !state.inES5()) {
+          warning("W070", state.tokens.curr);
+          break;
+        }
+      } else {
+        break;
+      }
+    }
+    if (b) {
+      indent -= state.option.indent;
+    }
+    advance("]", this);
+    return this;
+  });
+
+
+  function isMethod() {
+    return state.funct["(statement)"] && state.funct["(statement)"].type === "class" ||
+           state.funct["(context)"] && state.funct["(context)"]["(verb)"] === "class";
+  }
+
+
+  function isPropertyName(token) {
+    return token.identifier || token.id === "(string)" || token.id === "(number)";
+  }
+
+
+  function propertyName(preserveOrToken) {
+    var id;
+    var preserve = true;
+    if (typeof preserveOrToken === "object") {
+      id = preserveOrToken;
+    } else {
+      preserve = preserveOrToken;
+      id = optionalidentifier(false, true, preserve);
+    }
+
+    if (!id) {
+      if (state.tokens.next.id === "(string)") {
+        id = state.tokens.next.value;
+        if (!preserve) {
+          advance();
+        }
+      } else if (state.tokens.next.id === "(number)") {
+        id = state.tokens.next.value.toString();
+        if (!preserve) {
+          advance();
+        }
+      }
+    } else if (typeof id === "object") {
+      if (id.id === "(string)" || id.id === "(identifier)") id = id.value;
+      else if (id.id === "(number)") id = id.value.toString();
+    }
+
+    if (id === "hasOwnProperty") {
+      warning("W001");
+    }
+
+    return id;
+  }
+  function functionparams(options) {
+    var next;
+    var paramsIds = [];
+    var ident;
+    var tokens = [];
+    var t;
+    var pastDefault = false;
+    var pastRest = false;
+    var arity = 0;
+    var loneArg = options && options.loneArg;
+
+    if (loneArg && loneArg.identifier === true) {
+      state.funct["(scope)"].addParam(loneArg.value, loneArg);
+      return { arity: 1, params: [ loneArg.value ] };
+    }
+
+    next = state.tokens.next;
+
+    if (!options || !options.parsedOpening) {
+      advance("(");
+    }
+
+    if (state.tokens.next.id === ")") {
+      advance(")");
+      return;
+    }
+
+    function addParam(addParamArgs) {
+      state.funct["(scope)"].addParam.apply(state.funct["(scope)"], addParamArgs);
+    }
+
+    for (;;) {
+      arity++;
+      var currentParams = [];
+
+      if (_.contains(["{", "["], state.tokens.next.id)) {
+        tokens = destructuringPattern();
+        for (t in tokens) {
+          t = tokens[t];
+          if (t.id) {
+            paramsIds.push(t.id);
+            currentParams.push([t.id, t.token]);
+          }
+        }
+      } else {
+        if (checkPunctuator(state.tokens.next, "...")) pastRest = true;
+        ident = identifier(true);
+        if (ident) {
+          paramsIds.push(ident);
+          currentParams.push([ident, state.tokens.curr]);
+        } else {
+          while (!checkPunctuators(state.tokens.next, [",", ")"])) advance();
+        }
+      }
+      if (pastDefault) {
+        if (state.tokens.next.id !== "=") {
+          error("W138", state.tokens.current);
+        }
+      }
+      if (state.tokens.next.id === "=") {
+        if (!state.inES6()) {
+          warning("W119", state.tokens.next, "default parameters", "6");
+        }
+        advance("=");
+        pastDefault = true;
+        expression(10);
+      }
+      currentParams.forEach(addParam);
+
+      if (state.tokens.next.id === ",") {
+        if (pastRest) {
+          warning("W131", state.tokens.next);
+        }
+        comma();
+      } else {
+        advance(")", next);
+        return { arity: arity, params: paramsIds };
+      }
+    }
+  }
+
+  function functor(name, token, overwrites) {
+    var funct = {
+      "(name)"      : name,
+      "(breakage)"  : 0,
+      "(loopage)"   : 0,
+      "(tokens)"    : {},
+      "(properties)": {},
+
+      "(catch)"     : false,
+      "(global)"    : false,
+
+      "(line)"      : null,
+      "(character)" : null,
+      "(metrics)"   : null,
+      "(statement)" : null,
+      "(context)"   : null,
+      "(scope)"     : null,
+      "(comparray)" : null,
+      "(generator)" : null,
+      "(arrow)"     : null,
+      "(params)"    : null
+    };
+
+    if (token) {
+      _.extend(funct, {
+        "(line)"     : token.line,
+        "(character)": token.character,
+        "(metrics)"  : createMetrics(token)
+      });
+    }
+
+    _.extend(funct, overwrites);
+
+    if (funct["(context)"]) {
+      funct["(scope)"] = funct["(context)"]["(scope)"];
+      funct["(comparray)"]  = funct["(context)"]["(comparray)"];
+    }
+
+    return funct;
+  }
+
+  function isFunctor(token) {
+    return "(scope)" in token;
+  }
+  function hasParsedCode(funct) {
+    return funct["(global)"] && !funct["(verb)"];
+  }
+
+  function doTemplateLiteral(left) {
+    var ctx = this.context;
+    var noSubst = this.noSubst;
+    var depth = this.depth;
+
+    if (!noSubst) {
+      while (!end()) {
+        if (!state.tokens.next.template || state.tokens.next.depth > depth) {
+          expression(0); // should probably have different rbp?
+        } else {
+          advance();
+        }
+      }
+    }
+
+    return {
+      id: "(template)",
+      type: "(template)",
+      tag: left
+    };
+
+    function end() {
+      if (state.tokens.curr.template && state.tokens.curr.tail &&
+          state.tokens.curr.context === ctx) return true;
+      var complete = (state.tokens.next.template && state.tokens.next.tail &&
+                      state.tokens.next.context === ctx);
+      if (complete) advance();
+      return complete || state.tokens.next.isUnclosed;
+    }
+  }
+  function doFunction(options) {
+    var f, token, name, statement, classExprBinding, isGenerator, isArrow, ignoreLoopFunc;
+    var oldOption = state.option;
+    var oldIgnored = state.ignored;
+
+    if (options) {
+      name = options.name;
+      statement = options.statement;
+      classExprBinding = options.classExprBinding;
+      isGenerator = options.type === "generator";
+      isArrow = options.type === "arrow";
+      ignoreLoopFunc = options.ignoreLoopFunc;
+    }
+
+    state.option = Object.create(state.option);
+    state.ignored = Object.create(state.ignored);
+
+    state.funct = functor(name || state.nameStack.infer(), state.tokens.next, {
+      "(statement)": statement,
+      "(context)":   state.funct,
+      "(arrow)":     isArrow,
+      "(generator)": isGenerator
+    });
+
+    f = state.funct;
+    token = state.tokens.curr;
+    token.funct = state.funct;
+
+    functions.push(state.funct);
+    state.funct["(scope)"].stack("functionouter");
+    var internallyAccessibleName = name || classExprBinding;
+    if (internallyAccessibleName) {
+      state.funct["(scope)"].block.add(internallyAccessibleName,
+        classExprBinding ? "class" : "function", state.tokens.curr, false);
+    }
+    state.funct["(scope)"].stack("functionparams");
+
+    var paramsInfo = functionparams(options);
+
+    if (paramsInfo) {
+      state.funct["(params)"] = paramsInfo.params;
+      state.funct["(metrics)"].arity = paramsInfo.arity;
+      state.funct["(metrics)"].verifyMaxParametersPerFunction();
+    } else {
+      state.funct["(metrics)"].arity = 0;
+    }
+
+    if (isArrow) {
+      if (!state.inES6(true)) {
+        warning("W119", state.tokens.curr, "arrow function syntax (=>)", "6");
+      }
+
+      if (!options.loneArg) {
+        advance("=>");
+      }
+    }
+
+    block(false, true, true, isArrow);
+
+    if (!state.option.noyield && isGenerator &&
+        state.funct["(generator)"] !== "yielded") {
+      warning("W124", state.tokens.curr);
+    }
+
+    state.funct["(metrics)"].verifyMaxStatementsPerFunction();
+    state.funct["(metrics)"].verifyMaxComplexityPerFunction();
+    state.funct["(unusedOption)"] = state.option.unused;
+    state.option = oldOption;
+    state.ignored = oldIgnored;
+    state.funct["(last)"] = state.tokens.curr.line;
+    state.funct["(lastcharacter)"] = state.tokens.curr.character;
+    state.funct["(scope)"].unstack(); // also does usage and label checks
+    state.funct["(scope)"].unstack();
+
+    state.funct = state.funct["(context)"];
+
+    if (!ignoreLoopFunc && !state.option.loopfunc && state.funct["(loopage)"]) {
+      if (f["(isCapturing)"]) {
+        warning("W083", token);
+      }
+    }
+
+    return f;
+  }
+
+  function createMetrics(functionStartToken) {
+    return {
+      statementCount: 0,
+      nestedBlockDepth: -1,
+      ComplexityCount: 1,
+      arity: 0,
+
+      verifyMaxStatementsPerFunction: function() {
+        if (state.option.maxstatements &&
+          this.statementCount > state.option.maxstatements) {
+          warning("W071", functionStartToken, this.statementCount);
+        }
+      },
+
+      verifyMaxParametersPerFunction: function() {
+        if (_.isNumber(state.option.maxparams) &&
+          this.arity > state.option.maxparams) {
+          warning("W072", functionStartToken, this.arity);
+        }
+      },
+
+      verifyMaxNestedBlockDepthPerFunction: function() {
+        if (state.option.maxdepth &&
+          this.nestedBlockDepth > 0 &&
+          this.nestedBlockDepth === state.option.maxdepth + 1) {
+          warning("W073", null, this.nestedBlockDepth);
+        }
+      },
+
+      verifyMaxComplexityPerFunction: function() {
+        var max = state.option.maxcomplexity;
+        var cc = this.ComplexityCount;
+        if (max && cc > max) {
+          warning("W074", functionStartToken, cc);
+        }
+      }
+    };
+  }
+
+  function increaseComplexityCount() {
+    state.funct["(metrics)"].ComplexityCount += 1;
+  }
+
+  function checkCondAssignment(expr) {
+    var id, paren;
+    if (expr) {
+      id = expr.id;
+      paren = expr.paren;
+      if (id === "," && (expr = expr.exprs[expr.exprs.length - 1])) {
+        id = expr.id;
+        paren = paren || expr.paren;
+      }
+    }
+    switch (id) {
+    case "=":
+    case "+=":
+    case "-=":
+    case "*=":
+    case "%=":
+    case "&=":
+    case "|=":
+    case "^=":
+    case "/=":
+      if (!paren && !state.option.boss) {
+        warning("W084");
+      }
+    }
+  }
+  function checkProperties(props) {
+    if (state.inES5()) {
+      for (var name in props) {
+        if (props[name] && props[name].setterToken && !props[name].getterToken) {
+          warning("W078", props[name].setterToken);
+        }
+      }
+    }
+  }
+
+  function metaProperty(name, c) {
+    if (checkPunctuator(state.tokens.next, ".")) {
+      var left = state.tokens.curr.id;
+      advance(".");
+      var id = identifier();
+      state.tokens.curr.isMetaProperty = true;
+      if (name !== id) {
+        error("E057", state.tokens.prev, left, id);
+      } else {
+        c();
+      }
+      return state.tokens.curr;
+    }
+  }
+
+  (function(x) {
+    x.nud = function() {
+      var b, f, i, p, t, isGeneratorMethod = false, nextVal;
+      var props = Object.create(null); // All properties, including accessors
+
+      b = state.tokens.curr.line !== startLine(state.tokens.next);
+      if (b) {
+        indent += state.option.indent;
+        if (state.tokens.next.from === indent + state.option.indent) {
+          indent += state.option.indent;
+        }
+      }
+
+      var blocktype = lookupBlockType();
+      if (blocktype.isDestAssign) {
+        this.destructAssign = destructuringPattern({ openingParsed: true, assignment: true });
+        return this;
+      }
+
+      for (;;) {
+        if (state.tokens.next.id === "}") {
+          break;
+        }
+
+        nextVal = state.tokens.next.value;
+        if (state.tokens.next.identifier &&
+            (peekIgnoreEOL().id === "," || peekIgnoreEOL().id === "}")) {
+          if (!state.inES6()) {
+            warning("W104", state.tokens.next, "object short notation", "6");
+          }
+          i = propertyName(true);
+          saveProperty(props, i, state.tokens.next);
+
+          expression(10);
+
+        } else if (peek().id !== ":" && (nextVal === "get" || nextVal === "set")) {
+          advance(nextVal);
+
+          if (!state.inES5()) {
+            error("E034");
+          }
+
+          i = propertyName();
+          if (!i && !state.inES6()) {
+            error("E035");
+          }
+          if (i) {
+            saveAccessor(nextVal, props, i, state.tokens.curr);
+          }
+
+          t = state.tokens.next;
+          f = doFunction();
+          p = f["(params)"];
+          if (nextVal === "get" && i && p) {
+            warning("W076", t, p[0], i);
+          } else if (nextVal === "set" && i && (!p || p.length !== 1)) {
+            warning("W077", t, i);
+          }
+        } else {
+          if (state.tokens.next.value === "*" && state.tokens.next.type === "(punctuator)") {
+            if (!state.inES6()) {
+              warning("W104", state.tokens.next, "generator functions", "6");
+            }
+            advance("*");
+            isGeneratorMethod = true;
+          } else {
+            isGeneratorMethod = false;
+          }
+
+          if (state.tokens.next.id === "[") {
+            i = computedPropertyName();
+            state.nameStack.set(i);
+          } else {
+            state.nameStack.set(state.tokens.next);
+            i = propertyName();
+            saveProperty(props, i, state.tokens.next);
+
+            if (typeof i !== "string") {
+              break;
+            }
+          }
+
+          if (state.tokens.next.value === "(") {
+            if (!state.inES6()) {
+              warning("W104", state.tokens.curr, "concise methods", "6");
+            }
+            doFunction({ type: isGeneratorMethod ? "generator" : null });
+          } else {
+            advance(":");
+            expression(10);
+          }
+        }
+
+        countMember(i);
+
+        if (state.tokens.next.id === ",") {
+          comma({ allowTrailing: true, property: true });
+          if (state.tokens.next.id === ",") {
+            warning("W070", state.tokens.curr);
+          } else if (state.tokens.next.id === "}" && !state.inES5()) {
+            warning("W070", state.tokens.curr);
+          }
+        } else {
+          break;
+        }
+      }
+      if (b) {
+        indent -= state.option.indent;
+      }
+      advance("}", this);
+
+      checkProperties(props);
+
+      return this;
+    };
+    x.fud = function() {
+      error("E036", state.tokens.curr);
+    };
+  }(delim("{")));
+
+  function destructuringPattern(options) {
+    var isAssignment = options && options.assignment;
+
+    if (!state.inES6()) {
+      warning("W104", state.tokens.curr,
+        isAssignment ? "destructuring assignment" : "destructuring binding", "6");
+    }
+
+    return destructuringPatternRecursive(options);
+  }
+
+  function destructuringPatternRecursive(options) {
+    var ids;
+    var identifiers = [];
+    var openingParsed = options && options.openingParsed;
+    var isAssignment = options && options.assignment;
+    var recursiveOptions = isAssignment ? { assignment: isAssignment } : null;
+    var firstToken = openingParsed ? state.tokens.curr : state.tokens.next;
+
+    var nextInnerDE = function() {
+      var ident;
+      if (checkPunctuators(state.tokens.next, ["[", "{"])) {
+        ids = destructuringPatternRecursive(recursiveOptions);
+        for (var id in ids) {
+          id = ids[id];
+          identifiers.push({ id: id.id, token: id.token });
+        }
+      } else if (checkPunctuator(state.tokens.next, ",")) {
+        identifiers.push({ id: null, token: state.tokens.curr });
+      } else if (checkPunctuator(state.tokens.next, "(")) {
+        advance("(");
+        nextInnerDE();
+        advance(")");
+      } else {
+        var is_rest = checkPunctuator(state.tokens.next, "...");
+
+        if (isAssignment) {
+          var identifierToken = is_rest ? peek(0) : state.tokens.next;
+          if (!identifierToken.identifier) {
+            warning("E030", identifierToken, identifierToken.value);
+          }
+          var assignTarget = expression(155);
+          if (assignTarget) {
+            checkLeftSideAssign(assignTarget);
+            if (assignTarget.identifier) {
+              ident = assignTarget.value;
+            }
+          }
+        } else {
+          ident = identifier();
+        }
+        if (ident) {
+          identifiers.push({ id: ident, token: state.tokens.curr });
+        }
+        return is_rest;
+      }
+      return false;
+    };
+    var assignmentProperty = function() {
+      var id;
+      if (checkPunctuator(state.tokens.next, "[")) {
+        advance("[");
+        expression(10);
+        advance("]");
+        advance(":");
+        nextInnerDE();
+      } else if (state.tokens.next.id === "(string)" ||
+                 state.tokens.next.id === "(number)") {
+        advance();
+        advance(":");
+        nextInnerDE();
+      } else {
+        id = identifier();
+        if (checkPunctuator(state.tokens.next, ":")) {
+          advance(":");
+          nextInnerDE();
+        } else if (id) {
+          if (isAssignment) {
+            checkLeftSideAssign(state.tokens.curr);
+          }
+          identifiers.push({ id: id, token: state.tokens.curr });
+        }
+      }
+    };
+    if (checkPunctuator(firstToken, "[")) {
+      if (!openingParsed) {
+        advance("[");
+      }
+      if (checkPunctuator(state.tokens.next, "]")) {
+        warning("W137", state.tokens.curr);
+      }
+      var element_after_rest = false;
+      while (!checkPunctuator(state.tokens.next, "]")) {
+        if (nextInnerDE() && !element_after_rest &&
+            checkPunctuator(state.tokens.next, ",")) {
+          warning("W130", state.tokens.next);
+          element_after_rest = true;
+        }
+        if (checkPunctuator(state.tokens.next, "=")) {
+          if (checkPunctuator(state.tokens.prev, "...")) {
+            advance("]");
+          } else {
+            advance("=");
+          }
+          if (state.tokens.next.id === "undefined") {
+            warning("W080", state.tokens.prev, state.tokens.prev.value);
+          }
+          expression(10);
+        }
+        if (!checkPunctuator(state.tokens.next, "]")) {
+          advance(",");
+        }
+      }
+      advance("]");
+    } else if (checkPunctuator(firstToken, "{")) {
+
+      if (!openingParsed) {
+        advance("{");
+      }
+      if (checkPunctuator(state.tokens.next, "}")) {
+        warning("W137", state.tokens.curr);
+      }
+      while (!checkPunctuator(state.tokens.next, "}")) {
+        assignmentProperty();
+        if (checkPunctuator(state.tokens.next, "=")) {
+          advance("=");
+          if (state.tokens.next.id === "undefined") {
+            warning("W080", state.tokens.prev, state.tokens.prev.value);
+          }
+          expression(10);
+        }
+        if (!checkPunctuator(state.tokens.next, "}")) {
+          advance(",");
+          if (checkPunctuator(state.tokens.next, "}")) {
+            break;
+          }
+        }
+      }
+      advance("}");
+    }
+    return identifiers;
+  }
+
+  function destructuringPatternMatch(tokens, value) {
+    var first = value.first;
+
+    if (!first)
+      return;
+
+    _.zip(tokens, Array.isArray(first) ? first : [ first ]).forEach(function(val) {
+      var token = val[0];
+      var value = val[1];
+
+      if (token && value)
+        token.first = value;
+      else if (token && token.first && !value)
+        warning("W080", token.first, token.first.value);
+    });
+  }
+
+  function blockVariableStatement(type, statement, context) {
+
+    var prefix = context && context.prefix;
+    var inexport = context && context.inexport;
+    var isLet = type === "let";
+    var isConst = type === "const";
+    var tokens, lone, value, letblock;
+
+    if (!state.inES6()) {
+      warning("W104", state.tokens.curr, type, "6");
+    }
+
+    if (isLet && state.tokens.next.value === "(") {
+      if (!state.inMoz()) {
+        warning("W118", state.tokens.next, "let block");
+      }
+      advance("(");
+      state.funct["(scope)"].stack();
+      letblock = true;
+    } else if (state.funct["(noblockscopedvar)"]) {
+      error("E048", state.tokens.curr, isConst ? "Const" : "Let");
+    }
+
+    statement.first = [];
+    for (;;) {
+      var names = [];
+      if (_.contains(["{", "["], state.tokens.next.value)) {
+        tokens = destructuringPattern();
+        lone = false;
+      } else {
+        tokens = [ { id: identifier(), token: state.tokens.curr } ];
+        lone = true;
+      }
+
+      if (!prefix && isConst && state.tokens.next.id !== "=") {
+        warning("E012", state.tokens.curr, state.tokens.curr.value);
+      }
+
+      for (var t in tokens) {
+        if (tokens.hasOwnProperty(t)) {
+          t = tokens[t];
+          if (state.funct["(scope)"].block.isGlobal()) {
+            if (predefined[t.id] === false) {
+              warning("W079", t.token, t.id);
+            }
+          }
+          if (t.id && !state.funct["(noblockscopedvar)"]) {
+            state.funct["(scope)"].addlabel(t.id, {
+              type: type,
+              token: t.token });
+            names.push(t.token);
+
+            if (lone && inexport) {
+              state.funct["(scope)"].setExported(t.token.value, t.token);
+            }
+          }
+        }
+      }
+
+      if (state.tokens.next.id === "=") {
+        advance("=");
+        if (!prefix && state.tokens.next.id === "undefined") {
+          warning("W080", state.tokens.prev, state.tokens.prev.value);
+        }
+        if (!prefix && peek(0).id === "=" && state.tokens.next.identifier) {
+          warning("W120", state.tokens.next, state.tokens.next.value);
+        }
+        value = expression(prefix ? 120 : 10);
+        if (lone) {
+          tokens[0].first = value;
+        } else {
+          destructuringPatternMatch(names, value);
+        }
+      }
+
+      statement.first = statement.first.concat(names);
+
+      if (state.tokens.next.id !== ",") {
+        break;
+      }
+      comma();
+    }
+    if (letblock) {
+      advance(")");
+      block(true, true);
+      statement.block = true;
+      state.funct["(scope)"].unstack();
+    }
+
+    return statement;
+  }
+
+  var conststatement = stmt("const", function(context) {
+    return blockVariableStatement("const", this, context);
+  });
+  conststatement.exps = true;
+
+  var letstatement = stmt("let", function(context) {
+    return blockVariableStatement("let", this, context);
+  });
+  letstatement.exps = true;
+
+  var varstatement = stmt("var", function(context) {
+    var prefix = context && context.prefix;
+    var inexport = context && context.inexport;
+    var tokens, lone, value;
+    var implied = context && context.implied;
+    var report = !(context && context.ignore);
+
+    this.first = [];
+    for (;;) {
+      var names = [];
+      if (_.contains(["{", "["], state.tokens.next.value)) {
+        tokens = destructuringPattern();
+        lone = false;
+      } else {
+        tokens = [ { id: identifier(), token: state.tokens.curr } ];
+        lone = true;
+      }
+
+      if (!(prefix && implied) && report && state.option.varstmt) {
+        warning("W132", this);
+      }
+
+      this.first = this.first.concat(names);
+
+      for (var t in tokens) {
+        if (tokens.hasOwnProperty(t)) {
+          t = tokens[t];
+          if (!implied && state.funct["(global)"]) {
+            if (predefined[t.id] === false) {
+              warning("W079", t.token, t.id);
+            } else if (state.option.futurehostile === false) {
+              if ((!state.inES5() && vars.ecmaIdentifiers[5][t.id] === false) ||
+                (!state.inES6() && vars.ecmaIdentifiers[6][t.id] === false)) {
+                warning("W129", t.token, t.id);
+              }
+            }
+          }
+          if (t.id) {
+            if (implied === "for") {
+
+              if (!state.funct["(scope)"].has(t.id)) {
+                if (report) warning("W088", t.token, t.id);
+              }
+              state.funct["(scope)"].block.use(t.id, t.token);
+            } else {
+              state.funct["(scope)"].addlabel(t.id, {
+                type: "var",
+                token: t.token });
+
+              if (lone && inexport) {
+                state.funct["(scope)"].setExported(t.id, t.token);
+              }
+            }
+            names.push(t.token);
+          }
+        }
+      }
+
+      if (state.tokens.next.id === "=") {
+        state.nameStack.set(state.tokens.curr);
+
+        advance("=");
+        if (!prefix && report && !state.funct["(loopage)"] &&
+          state.tokens.next.id === "undefined") {
+          warning("W080", state.tokens.prev, state.tokens.prev.value);
+        }
+        if (peek(0).id === "=" && state.tokens.next.identifier) {
+          if (!prefix && report &&
+              !state.funct["(params)"] ||
+              state.funct["(params)"].indexOf(state.tokens.next.value) === -1) {
+            warning("W120", state.tokens.next, state.tokens.next.value);
+          }
+        }
+        value = expression(prefix ? 120 : 10);
+        if (lone) {
+          tokens[0].first = value;
+        } else {
+          destructuringPatternMatch(names, value);
+        }
+      }
+
+      if (state.tokens.next.id !== ",") {
+        break;
+      }
+      comma();
+    }
+
+    return this;
+  });
+  varstatement.exps = true;
+
+  blockstmt("class", function() {
+    return classdef.call(this, true);
+  });
+
+  function classdef(isStatement) {
+    if (!state.inES6()) {
+      warning("W104", state.tokens.curr, "class", "6");
+    }
+    if (isStatement) {
+      this.name = identifier();
+
+      state.funct["(scope)"].addlabel(this.name, {
+        type: "class",
+        token: state.tokens.curr });
+    } else if (state.tokens.next.identifier && state.tokens.next.value !== "extends") {
+      this.name = identifier();
+      this.namedExpr = true;
+    } else {
+      this.name = state.nameStack.infer();
+    }
+    classtail(this);
+    return this;
+  }
+
+  function classtail(c) {
+    var wasInClassBody = state.inClassBody;
+    if (state.tokens.next.value === "extends") {
+      advance("extends");
+      c.heritage = expression(10);
+    }
+
+    state.inClassBody = true;
+    advance("{");
+    c.body = classbody(c);
+    advance("}");
+    state.inClassBody = wasInClassBody;
+  }
+
+  function classbody(c) {
+    var name;
+    var isStatic;
+    var isGenerator;
+    var getset;
+    var props = Object.create(null);
+    var staticProps = Object.create(null);
+    var computed;
+    for (var i = 0; state.tokens.next.id !== "}"; ++i) {
+      name = state.tokens.next;
+      isStatic = false;
+      isGenerator = false;
+      getset = null;
+      if (name.id === ";") {
+        warning("W032");
+        advance(";");
+        continue;
+      }
+
+      if (name.id === "*") {
+        isGenerator = true;
+        advance("*");
+        name = state.tokens.next;
+      }
+      if (name.id === "[") {
+        name = computedPropertyName();
+        computed = true;
+      } else if (isPropertyName(name)) {
+        advance();
+        computed = false;
+        if (name.identifier && name.value === "static") {
+          if (checkPunctuator(state.tokens.next, "*")) {
+            isGenerator = true;
+            advance("*");
+          }
+          if (isPropertyName(state.tokens.next) || state.tokens.next.id === "[") {
+            computed = state.tokens.next.id === "[";
+            isStatic = true;
+            name = state.tokens.next;
+            if (state.tokens.next.id === "[") {
+              name = computedPropertyName();
+            } else advance();
+          }
+        }
+
+        if (name.identifier && (name.value === "get" || name.value === "set")) {
+          if (isPropertyName(state.tokens.next) || state.tokens.next.id === "[") {
+            computed = state.tokens.next.id === "[";
+            getset = name;
+            name = state.tokens.next;
+            if (state.tokens.next.id === "[") {
+              name = computedPropertyName();
+            } else advance();
+          }
+        }
+      } else {
+        warning("W052", state.tokens.next, state.tokens.next.value || state.tokens.next.type);
+        advance();
+        continue;
+      }
+
+      if (!checkPunctuator(state.tokens.next, "(")) {
+        error("E054", state.tokens.next, state.tokens.next.value);
+        while (state.tokens.next.id !== "}" &&
+               !checkPunctuator(state.tokens.next, "(")) {
+          advance();
+        }
+        if (state.tokens.next.value !== "(") {
+          doFunction({ statement: c });
+        }
+      }
+
+      if (!computed) {
+        if (getset) {
+          saveAccessor(
+            getset.value, isStatic ? staticProps : props, name.value, name, true, isStatic);
+        } else {
+          if (name.value === "constructor") {
+            state.nameStack.set(c);
+          } else {
+            state.nameStack.set(name);
+          }
+          saveProperty(isStatic ? staticProps : props, name.value, name, true, isStatic);
+        }
+      }
+
+      if (getset && name.value === "constructor") {
+        var propDesc = getset.value === "get" ? "class getter method" : "class setter method";
+        error("E049", name, propDesc, "constructor");
+      } else if (name.value === "prototype") {
+        error("E049", name, "class method", "prototype");
+      }
+
+      propertyName(name);
+
+      doFunction({
+        statement: c,
+        type: isGenerator ? "generator" : null,
+        classExprBinding: c.namedExpr ? c.name : null
+      });
+    }
+
+    checkProperties(props);
+  }
+
+  blockstmt("function", function(context) {
+    var inexport = context && context.inexport;
+    var generator = false;
+    if (state.tokens.next.value === "*") {
+      advance("*");
+      if (state.inES6({ strict: true })) {
+        generator = true;
+      } else {
+        warning("W119", state.tokens.curr, "function*", "6");
+      }
+    }
+    if (inblock) {
+      warning("W082", state.tokens.curr);
+    }
+    var i = optionalidentifier();
+
+    state.funct["(scope)"].addlabel(i, {
+      type: "function",
+      token: state.tokens.curr });
+
+    if (i === undefined) {
+      warning("W025");
+    } else if (inexport) {
+      state.funct["(scope)"].setExported(i, state.tokens.prev);
+    }
+
+    doFunction({
+      name: i,
+      statement: this,
+      type: generator ? "generator" : null,
+      ignoreLoopFunc: inblock // a declaration may already have warned
+    });
+    if (state.tokens.next.id === "(" && state.tokens.next.line === state.tokens.curr.line) {
+      error("E039");
+    }
+    return this;
+  });
+
+  prefix("function", function() {
+    var generator = false;
+
+    if (state.tokens.next.value === "*") {
+      if (!state.inES6()) {
+        warning("W119", state.tokens.curr, "function*", "6");
+      }
+      advance("*");
+      generator = true;
+    }
+
+    var i = optionalidentifier();
+    doFunction({ name: i, type: generator ? "generator" : null });
+    return this;
+  });
+
+  blockstmt("if", function() {
+    var t = state.tokens.next;
+    increaseComplexityCount();
+    state.condition = true;
+    advance("(");
+    var expr = expression(0);
+    checkCondAssignment(expr);
+    var forinifcheck = null;
+    if (state.option.forin && state.forinifcheckneeded) {
+      state.forinifcheckneeded = false; // We only need to analyze the first if inside the loop
+      forinifcheck = state.forinifchecks[state.forinifchecks.length - 1];
+      if (expr.type === "(punctuator)" && expr.value === "!") {
+        forinifcheck.type = "(negative)";
+      } else {
+        forinifcheck.type = "(positive)";
+      }
+    }
+
+    advance(")", t);
+    state.condition = false;
+    var s = block(true, true);
+    if (forinifcheck && forinifcheck.type === "(negative)") {
+      if (s && s[0] && s[0].type === "(identifier)" && s[0].value === "continue") {
+        forinifcheck.type = "(negative-with-continue)";
+      }
+    }
+
+    if (state.tokens.next.id === "else") {
+      advance("else");
+      if (state.tokens.next.id === "if" || state.tokens.next.id === "switch") {
+        statement();
+      } else {
+        block(true, true);
+      }
+    }
+    return this;
+  });
+
+  blockstmt("try", function() {
+    var b;
+
+    function doCatch() {
+      advance("catch");
+      advance("(");
+
+      state.funct["(scope)"].stack("catchparams");
+
+      if (checkPunctuators(state.tokens.next, ["[", "{"])) {
+        var tokens = destructuringPattern();
+        _.each(tokens, function(token) {
+          if (token.id) {
+            state.funct["(scope)"].addParam(token.id, token, "exception");
+          }
+        });
+      } else if (state.tokens.next.type !== "(identifier)") {
+        warning("E030", state.tokens.next, state.tokens.next.value);
+      } else {
+        state.funct["(scope)"].addParam(identifier(), state.tokens.curr, "exception");
+      }
+
+      if (state.tokens.next.value === "if") {
+        if (!state.inMoz()) {
+          warning("W118", state.tokens.curr, "catch filter");
+        }
+        advance("if");
+        expression(0);
+      }
+
+      advance(")");
+
+      block(false);
+
+      state.funct["(scope)"].unstack();
+    }
+
+    block(true);
+
+    while (state.tokens.next.id === "catch") {
+      increaseComplexityCount();
+      if (b && (!state.inMoz())) {
+        warning("W118", state.tokens.next, "multiple catch blocks");
+      }
+      doCatch();
+      b = true;
+    }
+
+    if (state.tokens.next.id === "finally") {
+      advance("finally");
+      block(true);
+      return;
+    }
+
+    if (!b) {
+      error("E021", state.tokens.next, "catch", state.tokens.next.value);
+    }
+
+    return this;
+  });
+
+  blockstmt("while", function() {
+    var t = state.tokens.next;
+    state.funct["(breakage)"] += 1;
+    state.funct["(loopage)"] += 1;
+    increaseComplexityCount();
+    advance("(");
+    checkCondAssignment(expression(0));
+    advance(")", t);
+    block(true, true);
+    state.funct["(breakage)"] -= 1;
+    state.funct["(loopage)"] -= 1;
+    return this;
+  }).labelled = true;
+
+  blockstmt("with", function() {
+    var t = state.tokens.next;
+    if (state.isStrict()) {
+      error("E010", state.tokens.curr);
+    } else if (!state.option.withstmt) {
+      warning("W085", state.tokens.curr);
+    }
+
+    advance("(");
+    expression(0);
+    advance(")", t);
+    block(true, true);
+
+    return this;
+  });
+
+  blockstmt("switch", function() {
+    var t = state.tokens.next;
+    var g = false;
+    var noindent = false;
+
+    state.funct["(breakage)"] += 1;
+    advance("(");
+    checkCondAssignment(expression(0));
+    advance(")", t);
+    t = state.tokens.next;
+    advance("{");
+
+    if (state.tokens.next.from === indent)
+      noindent = true;
+
+    if (!noindent)
+      indent += state.option.indent;
+
+    this.cases = [];
+
+    for (;;) {
+      switch (state.tokens.next.id) {
+      case "case":
+        switch (state.funct["(verb)"]) {
+        case "yield":
+        case "break":
+        case "case":
+        case "continue":
+        case "return":
+        case "switch":
+        case "throw":
+          break;
+        default:
+          if (!state.tokens.curr.caseFallsThrough) {
+            warning("W086", state.tokens.curr, "case");
+          }
+        }
+
+        advance("case");
+        this.cases.push(expression(0));
+        increaseComplexityCount();
+        g = true;
+        advance(":");
+        state.funct["(verb)"] = "case";
+        break;
+      case "default":
+        switch (state.funct["(verb)"]) {
+        case "yield":
+        case "break":
+        case "continue":
+        case "return":
+        case "throw":
+          break;
+        default:
+          if (this.cases.length) {
+            if (!state.tokens.curr.caseFallsThrough) {
+              warning("W086", state.tokens.curr, "default");
+            }
+          }
+        }
+
+        advance("default");
+        g = true;
+        advance(":");
+        break;
+      case "}":
+        if (!noindent)
+          indent -= state.option.indent;
+
+        advance("}", t);
+        state.funct["(breakage)"] -= 1;
+        state.funct["(verb)"] = undefined;
+        return;
+      case "(end)":
+        error("E023", state.tokens.next, "}");
+        return;
+      default:
+        indent += state.option.indent;
+        if (g) {
+          switch (state.tokens.curr.id) {
+          case ",":
+            error("E040");
+            return;
+          case ":":
+            g = false;
+            statements();
+            break;
+          default:
+            error("E025", state.tokens.curr);
+            return;
+          }
+        } else {
+          if (state.tokens.curr.id === ":") {
+            advance(":");
+            error("E024", state.tokens.curr, ":");
+            statements();
+          } else {
+            error("E021", state.tokens.next, "case", state.tokens.next.value);
+            return;
+          }
+        }
+        indent -= state.option.indent;
+      }
+    }
+    return this;
+  }).labelled = true;
+
+  stmt("debugger", function() {
+    if (!state.option.debug) {
+      warning("W087", this);
+    }
+    return this;
+  }).exps = true;
+
+  (function() {
+    var x = stmt("do", function() {
+      state.funct["(breakage)"] += 1;
+      state.funct["(loopage)"] += 1;
+      increaseComplexityCount();
+
+      this.first = block(true, true);
+      advance("while");
+      var t = state.tokens.next;
+      advance("(");
+      checkCondAssignment(expression(0));
+      advance(")", t);
+      state.funct["(breakage)"] -= 1;
+      state.funct["(loopage)"] -= 1;
+      return this;
+    });
+    x.labelled = true;
+    x.exps = true;
+  }());
+
+  blockstmt("for", function() {
+    var s, t = state.tokens.next;
+    var letscope = false;
+    var foreachtok = null;
+
+    if (t.value === "each") {
+      foreachtok = t;
+      advance("each");
+      if (!state.inMoz()) {
+        warning("W118", state.tokens.curr, "for each");
+      }
+    }
+
+    increaseComplexityCount();
+    advance("(");
+    var nextop; // contains the token of the "in" or "of" operator
+    var i = 0;
+    var inof = ["in", "of"];
+    var level = 0; // BindingPattern "level" --- level 0 === no BindingPattern
+    var comma; // First comma punctuator at level 0
+    var initializer; // First initializer at level 0
+    if (checkPunctuators(state.tokens.next, ["{", "["])) ++level;
+    do {
+      nextop = peek(i);
+      ++i;
+      if (checkPunctuators(nextop, ["{", "["])) ++level;
+      else if (checkPunctuators(nextop, ["}", "]"])) --level;
+      if (level < 0) break;
+      if (level === 0) {
+        if (!comma && checkPunctuator(nextop, ",")) comma = nextop;
+        else if (!initializer && checkPunctuator(nextop, "=")) initializer = nextop;
+      }
+    } while (level > 0 || !_.contains(inof, nextop.value) && nextop.value !== ";" &&
+    nextop.type !== "(end)"); // Is this a JSCS bug? This looks really weird.
+    if (_.contains(inof, nextop.value)) {
+      if (!state.inES6() && nextop.value === "of") {
+        warning("W104", nextop, "for of", "6");
+      }
+
+      var ok = !(initializer || comma);
+      if (initializer) {
+        error("W133", comma, nextop.value, "initializer is forbidden");
+      }
+
+      if (comma) {
+        error("W133", comma, nextop.value, "more than one ForBinding");
+      }
+
+      if (state.tokens.next.id === "var") {
+        advance("var");
+        state.tokens.curr.fud({ prefix: true });
+      } else if (state.tokens.next.id === "let" || state.tokens.next.id === "const") {
+        advance(state.tokens.next.id);
+        letscope = true;
+        state.funct["(scope)"].stack();
+        state.tokens.curr.fud({ prefix: true });
+      } else {
+        Object.create(varstatement).fud({ prefix: true, implied: "for", ignore: !ok });
+      }
+      advance(nextop.value);
+      expression(20);
+      advance(")", t);
+
+      if (nextop.value === "in" && state.option.forin) {
+        state.forinifcheckneeded = true;
+
+        if (state.forinifchecks === undefined) {
+          state.forinifchecks = [];
+        }
+        state.forinifchecks.push({
+          type: "(none)"
+        });
+      }
+
+      state.funct["(breakage)"] += 1;
+      state.funct["(loopage)"] += 1;
+
+      s = block(true, true);
+
+      if (nextop.value === "in" && state.option.forin) {
+        if (state.forinifchecks && state.forinifchecks.length > 0) {
+          var check = state.forinifchecks.pop();
+
+          if (// No if statement or not the first statement in loop body
+              s && s.length > 0 && (typeof s[0] !== "object" || s[0].value !== "if") ||
+              check.type === "(positive)" && s.length > 1 ||
+              check.type === "(negative)") {
+            warning("W089", this);
+          }
+        }
+        state.forinifcheckneeded = false;
+      }
+
+      state.funct["(breakage)"] -= 1;
+      state.funct["(loopage)"] -= 1;
+    } else {
+      if (foreachtok) {
+        error("E045", foreachtok);
+      }
+      if (state.tokens.next.id !== ";") {
+        if (state.tokens.next.id === "var") {
+          advance("var");
+          state.tokens.curr.fud();
+        } else if (state.tokens.next.id === "let") {
+          advance("let");
+          letscope = true;
+          state.funct["(scope)"].stack();
+          state.tokens.curr.fud();
+        } else {
+          for (;;) {
+            expression(0, "for");
+            if (state.tokens.next.id !== ",") {
+              break;
+            }
+            comma();
+          }
+        }
+      }
+      nolinebreak(state.tokens.curr);
+      advance(";");
+      state.funct["(loopage)"] += 1;
+      if (state.tokens.next.id !== ";") {
+        checkCondAssignment(expression(0));
+      }
+      nolinebreak(state.tokens.curr);
+      advance(";");
+      if (state.tokens.next.id === ";") {
+        error("E021", state.tokens.next, ")", ";");
+      }
+      if (state.tokens.next.id !== ")") {
+        for (;;) {
+          expression(0, "for");
+          if (state.tokens.next.id !== ",") {
+            break;
+          }
+          comma();
+        }
+      }
+      advance(")", t);
+      state.funct["(breakage)"] += 1;
+      block(true, true);
+      state.funct["(breakage)"] -= 1;
+      state.funct["(loopage)"] -= 1;
+
+    }
+    if (letscope) {
+      state.funct["(scope)"].unstack();
+    }
+    return this;
+  }).labelled = true;
+
+
+  stmt("break", function() {
+    var v = state.tokens.next.value;
+
+    if (!state.option.asi)
+      nolinebreak(this);
+
+    if (state.tokens.next.id !== ";" && !state.tokens.next.reach &&
+        state.tokens.curr.line === startLine(state.tokens.next)) {
+      if (!state.funct["(scope)"].funct.hasBreakLabel(v)) {
+        warning("W090", state.tokens.next, v);
+      }
+      this.first = state.tokens.next;
+      advance();
+    } else {
+      if (state.funct["(breakage)"] === 0)
+        warning("W052", state.tokens.next, this.value);
+    }
+
+    reachable(this);
+
+    return this;
+  }).exps = true;
+
+
+  stmt("continue", function() {
+    var v = state.tokens.next.value;
+
+    if (state.funct["(breakage)"] === 0)
+      warning("W052", state.tokens.next, this.value);
+    if (!state.funct["(loopage)"])
+      warning("W052", state.tokens.next, this.value);
+
+    if (!state.option.asi)
+      nolinebreak(this);
+
+    if (state.tokens.next.id !== ";" && !state.tokens.next.reach) {
+      if (state.tokens.curr.line === startLine(state.tokens.next)) {
+        if (!state.funct["(scope)"].funct.hasBreakLabel(v)) {
+          warning("W090", state.tokens.next, v);
+        }
+        this.first = state.tokens.next;
+        advance();
+      }
+    }
+
+    reachable(this);
+
+    return this;
+  }).exps = true;
+
+
+  stmt("return", function() {
+    if (this.line === startLine(state.tokens.next)) {
+      if (state.tokens.next.id !== ";" && !state.tokens.next.reach) {
+        this.first = expression(0);
+
+        if (this.first &&
+            this.first.type === "(punctuator)" && this.first.value === "=" &&
+            !this.first.paren && !state.option.boss) {
+          warningAt("W093", this.first.line, this.first.character);
+        }
+      }
+    } else {
+      if (state.tokens.next.type === "(punctuator)" &&
+        ["[", "{", "+", "-"].indexOf(state.tokens.next.value) > -1) {
+        nolinebreak(this); // always warn (Line breaking error)
+      }
+    }
+
+    reachable(this);
+
+    return this;
+  }).exps = true;
+
+  (function(x) {
+    x.exps = true;
+    x.lbp = 25;
+  }(prefix("yield", function() {
+    var prev = state.tokens.prev;
+    if (state.inES6(true) && !state.funct["(generator)"]) {
+      if (!("(catch)" === state.funct["(name)"] && state.funct["(context)"]["(generator)"])) {
+        error("E046", state.tokens.curr, "yield");
+      }
+    } else if (!state.inES6()) {
+      warning("W104", state.tokens.curr, "yield", "6");
+    }
+    state.funct["(generator)"] = "yielded";
+    var delegatingYield = false;
+
+    if (state.tokens.next.value === "*") {
+      delegatingYield = true;
+      advance("*");
+    }
+
+    if (this.line === startLine(state.tokens.next) || !state.inMoz()) {
+      if (delegatingYield ||
+          (state.tokens.next.id !== ";" && !state.option.asi &&
+           !state.tokens.next.reach && state.tokens.next.nud)) {
+
+        nobreaknonadjacent(state.tokens.curr, state.tokens.next);
+        this.first = expression(10);
+
+        if (this.first.type === "(punctuator)" && this.first.value === "=" &&
+            !this.first.paren && !state.option.boss) {
+          warningAt("W093", this.first.line, this.first.character);
+        }
+      }
+
+      if (state.inMoz() && state.tokens.next.id !== ")" &&
+          (prev.lbp > 30 || (!prev.assign && !isEndOfExpr()) || prev.id === "yield")) {
+        error("E050", this);
+      }
+    } else if (!state.option.asi) {
+      nolinebreak(this); // always warn (Line breaking error)
+    }
+    return this;
+  })));
+
+
+  stmt("throw", function() {
+    nolinebreak(this);
+    this.first = expression(20);
+
+    reachable(this);
+
+    return this;
+  }).exps = true;
+
+  stmt("import", function() {
+    if (!state.inES6()) {
+      warning("W119", state.tokens.curr, "import", "6");
+    }
+
+    if (state.tokens.next.type === "(string)") {
+      advance("(string)");
+      return this;
+    }
+
+    if (state.tokens.next.identifier) {
+      this.name = identifier();
+      state.funct["(scope)"].addlabel(this.name, {
+        type: "const",
+        token: state.tokens.curr });
+
+      if (state.tokens.next.value === ",") {
+        advance(",");
+      } else {
+        advance("from");
+        advance("(string)");
+        return this;
+      }
+    }
+
+    if (state.tokens.next.id === "*") {
+      advance("*");
+      advance("as");
+      if (state.tokens.next.identifier) {
+        this.name = identifier();
+        state.funct["(scope)"].addlabel(this.name, {
+          type: "const",
+          token: state.tokens.curr });
+      }
+    } else {
+      advance("{");
+      for (;;) {
+        if (state.tokens.next.value === "}") {
+          advance("}");
+          break;
+        }
+        var importName;
+        if (state.tokens.next.type === "default") {
+          importName = "default";
+          advance("default");
+        } else {
+          importName = identifier();
+        }
+        if (state.tokens.next.value === "as") {
+          advance("as");
+          importName = identifier();
+        }
+        state.funct["(scope)"].addlabel(importName, {
+          type: "const",
+          token: state.tokens.curr });
+
+        if (state.tokens.next.value === ",") {
+          advance(",");
+        } else if (state.tokens.next.value === "}") {
+          advance("}");
+          break;
+        } else {
+          error("E024", state.tokens.next, state.tokens.next.value);
+          break;
+        }
+      }
+    }
+    advance("from");
+    advance("(string)");
+    return this;
+  }).exps = true;
+
+  stmt("export", function() {
+    var ok = true;
+    var token;
+    var identifier;
+
+    if (!state.inES6()) {
+      warning("W119", state.tokens.curr, "export", "6");
+      ok = false;
+    }
+
+    if (!state.funct["(scope)"].block.isGlobal()) {
+      error("E053", state.tokens.curr);
+      ok = false;
+    }
+
+    if (state.tokens.next.value === "*") {
+      advance("*");
+      advance("from");
+      advance("(string)");
+      return this;
+    }
+
+    if (state.tokens.next.type === "default") {
+      state.nameStack.set(state.tokens.next);
+      advance("default");
+      var exportType = state.tokens.next.id;
+      if (exportType === "function" || exportType === "class") {
+        this.block = true;
+      }
+
+      token = peek();
+
+      expression(10);
+
+      identifier = token.value;
+
+      if (this.block) {
+        state.funct["(scope)"].addlabel(identifier, {
+          type: exportType,
+          token: token });
+
+        state.funct["(scope)"].setExported(identifier, token);
+      }
+
+      return this;
+    }
+
+    if (state.tokens.next.value === "{") {
+      advance("{");
+      var exportedTokens = [];
+      for (;;) {
+        if (!state.tokens.next.identifier) {
+          error("E030", state.tokens.next, state.tokens.next.value);
+        }
+        advance();
+
+        exportedTokens.push(state.tokens.curr);
+
+        if (state.tokens.next.value === "as") {
+          advance("as");
+          if (!state.tokens.next.identifier) {
+            error("E030", state.tokens.next, state.tokens.next.value);
+          }
+          advance();
+        }
+
+        if (state.tokens.next.value === ",") {
+          advance(",");
+        } else if (state.tokens.next.value === "}") {
+          advance("}");
+          break;
+        } else {
+          error("E024", state.tokens.next, state.tokens.next.value);
+          break;
+        }
+      }
+      if (state.tokens.next.value === "from") {
+        advance("from");
+        advance("(string)");
+      } else if (ok) {
+        exportedTokens.forEach(function(token) {
+          state.funct["(scope)"].setExported(token.value, token);
+        });
+      }
+      return this;
+    }
+
+    if (state.tokens.next.id === "var") {
+      advance("var");
+      state.tokens.curr.fud({ inexport:true });
+    } else if (state.tokens.next.id === "let") {
+      advance("let");
+      state.tokens.curr.fud({ inexport:true });
+    } else if (state.tokens.next.id === "const") {
+      advance("const");
+      state.tokens.curr.fud({ inexport:true });
+    } else if (state.tokens.next.id === "function") {
+      this.block = true;
+      advance("function");
+      state.syntax["function"].fud({ inexport:true });
+    } else if (state.tokens.next.id === "class") {
+      this.block = true;
+      advance("class");
+      var classNameToken = state.tokens.next;
+      state.syntax["class"].fud();
+      state.funct["(scope)"].setExported(classNameToken.value, classNameToken);
+    } else {
+      error("E024", state.tokens.next, state.tokens.next.value);
+    }
+
+    return this;
+  }).exps = true;
+
+  FutureReservedWord("abstract");
+  FutureReservedWord("boolean");
+  FutureReservedWord("byte");
+  FutureReservedWord("char");
+  FutureReservedWord("class", { es5: true, nud: classdef });
+  FutureReservedWord("double");
+  FutureReservedWord("enum", { es5: true });
+  FutureReservedWord("export", { es5: true });
+  FutureReservedWord("extends", { es5: true });
+  FutureReservedWord("final");
+  FutureReservedWord("float");
+  FutureReservedWord("goto");
+  FutureReservedWord("implements", { es5: true, strictOnly: true });
+  FutureReservedWord("import", { es5: true });
+  FutureReservedWord("int");
+  FutureReservedWord("interface", { es5: true, strictOnly: true });
+  FutureReservedWord("long");
+  FutureReservedWord("native");
+  FutureReservedWord("package", { es5: true, strictOnly: true });
+  FutureReservedWord("private", { es5: true, strictOnly: true });
+  FutureReservedWord("protected", { es5: true, strictOnly: true });
+  FutureReservedWord("public", { es5: true, strictOnly: true });
+  FutureReservedWord("short");
+  FutureReservedWord("static", { es5: true, strictOnly: true });
+  FutureReservedWord("super", { es5: true });
+  FutureReservedWord("synchronized");
+  FutureReservedWord("transient");
+  FutureReservedWord("volatile");
+
+  var lookupBlockType = function() {
+    var pn, pn1, prev;
+    var i = -1;
+    var bracketStack = 0;
+    var ret = {};
+    if (checkPunctuators(state.tokens.curr, ["[", "{"])) {
+      bracketStack += 1;
+    }
+    do {
+      prev = i === -1 ? state.tokens.curr : pn;
+      pn = i === -1 ? state.tokens.next : peek(i);
+      pn1 = peek(i + 1);
+      i = i + 1;
+      if (checkPunctuators(pn, ["[", "{"])) {
+        bracketStack += 1;
+      } else if (checkPunctuators(pn, ["]", "}"])) {
+        bracketStack -= 1;
+      }
+      if (bracketStack === 1 && pn.identifier && pn.value === "for" &&
+          !checkPunctuator(prev, ".")) {
+        ret.isCompArray = true;
+        ret.notJson = true;
+        break;
+      }
+      if (bracketStack === 0 && checkPunctuators(pn, ["}", "]"])) {
+        if (pn1.value === "=") {
+          ret.isDestAssign = true;
+          ret.notJson = true;
+          break;
+        } else if (pn1.value === ".") {
+          ret.notJson = true;
+          break;
+        }
+      }
+      if (checkPunctuator(pn, ";")) {
+        ret.isBlock = true;
+        ret.notJson = true;
+      }
+    } while (bracketStack > 0 && pn.id !== "(end)");
+    return ret;
+  };
+
+  function saveProperty(props, name, tkn, isClass, isStatic) {
+    var msg = ["key", "class method", "static class method"];
+    msg = msg[(isClass || false) + (isStatic || false)];
+    if (tkn.identifier) {
+      name = tkn.value;
+    }
+
+    if (props[name] && name !== "__proto__") {
+      warning("W075", state.tokens.next, msg, name);
+    } else {
+      props[name] = Object.create(null);
+    }
+
+    props[name].basic = true;
+    props[name].basictkn = tkn;
+  }
+  function saveAccessor(accessorType, props, name, tkn, isClass, isStatic) {
+    var flagName = accessorType === "get" ? "getterToken" : "setterToken";
+    var msg = "";
+
+    if (isClass) {
+      if (isStatic) {
+        msg += "static ";
+      }
+      msg += accessorType + "ter method";
+    } else {
+      msg = "key";
+    }
+
+    state.tokens.curr.accessorType = accessorType;
+    state.nameStack.set(tkn);
+
+    if (props[name]) {
+      if ((props[name].basic || props[name][flagName]) && name !== "__proto__") {
+        warning("W075", state.tokens.next, msg, name);
+      }
+    } else {
+      props[name] = Object.create(null);
+    }
+
+    props[name][flagName] = tkn;
+  }
+
+  function computedPropertyName() {
+    advance("[");
+    if (!state.inES6()) {
+      warning("W119", state.tokens.curr, "computed property names", "6");
+    }
+    var value = expression(10);
+    advance("]");
+    return value;
+  }
+  function checkPunctuators(token, values) {
+    if (token.type === "(punctuator)") {
+      return _.contains(values, token.value);
+    }
+    return false;
+  }
+  function checkPunctuator(token, value) {
+    return token.type === "(punctuator)" && token.value === value;
+  }
+  function destructuringAssignOrJsonValue() {
+
+    var block = lookupBlockType();
+    if (block.notJson) {
+      if (!state.inES6() && block.isDestAssign) {
+        warning("W104", state.tokens.curr, "destructuring assignment", "6");
+      }
+      statements();
+    } else {
+      state.option.laxbreak = true;
+      state.jsonMode = true;
+      jsonValue();
+    }
+  }
+
+  var arrayComprehension = function() {
+    var CompArray = function() {
+      this.mode = "use";
+      this.variables = [];
+    };
+    var _carrays = [];
+    var _current;
+    function declare(v) {
+      var l = _current.variables.filter(function(elt) {
+        if (elt.value === v) {
+          elt.undef = false;
+          return v;
+        }
+      }).length;
+      return l !== 0;
+    }
+    function use(v) {
+      var l = _current.variables.filter(function(elt) {
+        if (elt.value === v && !elt.undef) {
+          if (elt.unused === true) {
+            elt.unused = false;
+          }
+          return v;
+        }
+      }).length;
+      return (l === 0);
+    }
+    return { stack: function() {
+          _current = new CompArray();
+          _carrays.push(_current);
+        },
+        unstack: function() {
+          _current.variables.filter(function(v) {
+            if (v.unused)
+              warning("W098", v.token, v.raw_text || v.value);
+            if (v.undef)
+              state.funct["(scope)"].block.use(v.value, v.token);
+          });
+          _carrays.splice(-1, 1);
+          _current = _carrays[_carrays.length - 1];
+        },
+        setState: function(s) {
+          if (_.contains(["use", "define", "generate", "filter"], s))
+            _current.mode = s;
+        },
+        check: function(v) {
+          if (!_current) {
+            return;
+          }
+          if (_current && _current.mode === "use") {
+            if (use(v)) {
+              _current.variables.push({
+                funct: state.funct,
+                token: state.tokens.curr,
+                value: v,
+                undef: true,
+                unused: false
+              });
+            }
+            return true;
+          } else if (_current && _current.mode === "define") {
+            if (!declare(v)) {
+              _current.variables.push({
+                funct: state.funct,
+                token: state.tokens.curr,
+                value: v,
+                undef: false,
+                unused: true
+              });
+            }
+            return true;
+          } else if (_current && _current.mode === "generate") {
+            state.funct["(scope)"].block.use(v, state.tokens.curr);
+            return true;
+          } else if (_current && _current.mode === "filter") {
+            if (use(v)) {
+              state.funct["(scope)"].block.use(v, state.tokens.curr);
+            }
+            return true;
+          }
+          return false;
+        }
+        };
+  };
+
+  function jsonValue() {
+    function jsonObject() {
+      var o = {}, t = state.tokens.next;
+      advance("{");
+      if (state.tokens.next.id !== "}") {
+        for (;;) {
+          if (state.tokens.next.id === "(end)") {
+            error("E026", state.tokens.next, t.line);
+          } else if (state.tokens.next.id === "}") {
+            warning("W094", state.tokens.curr);
+            break;
+          } else if (state.tokens.next.id === ",") {
+            error("E028", state.tokens.next);
+          } else if (state.tokens.next.id !== "(string)") {
+            warning("W095", state.tokens.next, state.tokens.next.value);
+          }
+          if (o[state.tokens.next.value] === true) {
+            warning("W075", state.tokens.next, "key", state.tokens.next.value);
+          } else if ((state.tokens.next.value === "__proto__" &&
+            !state.option.proto) || (state.tokens.next.value === "__iterator__" &&
+            !state.option.iterator)) {
+            warning("W096", state.tokens.next, state.tokens.next.value);
+          } else {
+            o[state.tokens.next.value] = true;
+          }
+          advance();
+          advance(":");
+          jsonValue();
+          if (state.tokens.next.id !== ",") {
+            break;
+          }
+          advance(",");
+        }
+      }
+      advance("}");
+    }
+
+    function jsonArray() {
+      var t = state.tokens.next;
+      advance("[");
+      if (state.tokens.next.id !== "]") {
+        for (;;) {
+          if (state.tokens.next.id === "(end)") {
+            error("E027", state.tokens.next, t.line);
+          } else if (state.tokens.next.id === "]") {
+            warning("W094", state.tokens.curr);
+            break;
+          } else if (state.tokens.next.id === ",") {
+            error("E028", state.tokens.next);
+          }
+          jsonValue();
+          if (state.tokens.next.id !== ",") {
+            break;
+          }
+          advance(",");
+        }
+      }
+      advance("]");
+    }
+
+    switch (state.tokens.next.id) {
+    case "{":
+      jsonObject();
+      break;
+    case "[":
+      jsonArray();
+      break;
+    case "true":
+    case "false":
+    case "null":
+    case "(number)":
+    case "(string)":
+      advance();
+      break;
+    case "-":
+      advance("-");
+      advance("(number)");
+      break;
+    default:
+      error("E003", state.tokens.next);
+    }
+  }
+
+  var escapeRegex = function(str) {
+    return str.replace(/[-\/\\^$*+?.()|[\]{}]/g, "\\$&");
+  };
+  var itself = function(s, o, g) {
+    var i, k, x, reIgnoreStr, reIgnore;
+    var optionKeys;
+    var newOptionObj = {};
+    var newIgnoredObj = {};
+
+    o = _.clone(o);
+    state.reset();
+
+    if (o && o.scope) {
+      JSHINT.scope = o.scope;
+    } else {
+      JSHINT.errors = [];
+      JSHINT.undefs = [];
+      JSHINT.internals = [];
+      JSHINT.blacklist = {};
+      JSHINT.scope = "(main)";
+    }
+
+    predefined = Object.create(null);
+    combine(predefined, vars.ecmaIdentifiers[3]);
+    combine(predefined, vars.reservedVars);
+
+    combine(predefined, g || {});
+
+    declared = Object.create(null);
+    var exported = Object.create(null); // Variables that live outside the current file
+
+    function each(obj, cb) {
+      if (!obj)
+        return;
+
+      if (!Array.isArray(obj) && typeof obj === "object")
+        obj = Object.keys(obj);
+
+      obj.forEach(cb);
+    }
+
+    if (o) {
+      each(o.predef || null, function(item) {
+        var slice, prop;
+
+        if (item[0] === "-") {
+          slice = item.slice(1);
+          JSHINT.blacklist[slice] = slice;
+          delete predefined[slice];
+        } else {
+          prop = Object.getOwnPropertyDescriptor(o.predef, item);
+          predefined[item] = prop ? prop.value : false;
+        }
+      });
+
+      each(o.exported || null, function(item) {
+        exported[item] = true;
+      });
+
+      delete o.predef;
+      delete o.exported;
+
+      optionKeys = Object.keys(o);
+      for (x = 0; x < optionKeys.length; x++) {
+        if (/^-W\d{3}$/g.test(optionKeys[x])) {
+          newIgnoredObj[optionKeys[x].slice(1)] = true;
+        } else {
+          var optionKey = optionKeys[x];
+          newOptionObj[optionKey] = o[optionKey];
+          if ((optionKey === "esversion" && o[optionKey] === 5) ||
+              (optionKey === "es5" && o[optionKey])) {
+            warning("I003");
+          }
+
+          if (optionKeys[x] === "newcap" && o[optionKey] === false)
+            newOptionObj["(explicitNewcap)"] = true;
+        }
+      }
+    }
+
+    state.option = newOptionObj;
+    state.ignored = newIgnoredObj;
+
+    state.option.indent = state.option.indent || 4;
+    state.option.maxerr = state.option.maxerr || 50;
+
+    indent = 1;
+
+    var scopeManagerInst = scopeManager(state, predefined, exported, declared);
+    scopeManagerInst.on("warning", function(ev) {
+      warning.apply(null, [ ev.code, ev.token].concat(ev.data));
+    });
+
+    scopeManagerInst.on("error", function(ev) {
+      error.apply(null, [ ev.code, ev.token ].concat(ev.data));
+    });
+
+    state.funct = functor("(global)", null, {
+      "(global)"    : true,
+      "(scope)"     : scopeManagerInst,
+      "(comparray)" : arrayComprehension(),
+      "(metrics)"   : createMetrics(state.tokens.next)
+    });
+
+    functions = [state.funct];
+    urls = [];
+    stack = null;
+    member = {};
+    membersOnly = null;
+    inblock = false;
+    lookahead = [];
+
+    if (!isString(s) && !Array.isArray(s)) {
+      errorAt("E004", 0);
+      return false;
+    }
+
+    api = {
+      get isJSON() {
+        return state.jsonMode;
+      },
+
+      getOption: function(name) {
+        return state.option[name] || null;
+      },
+
+      getCache: function(name) {
+        return state.cache[name];
+      },
+
+      setCache: function(name, value) {
+        state.cache[name] = value;
+      },
+
+      warn: function(code, data) {
+        warningAt.apply(null, [ code, data.line, data.char ].concat(data.data));
+      },
+
+      on: function(names, listener) {
+        names.split(" ").forEach(function(name) {
+          emitter.on(name, listener);
+        }.bind(this));
+      }
+    };
+
+    emitter.removeAllListeners();
+    (extraModules || []).forEach(function(func) {
+      func(api);
+    });
+
+    state.tokens.prev = state.tokens.curr = state.tokens.next = state.syntax["(begin)"];
+
+    if (o && o.ignoreDelimiters) {
+
+      if (!Array.isArray(o.ignoreDelimiters)) {
+        o.ignoreDelimiters = [o.ignoreDelimiters];
+      }
+
+      o.ignoreDelimiters.forEach(function(delimiterPair) {
+        if (!delimiterPair.start || !delimiterPair.end)
+            return;
+
+        reIgnoreStr = escapeRegex(delimiterPair.start) +
+                      "[\\s\\S]*?" +
+                      escapeRegex(delimiterPair.end);
+
+        reIgnore = new RegExp(reIgnoreStr, "ig");
+
+        s = s.replace(reIgnore, function(match) {
+          return match.replace(/./g, " ");
+        });
+      });
+    }
+
+    lex = new Lexer(s);
+
+    lex.on("warning", function(ev) {
+      warningAt.apply(null, [ ev.code, ev.line, ev.character].concat(ev.data));
+    });
+
+    lex.on("error", function(ev) {
+      errorAt.apply(null, [ ev.code, ev.line, ev.character ].concat(ev.data));
+    });
+
+    lex.on("fatal", function(ev) {
+      quit("E041", ev.line, ev.from);
+    });
+
+    lex.on("Identifier", function(ev) {
+      emitter.emit("Identifier", ev);
+    });
+
+    lex.on("String", function(ev) {
+      emitter.emit("String", ev);
+    });
+
+    lex.on("Number", function(ev) {
+      emitter.emit("Number", ev);
+    });
+
+    lex.start();
+    for (var name in o) {
+      if (_.has(o, name)) {
+        checkOption(name, state.tokens.curr);
+      }
+    }
+
+    assume();
+    combine(predefined, g || {});
+    comma.first = true;
+
+    try {
+      advance();
+      switch (state.tokens.next.id) {
+      case "{":
+      case "[":
+        destructuringAssignOrJsonValue();
+        break;
+      default:
+        directives();
+
+        if (state.directive["use strict"]) {
+          if (state.option.strict !== "global") {
+            warning("W097", state.tokens.prev);
+          }
+        }
+
+        statements();
+      }
+
+      if (state.tokens.next.id !== "(end)") {
+        quit("E041", state.tokens.curr.line);
+      }
+
+      state.funct["(scope)"].unstack();
+
+    } catch (err) {
+      if (err && err.name === "JSHintError") {
+        var nt = state.tokens.next || {};
+        JSHINT.errors.push({
+          scope     : "(main)",
+          raw       : err.raw,
+          code      : err.code,
+          reason    : err.message,
+          line      : err.line || nt.line,
+          character : err.character || nt.from
+        }, null);
+      } else {
+        throw err;
+      }
+    }
+
+    if (JSHINT.scope === "(main)") {
+      o = o || {};
+
+      for (i = 0; i < JSHINT.internals.length; i += 1) {
+        k = JSHINT.internals[i];
+        o.scope = k.elem;
+        itself(k.value, o, g);
+      }
+    }
+
+    return JSHINT.errors.length === 0;
+  };
+  itself.addModule = function(func) {
+    extraModules.push(func);
+  };
+
+  itself.addModule(style.register);
+  itself.data = function() {
+    var data = {
+      functions: [],
+      options: state.option
+    };
+
+    var fu, f, i, j, n, globals;
+
+    if (itself.errors.length) {
+      data.errors = itself.errors;
+    }
+
+    if (state.jsonMode) {
+      data.json = true;
+    }
+
+    var impliedGlobals = state.funct["(scope)"].getImpliedGlobals();
+    if (impliedGlobals.length > 0) {
+      data.implieds = impliedGlobals;
+    }
+
+    if (urls.length > 0) {
+      data.urls = urls;
+    }
+
+    globals = state.funct["(scope)"].getUsedOrDefinedGlobals();
+    if (globals.length > 0) {
+      data.globals = globals;
+    }
+
+    for (i = 1; i < functions.length; i += 1) {
+      f = functions[i];
+      fu = {};
+
+      for (j = 0; j < functionicity.length; j += 1) {
+        fu[functionicity[j]] = [];
+      }
+
+      for (j = 0; j < functionicity.length; j += 1) {
+        if (fu[functionicity[j]].length === 0) {
+          delete fu[functionicity[j]];
+        }
+      }
+
+      fu.name = f["(name)"];
+      fu.param = f["(params)"];
+      fu.line = f["(line)"];
+      fu.character = f["(character)"];
+      fu.last = f["(last)"];
+      fu.lastcharacter = f["(lastcharacter)"];
+
+      fu.metrics = {
+        complexity: f["(metrics)"].ComplexityCount,
+        parameters: f["(metrics)"].arity,
+        statements: f["(metrics)"].statementCount
+      };
+
+      data.functions.push(fu);
+    }
+
+    var unuseds = state.funct["(scope)"].getUnuseds();
+    if (unuseds.length > 0) {
+      data.unused = unuseds;
+    }
+
+    for (n in member) {
+      if (typeof member[n] === "number") {
+        data.member = member;
+        break;
+      }
+    }
+
+    return data;
+  };
+
+  itself.jshint = itself;
+
+  return itself;
+}());
+if (typeof exports === "object" && exports) {
+  exports.JSHINT = JSHINT;
+}
+
+},{"../lodash":"/node_modules/jshint/lodash.js","./lex.js":"/node_modules/jshint/src/lex.js","./messages.js":"/node_modules/jshint/src/messages.js","./options.js":"/node_modules/jshint/src/options.js","./reg.js":"/node_modules/jshint/src/reg.js","./scope-manager.js":"/node_modules/jshint/src/scope-manager.js","./state.js":"/node_modules/jshint/src/state.js","./style.js":"/node_modules/jshint/src/style.js","./vars.js":"/node_modules/jshint/src/vars.js","events":"/node_modules/browserify/node_modules/events/events.js"}],"/node_modules/jshint/src/lex.js":[function(_dereq_,module,exports){
+
+"use strict";
+
+var _      = _dereq_("../lodash");
+var events = _dereq_("events");
+var reg    = _dereq_("./reg.js");
+var state  = _dereq_("./state.js").state;
+
+var unicodeData = _dereq_("../data/ascii-identifier-data.js");
+var asciiIdentifierStartTable = unicodeData.asciiIdentifierStartTable;
+var asciiIdentifierPartTable = unicodeData.asciiIdentifierPartTable;
+
+var Token = {
+  Identifier: 1,
+  Punctuator: 2,
+  NumericLiteral: 3,
+  StringLiteral: 4,
+  Comment: 5,
+  Keyword: 6,
+  NullLiteral: 7,
+  BooleanLiteral: 8,
+  RegExp: 9,
+  TemplateHead: 10,
+  TemplateMiddle: 11,
+  TemplateTail: 12,
+  NoSubstTemplate: 13
+};
+
+var Context = {
+  Block: 1,
+  Template: 2
+};
+
+function asyncTrigger() {
+  var _checks = [];
+
+  return {
+    push: function(fn) {
+      _checks.push(fn);
+    },
+
+    check: function() {
+      for (var check = 0; check < _checks.length; ++check) {
+        _checks[check]();
+      }
+
+      _checks.splice(0, _checks.length);
+    }
+  };
+}
+function Lexer(source) {
+  var lines = source;
+
+  if (typeof lines === "string") {
+    lines = lines
+      .replace(/\r\n/g, "\n")
+      .replace(/\r/g, "\n")
+      .split("\n");
+  }
+
+  if (lines[0] && lines[0].substr(0, 2) === "#!") {
+    if (lines[0].indexOf("node") !== -1) {
+      state.option.node = true;
+    }
+    lines[0] = "";
+  }
+
+  this.emitter = new events.EventEmitter();
+  this.source = source;
+  this.setLines(lines);
+  this.prereg = true;
+
+  this.line = 0;
+  this.char = 1;
+  this.from = 1;
+  this.input = "";
+  this.inComment = false;
+  this.context = [];
+  this.templateStarts = [];
+
+  for (var i = 0; i < state.option.indent; i += 1) {
+    state.tab += " ";
+  }
+  this.ignoreLinterErrors = false;
+}
+
+Lexer.prototype = {
+  _lines: [],
+
+  inContext: function(ctxType) {
+    return this.context.length > 0 && this.context[this.context.length - 1].type === ctxType;
+  },
+
+  pushContext: function(ctxType) {
+    this.context.push({ type: ctxType });
+  },
+
+  popContext: function() {
+    return this.context.pop();
+  },
+
+  isContext: function(context) {
+    return this.context.length > 0 && this.context[this.context.length - 1] === context;
+  },
+
+  currentContext: function() {
+    return this.context.length > 0 && this.context[this.context.length - 1];
+  },
+
+  getLines: function() {
+    this._lines = state.lines;
+    return this._lines;
+  },
+
+  setLines: function(val) {
+    this._lines = val;
+    state.lines = this._lines;
+  },
+  peek: function(i) {
+    return this.input.charAt(i || 0);
+  },
+  skip: function(i) {
+    i = i || 1;
+    this.char += i;
+    this.input = this.input.slice(i);
+  },
+  on: function(names, listener) {
+    names.split(" ").forEach(function(name) {
+      this.emitter.on(name, listener);
+    }.bind(this));
+  },
+  trigger: function() {
+    this.emitter.emit.apply(this.emitter, Array.prototype.slice.call(arguments));
+  },
+  triggerAsync: function(type, args, checks, fn) {
+    checks.push(function() {
+      if (fn()) {
+        this.trigger(type, args);
+      }
+    }.bind(this));
+  },
+  scanPunctuator: function() {
+    var ch1 = this.peek();
+    var ch2, ch3, ch4;
+
+    switch (ch1) {
+    case ".":
+      if ((/^[0-9]$/).test(this.peek(1))) {
+        return null;
+      }
+      if (this.peek(1) === "." && this.peek(2) === ".") {
+        return {
+          type: Token.Punctuator,
+          value: "..."
+        };
+      }
+    case "(":
+    case ")":
+    case ";":
+    case ",":
+    case "[":
+    case "]":
+    case ":":
+    case "~":
+    case "?":
+      return {
+        type: Token.Punctuator,
+        value: ch1
+      };
+    case "{":
+      this.pushContext(Context.Block);
+      return {
+        type: Token.Punctuator,
+        value: ch1
+      };
+    case "}":
+      if (this.inContext(Context.Block)) {
+        this.popContext();
+      }
+      return {
+        type: Token.Punctuator,
+        value: ch1
+      };
+    case "#":
+      return {
+        type: Token.Punctuator,
+        value: ch1
+      };
+    case "":
+      return null;
+    }
+
+    ch2 = this.peek(1);
+    ch3 = this.peek(2);
+    ch4 = this.peek(3);
+
+    if (ch1 === ">" && ch2 === ">" && ch3 === ">" && ch4 === "=") {
+      return {
+        type: Token.Punctuator,
+        value: ">>>="
+      };
+    }
+
+    if (ch1 === "=" && ch2 === "=" && ch3 === "=") {
+      return {
+        type: Token.Punctuator,
+        value: "==="
+      };
+    }
+
+    if (ch1 === "!" && ch2 === "=" && ch3 === "=") {
+      return {
+        type: Token.Punctuator,
+        value: "!=="
+      };
+    }
+
+    if (ch1 === ">" && ch2 === ">" && ch3 === ">") {
+      return {
+        type: Token.Punctuator,
+        value: ">>>"
+      };
+    }
+
+    if (ch1 === "<" && ch2 === "<" && ch3 === "=") {
+      return {
+        type: Token.Punctuator,
+        value: "<<="
+      };
+    }
+
+    if (ch1 === ">" && ch2 === ">" && ch3 === "=") {
+      return {
+        type: Token.Punctuator,
+        value: ">>="
+      };
+    }
+    if (ch1 === "=" && ch2 === ">") {
+      return {
+        type: Token.Punctuator,
+        value: ch1 + ch2
+      };
+    }
+    if (ch1 === ch2 && ("+-<>&|".indexOf(ch1) >= 0)) {
+      return {
+        type: Token.Punctuator,
+        value: ch1 + ch2
+      };
+    }
+
+    if ("<>=!+-*%&|^".indexOf(ch1) >= 0) {
+      if (ch2 === "=") {
+        return {
+          type: Token.Punctuator,
+          value: ch1 + ch2
+        };
+      }
+
+      return {
+        type: Token.Punctuator,
+        value: ch1
+      };
+    }
+
+    if (ch1 === "/") {
+      if (ch2 === "=") {
+        return {
+          type: Token.Punctuator,
+          value: "/="
+        };
+      }
+
+      return {
+        type: Token.Punctuator,
+        value: "/"
+      };
+    }
+
+    return null;
+  },
+  scanComments: function() {
+    var ch1 = this.peek();
+    var ch2 = this.peek(1);
+    var rest = this.input.substr(2);
+    var startLine = this.line;
+    var startChar = this.char;
+    var self = this;
+
+    function commentToken(label, body, opt) {
+      var special = ["jshint", "jslint", "members", "member", "globals", "global", "exported"];
+      var isSpecial = false;
+      var value = label + body;
+      var commentType = "plain";
+      opt = opt || {};
+
+      if (opt.isMultiline) {
+        value += "*/";
+      }
+
+      body = body.replace(/\n/g, " ");
+
+      if (label === "/*" && reg.fallsThrough.test(body)) {
+        isSpecial = true;
+        commentType = "falls through";
+      }
+
+      special.forEach(function(str) {
+        if (isSpecial) {
+          return;
+        }
+        if (label === "//" && str !== "jshint") {
+          return;
+        }
+
+        if (body.charAt(str.length) === " " && body.substr(0, str.length) === str) {
+          isSpecial = true;
+          label = label + str;
+          body = body.substr(str.length);
+        }
+
+        if (!isSpecial && body.charAt(0) === " " && body.charAt(str.length + 1) === " " &&
+          body.substr(1, str.length) === str) {
+          isSpecial = true;
+          label = label + " " + str;
+          body = body.substr(str.length + 1);
+        }
+
+        if (!isSpecial) {
+          return;
+        }
+
+        switch (str) {
+        case "member":
+          commentType = "members";
+          break;
+        case "global":
+          commentType = "globals";
+          break;
+        default:
+          var options = body.split(":").map(function(v) {
+            return v.replace(/^\s+/, "").replace(/\s+$/, "");
+          });
+
+          if (options.length === 2) {
+            switch (options[0]) {
+            case "ignore":
+              switch (options[1]) {
+              case "start":
+                self.ignoringLinterErrors = true;
+                isSpecial = false;
+                break;
+              case "end":
+                self.ignoringLinterErrors = false;
+                isSpecial = false;
+                break;
+              }
+            }
+          }
+
+          commentType = str;
+        }
+      });
+
+      return {
+        type: Token.Comment,
+        commentType: commentType,
+        value: value,
+        body: body,
+        isSpecial: isSpecial,
+        isMultiline: opt.isMultiline || false,
+        isMalformed: opt.isMalformed || false
+      };
+    }
+    if (ch1 === "*" && ch2 === "/") {
+      this.trigger("error", {
+        code: "E018",
+        line: startLine,
+        character: startChar
+      });
+
+      this.skip(2);
+      return null;
+    }
+    if (ch1 !== "/" || (ch2 !== "*" && ch2 !== "/")) {
+      return null;
+    }
+    if (ch2 === "/") {
+      this.skip(this.input.length); // Skip to the EOL.
+      return commentToken("//", rest);
+    }
+
+    var body = "";
+    if (ch2 === "*") {
+      this.inComment = true;
+      this.skip(2);
+
+      while (this.peek() !== "*" || this.peek(1) !== "/") {
+        if (this.peek() === "") { // End of Line
+          body += "\n";
+          if (!this.nextLine()) {
+            this.trigger("error", {
+              code: "E017",
+              line: startLine,
+              character: startChar
+            });
+
+            this.inComment = false;
+            return commentToken("/*", body, {
+              isMultiline: true,
+              isMalformed: true
+            });
+          }
+        } else {
+          body += this.peek();
+          this.skip();
+        }
+      }
+
+      this.skip(2);
+      this.inComment = false;
+      return commentToken("/*", body, { isMultiline: true });
+    }
+  },
+  scanKeyword: function() {
+    var result = /^[a-zA-Z_$][a-zA-Z0-9_$]*/.exec(this.input);
+    var keywords = [
+      "if", "in", "do", "var", "for", "new",
+      "try", "let", "this", "else", "case",
+      "void", "with", "enum", "while", "break",
+      "catch", "throw", "const", "yield", "class",
+      "super", "return", "typeof", "delete",
+      "switch", "export", "import", "default",
+      "finally", "extends", "function", "continue",
+      "debugger", "instanceof"
+    ];
+
+    if (result && keywords.indexOf(result[0]) >= 0) {
+      return {
+        type: Token.Keyword,
+        value: result[0]
+      };
+    }
+
+    return null;
+  },
+  scanIdentifier: function() {
+    var id = "";
+    var index = 0;
+    var type, char;
+
+    function isNonAsciiIdentifierStart(code) {
+      return code > 256;
+    }
+
+    function isNonAsciiIdentifierPart(code) {
+      return code > 256;
+    }
+
+    function isHexDigit(str) {
+      return (/^[0-9a-fA-F]$/).test(str);
+    }
+
+    var readUnicodeEscapeSequence = function() {
+      index += 1;
+
+      if (this.peek(index) !== "u") {
+        return null;
+      }
+
+      var ch1 = this.peek(index + 1);
+      var ch2 = this.peek(index + 2);
+      var ch3 = this.peek(index + 3);
+      var ch4 = this.peek(index + 4);
+      var code;
+
+      if (isHexDigit(ch1) && isHexDigit(ch2) && isHexDigit(ch3) && isHexDigit(ch4)) {
+        code = parseInt(ch1 + ch2 + ch3 + ch4, 16);
+
+        if (asciiIdentifierPartTable[code] || isNonAsciiIdentifierPart(code)) {
+          index += 5;
+          return "\\u" + ch1 + ch2 + ch3 + ch4;
+        }
+
+        return null;
+      }
+
+      return null;
+    }.bind(this);
+
+    var getIdentifierStart = function() {
+      var chr = this.peek(index);
+      var code = chr.charCodeAt(0);
+
+      if (code === 92) {
+        return readUnicodeEscapeSequence();
+      }
+
+      if (code < 128) {
+        if (asciiIdentifierStartTable[code]) {
+          index += 1;
+          return chr;
+        }
+
+        return null;
+      }
+
+      if (isNonAsciiIdentifierStart(code)) {
+        index += 1;
+        return chr;
+      }
+
+      return null;
+    }.bind(this);
+
+    var getIdentifierPart = function() {
+      var chr = this.peek(index);
+      var code = chr.charCodeAt(0);
+
+      if (code === 92) {
+        return readUnicodeEscapeSequence();
+      }
+
+      if (code < 128) {
+        if (asciiIdentifierPartTable[code]) {
+          index += 1;
+          return chr;
+        }
+
+        return null;
+      }
+
+      if (isNonAsciiIdentifierPart(code)) {
+        index += 1;
+        return chr;
+      }
+
+      return null;
+    }.bind(this);
+
+    function removeEscapeSequences(id) {
+      return id.replace(/\\u([0-9a-fA-F]{4})/g, function(m0, codepoint) {
+        return String.fromCharCode(parseInt(codepoint, 16));
+      });
+    }
+
+    char = getIdentifierStart();
+    if (char === null) {
+      return null;
+    }
+
+    id = char;
+    for (;;) {
+      char = getIdentifierPart();
+
+      if (char === null) {
+        break;
+      }
+
+      id += char;
+    }
+
+    switch (id) {
+    case "true":
+    case "false":
+      type = Token.BooleanLiteral;
+      break;
+    case "null":
+      type = Token.NullLiteral;
+      break;
+    default:
+      type = Token.Identifier;
+    }
+
+    return {
+      type: type,
+      value: removeEscapeSequences(id),
+      text: id,
+      tokenLength: id.length
+    };
+  },
+  scanNumericLiteral: function() {
+    var index = 0;
+    var value = "";
+    var length = this.input.length;
+    var char = this.peek(index);
+    var bad;
+    var isAllowedDigit = isDecimalDigit;
+    var base = 10;
+    var isLegacy = false;
+
+    function isDecimalDigit(str) {
+      return (/^[0-9]$/).test(str);
+    }
+
+    function isOctalDigit(str) {
+      return (/^[0-7]$/).test(str);
+    }
+
+    function isBinaryDigit(str) {
+      return (/^[01]$/).test(str);
+    }
+
+    function isHexDigit(str) {
+      return (/^[0-9a-fA-F]$/).test(str);
+    }
+
+    function isIdentifierStart(ch) {
+      return (ch === "$") || (ch === "_") || (ch === "\\") ||
+        (ch >= "a" && ch <= "z") || (ch >= "A" && ch <= "Z");
+    }
+
+    if (char !== "." && !isDecimalDigit(char)) {
+      return null;
+    }
+
+    if (char !== ".") {
+      value = this.peek(index);
+      index += 1;
+      char = this.peek(index);
+
+      if (value === "0") {
+        if (char === "x" || char === "X") {
+          isAllowedDigit = isHexDigit;
+          base = 16;
+
+          index += 1;
+          value += char;
+        }
+        if (char === "o" || char === "O") {
+          isAllowedDigit = isOctalDigit;
+          base = 8;
+
+          if (!state.inES6(true)) {
+            this.trigger("warning", {
+              code: "W119",
+              line: this.line,
+              character: this.char,
+              data: [ "Octal integer literal", "6" ]
+            });
+          }
+
+          index += 1;
+          value += char;
+        }
+        if (char === "b" || char === "B") {
+          isAllowedDigit = isBinaryDigit;
+          base = 2;
+
+          if (!state.inES6(true)) {
+            this.trigger("warning", {
+              code: "W119",
+              line: this.line,
+              character: this.char,
+              data: [ "Binary integer literal", "6" ]
+            });
+          }
+
+          index += 1;
+          value += char;
+        }
+        if (isOctalDigit(char)) {
+          isAllowedDigit = isOctalDigit;
+          base = 8;
+          isLegacy = true;
+          bad = false;
+
+          index += 1;
+          value += char;
+        }
+
+        if (!isOctalDigit(char) && isDecimalDigit(char)) {
+          index += 1;
+          value += char;
+        }
+      }
+
+      while (index < length) {
+        char = this.peek(index);
+
+        if (isLegacy && isDecimalDigit(char)) {
+          bad = true;
+        } else if (!isAllowedDigit(char)) {
+          break;
+        }
+        value += char;
+        index += 1;
+      }
+
+      if (isAllowedDigit !== isDecimalDigit) {
+        if (!isLegacy && value.length <= 2) { // 0x
+          return {
+            type: Token.NumericLiteral,
+            value: value,
+            isMalformed: true
+          };
+        }
+
+        if (index < length) {
+          char = this.peek(index);
+          if (isIdentifierStart(char)) {
+            return null;
+          }
+        }
+
+        return {
+          type: Token.NumericLiteral,
+          value: value,
+          base: base,
+          isLegacy: isLegacy,
+          isMalformed: false
+        };
+      }
+    }
+
+    if (char === ".") {
+      value += char;
+      index += 1;
+
+      while (index < length) {
+        char = this.peek(index);
+        if (!isDecimalDigit(char)) {
+          break;
+        }
+        value += char;
+        index += 1;
+      }
+    }
+
+    if (char === "e" || char === "E") {
+      value += char;
+      index += 1;
+      char = this.peek(index);
+
+      if (char === "+" || char === "-") {
+        value += this.peek(index);
+        index += 1;
+      }
+
+      char = this.peek(index);
+      if (isDecimalDigit(char)) {
+        value += char;
+        index += 1;
+
+        while (index < length) {
+          char = this.peek(index);
+          if (!isDecimalDigit(char)) {
+            break;
+          }
+          value += char;
+          index += 1;
+        }
+      } else {
+        return null;
+      }
+    }
+
+    if (index < length) {
+      char = this.peek(index);
+      if (isIdentifierStart(char)) {
+        return null;
+      }
+    }
+
+    return {
+      type: Token.NumericLiteral,
+      value: value,
+      base: base,
+      isMalformed: !isFinite(value)
+    };
+  },
+  scanEscapeSequence: function(checks) {
+    var allowNewLine = false;
+    var jump = 1;
+    this.skip();
+    var char = this.peek();
+
+    switch (char) {
+    case "'":
+      this.triggerAsync("warning", {
+        code: "W114",
+        line: this.line,
+        character: this.char,
+        data: [ "\\'" ]
+      }, checks, function() {return state.jsonMode; });
+      break;
+    case "b":
+      char = "\\b";
+      break;
+    case "f":
+      char = "\\f";
+      break;
+    case "n":
+      char = "\\n";
+      break;
+    case "r":
+      char = "\\r";
+      break;
+    case "t":
+      char = "\\t";
+      break;
+    case "0":
+      char = "\\0";
+      var n = parseInt(this.peek(1), 10);
+      this.triggerAsync("warning", {
+        code: "W115",
+        line: this.line,
+        character: this.char
+      }, checks,
+      function() { return n >= 0 && n <= 7 && state.isStrict(); });
+      break;
+    case "u":
+      var hexCode = this.input.substr(1, 4);
+      var code = parseInt(hexCode, 16);
+      if (isNaN(code)) {
+        this.trigger("warning", {
+          code: "W052",
+          line: this.line,
+          character: this.char,
+          data: [ "u" + hexCode ]
+        });
+      }
+      char = String.fromCharCode(code);
+      jump = 5;
+      break;
+    case "v":
+      this.triggerAsync("warning", {
+        code: "W114",
+        line: this.line,
+        character: this.char,
+        data: [ "\\v" ]
+      }, checks, function() { return state.jsonMode; });
+
+      char = "\v";
+      break;
+    case "x":
+      var  x = parseInt(this.input.substr(1, 2), 16);
+
+      this.triggerAsync("warning", {
+        code: "W114",
+        line: this.line,
+        character: this.char,
+        data: [ "\\x-" ]
+      }, checks, function() { return state.jsonMode; });
+
+      char = String.fromCharCode(x);
+      jump = 3;
+      break;
+    case "\\":
+      char = "\\\\";
+      break;
+    case "\"":
+      char = "\\\"";
+      break;
+    case "/":
+      break;
+    case "":
+      allowNewLine = true;
+      char = "";
+      break;
+    }
+
+    return { char: char, jump: jump, allowNewLine: allowNewLine };
+  },
+  scanTemplateLiteral: function(checks) {
+    var tokenType;
+    var value = "";
+    var ch;
+    var startLine = this.line;
+    var startChar = this.char;
+    var depth = this.templateStarts.length;
+
+    if (!state.inES6(true)) {
+      return null;
+    } else if (this.peek() === "`") {
+      tokenType = Token.TemplateHead;
+      this.templateStarts.push({ line: this.line, char: this.char });
+      depth = this.templateStarts.length;
+      this.skip(1);
+      this.pushContext(Context.Template);
+    } else if (this.inContext(Context.Template) && this.peek() === "}") {
+      tokenType = Token.TemplateMiddle;
+    } else {
+      return null;
+    }
+
+    while (this.peek() !== "`") {
+      while ((ch = this.peek()) === "") {
+        value += "\n";
+        if (!this.nextLine()) {
+          var startPos = this.templateStarts.pop();
+          this.trigger("error", {
+            code: "E052",
+            line: startPos.line,
+            character: startPos.char
+          });
+          return {
+            type: tokenType,
+            value: value,
+            startLine: startLine,
+            startChar: startChar,
+            isUnclosed: true,
+            depth: depth,
+            context: this.popContext()
+          };
+        }
+      }
+
+      if (ch === '$' && this.peek(1) === '{') {
+        value += '${';
+        this.skip(2);
+        return {
+          type: tokenType,
+          value: value,
+          startLine: startLine,
+          startChar: startChar,
+          isUnclosed: false,
+          depth: depth,
+          context: this.currentContext()
+        };
+      } else if (ch === '\\') {
+        var escape = this.scanEscapeSequence(checks);
+        value += escape.char;
+        this.skip(escape.jump);
+      } else if (ch !== '`') {
+        value += ch;
+        this.skip(1);
+      }
+    }
+    tokenType = tokenType === Token.TemplateHead ? Token.NoSubstTemplate : Token.TemplateTail;
+    this.skip(1);
+    this.templateStarts.pop();
+
+    return {
+      type: tokenType,
+      value: value,
+      startLine: startLine,
+      startChar: startChar,
+      isUnclosed: false,
+      depth: depth,
+      context: this.popContext()
+    };
+  },
+  scanStringLiteral: function(checks) {
+    var quote = this.peek();
+    if (quote !== "\"" && quote !== "'") {
+      return null;
+    }
+    this.triggerAsync("warning", {
+      code: "W108",
+      line: this.line,
+      character: this.char // +1?
+    }, checks, function() { return state.jsonMode && quote !== "\""; });
+
+    var value = "";
+    var startLine = this.line;
+    var startChar = this.char;
+    var allowNewLine = false;
+
+    this.skip();
+
+    while (this.peek() !== quote) {
+      if (this.peek() === "") { // End Of Line
+
+        if (!allowNewLine) {
+          this.trigger("warning", {
+            code: "W112",
+            line: this.line,
+            character: this.char
+          });
+        } else {
+          allowNewLine = false;
+
+          this.triggerAsync("warning", {
+            code: "W043",
+            line: this.line,
+            character: this.char
+          }, checks, function() { return !state.option.multistr; });
+
+          this.triggerAsync("warning", {
+            code: "W042",
+            line: this.line,
+            character: this.char
+          }, checks, function() { return state.jsonMode && state.option.multistr; });
+        }
+
+        if (!this.nextLine()) {
+          this.trigger("error", {
+            code: "E029",
+            line: startLine,
+            character: startChar
+          });
+
+          return {
+            type: Token.StringLiteral,
+            value: value,
+            startLine: startLine,
+            startChar: startChar,
+            isUnclosed: true,
+            quote: quote
+          };
+        }
+
+      } else { // Any character other than End Of Line
+
+        allowNewLine = false;
+        var char = this.peek();
+        var jump = 1; // A length of a jump, after we're done
+
+        if (char < " ") {
+          this.trigger("warning", {
+            code: "W113",
+            line: this.line,
+            character: this.char,
+            data: [ "<non-printable>" ]
+          });
+        }
+        if (char === "\\") {
+          var parsed = this.scanEscapeSequence(checks);
+          char = parsed.char;
+          jump = parsed.jump;
+          allowNewLine = parsed.allowNewLine;
+        }
+
+        value += char;
+        this.skip(jump);
+      }
+    }
+
+    this.skip();
+    return {
+      type: Token.StringLiteral,
+      value: value,
+      startLine: startLine,
+      startChar: startChar,
+      isUnclosed: false,
+      quote: quote
+    };
+  },
+  scanRegExp: function() {
+    var index = 0;
+    var length = this.input.length;
+    var char = this.peek();
+    var value = char;
+    var body = "";
+    var flags = [];
+    var malformed = false;
+    var isCharSet = false;
+    var terminated;
+
+    var scanUnexpectedChars = function() {
+      if (char < " ") {
+        malformed = true;
+        this.trigger("warning", {
+          code: "W048",
+          line: this.line,
+          character: this.char
+        });
+      }
+      if (char === "<") {
+        malformed = true;
+        this.trigger("warning", {
+          code: "W049",
+          line: this.line,
+          character: this.char,
+          data: [ char ]
+        });
+      }
+    }.bind(this);
+    if (!this.prereg || char !== "/") {
+      return null;
+    }
+
+    index += 1;
+    terminated = false;
+
+    while (index < length) {
+      char = this.peek(index);
+      value += char;
+      body += char;
+
+      if (isCharSet) {
+        if (char === "]") {
+          if (this.peek(index - 1) !== "\\" || this.peek(index - 2) === "\\") {
+            isCharSet = false;
+          }
+        }
+
+        if (char === "\\") {
+          index += 1;
+          char = this.peek(index);
+          body += char;
+          value += char;
+
+          scanUnexpectedChars();
+        }
+
+        index += 1;
+        continue;
+      }
+
+      if (char === "\\") {
+        index += 1;
+        char = this.peek(index);
+        body += char;
+        value += char;
+
+        scanUnexpectedChars();
+
+        if (char === "/") {
+          index += 1;
+          continue;
+        }
+
+        if (char === "[") {
+          index += 1;
+          continue;
+        }
+      }
+
+      if (char === "[") {
+        isCharSet = true;
+        index += 1;
+        continue;
+      }
+
+      if (char === "/") {
+        body = body.substr(0, body.length - 1);
+        terminated = true;
+        index += 1;
+        break;
+      }
+
+      index += 1;
+    }
+
+    if (!terminated) {
+      this.trigger("error", {
+        code: "E015",
+        line: this.line,
+        character: this.from
+      });
+
+      return void this.trigger("fatal", {
+        line: this.line,
+        from: this.from
+      });
+    }
+
+    while (index < length) {
+      char = this.peek(index);
+      if (!/[gim]/.test(char)) {
+        break;
+      }
+      flags.push(char);
+      value += char;
+      index += 1;
+    }
+
+    try {
+      new RegExp(body, flags.join(""));
+    } catch (err) {
+      malformed = true;
+      this.trigger("error", {
+        code: "E016",
+        line: this.line,
+        character: this.char,
+        data: [ err.message ] // Platform dependent!
+      });
+    }
+
+    return {
+      type: Token.RegExp,
+      value: value,
+      flags: flags,
+      isMalformed: malformed
+    };
+  },
+  scanNonBreakingSpaces: function() {
+    return state.option.nonbsp ?
+      this.input.search(/(\u00A0)/) : -1;
+  },
+  scanUnsafeChars: function() {
+    return this.input.search(reg.unsafeChars);
+  },
+  next: function(checks) {
+    this.from = this.char;
+    var start;
+    if (/\s/.test(this.peek())) {
+      start = this.char;
+
+      while (/\s/.test(this.peek())) {
+        this.from += 1;
+        this.skip();
+      }
+    }
+
+    var match = this.scanComments() ||
+      this.scanStringLiteral(checks) ||
+      this.scanTemplateLiteral(checks);
+
+    if (match) {
+      return match;
+    }
+
+    match =
+      this.scanRegExp() ||
+      this.scanPunctuator() ||
+      this.scanKeyword() ||
+      this.scanIdentifier() ||
+      this.scanNumericLiteral();
+
+    if (match) {
+      this.skip(match.tokenLength || match.value.length);
+      return match;
+    }
+
+    return null;
+  },
+  nextLine: function() {
+    var char;
+
+    if (this.line >= this.getLines().length) {
+      return false;
+    }
+
+    this.input = this.getLines()[this.line];
+    this.line += 1;
+    this.char = 1;
+    this.from = 1;
+
+    var inputTrimmed = this.input.trim();
+
+    var startsWith = function() {
+      return _.some(arguments, function(prefix) {
+        return inputTrimmed.indexOf(prefix) === 0;
+      });
+    };
+
+    var endsWith = function() {
+      return _.some(arguments, function(suffix) {
+        return inputTrimmed.indexOf(suffix, inputTrimmed.length - suffix.length) !== -1;
+      });
+    };
+    if (this.ignoringLinterErrors === true) {
+      if (!startsWith("/*", "//") && !(this.inComment && endsWith("*/"))) {
+        this.input = "";
+      }
+    }
+
+    char = this.scanNonBreakingSpaces();
+    if (char >= 0) {
+      this.trigger("warning", { code: "W125", line: this.line, character: char + 1 });
+    }
+
+    this.input = this.input.replace(/\t/g, state.tab);
+    char = this.scanUnsafeChars();
+
+    if (char >= 0) {
+      this.trigger("warning", { code: "W100", line: this.line, character: char });
+    }
+
+    if (!this.ignoringLinterErrors && state.option.maxlen &&
+      state.option.maxlen < this.input.length) {
+      var inComment = this.inComment ||
+        startsWith.call(inputTrimmed, "//") ||
+        startsWith.call(inputTrimmed, "/*");
+
+      var shouldTriggerError = !inComment || !reg.maxlenException.test(inputTrimmed);
+
+      if (shouldTriggerError) {
+        this.trigger("warning", { code: "W101", line: this.line, character: this.input.length });
+      }
+    }
+
+    return true;
+  },
+  start: function() {
+    this.nextLine();
+  },
+  token: function() {
+    var checks = asyncTrigger();
+    var token;
+
+
+    function isReserved(token, isProperty) {
+      if (!token.reserved) {
+        return false;
+      }
+      var meta = token.meta;
+
+      if (meta && meta.isFutureReservedWord && state.inES5()) {
+        if (!meta.es5) {
+          return false;
+        }
+        if (meta.strictOnly) {
+          if (!state.option.strict && !state.isStrict()) {
+            return false;
+          }
+        }
+
+        if (isProperty) {
+          return false;
+        }
+      }
+
+      return true;
+    }
+    var create = function(type, value, isProperty, token) {
+      var obj;
+
+      if (type !== "(endline)" && type !== "(end)") {
+        this.prereg = false;
+      }
+
+      if (type === "(punctuator)") {
+        switch (value) {
+        case ".":
+        case ")":
+        case "~":
+        case "#":
+        case "]":
+        case "++":
+        case "--":
+          this.prereg = false;
+          break;
+        default:
+          this.prereg = true;
+        }
+
+        obj = Object.create(state.syntax[value] || state.syntax["(error)"]);
+      }
+
+      if (type === "(identifier)") {
+        if (value === "return" || value === "case" || value === "typeof") {
+          this.prereg = true;
+        }
+
+        if (_.has(state.syntax, value)) {
+          obj = Object.create(state.syntax[value] || state.syntax["(error)"]);
+          if (!isReserved(obj, isProperty && type === "(identifier)")) {
+            obj = null;
+          }
+        }
+      }
+
+      if (!obj) {
+        obj = Object.create(state.syntax[type]);
+      }
+
+      obj.identifier = (type === "(identifier)");
+      obj.type = obj.type || type;
+      obj.value = value;
+      obj.line = this.line;
+      obj.character = this.char;
+      obj.from = this.from;
+      if (obj.identifier && token) obj.raw_text = token.text || token.value;
+      if (token && token.startLine && token.startLine !== this.line) {
+        obj.startLine = token.startLine;
+      }
+      if (token && token.context) {
+        obj.context = token.context;
+      }
+      if (token && token.depth) {
+        obj.depth = token.depth;
+      }
+      if (token && token.isUnclosed) {
+        obj.isUnclosed = token.isUnclosed;
+      }
+
+      if (isProperty && obj.identifier) {
+        obj.isProperty = isProperty;
+      }
+
+      obj.check = checks.check;
+
+      return obj;
+    }.bind(this);
+
+    for (;;) {
+      if (!this.input.length) {
+        if (this.nextLine()) {
+          return create("(endline)", "");
+        }
+
+        if (this.exhausted) {
+          return null;
+        }
+
+        this.exhausted = true;
+        return create("(end)", "");
+      }
+
+      token = this.next(checks);
+
+      if (!token) {
+        if (this.input.length) {
+          this.trigger("error", {
+            code: "E024",
+            line: this.line,
+            character: this.char,
+            data: [ this.peek() ]
+          });
+
+          this.input = "";
+        }
+
+        continue;
+      }
+
+      switch (token.type) {
+      case Token.StringLiteral:
+        this.triggerAsync("String", {
+          line: this.line,
+          char: this.char,
+          from: this.from,
+          startLine: token.startLine,
+          startChar: token.startChar,
+          value: token.value,
+          quote: token.quote
+        }, checks, function() { return true; });
+
+        return create("(string)", token.value, null, token);
+
+      case Token.TemplateHead:
+        this.trigger("TemplateHead", {
+          line: this.line,
+          char: this.char,
+          from: this.from,
+          startLine: token.startLine,
+          startChar: token.startChar,
+          value: token.value
+        });
+        return create("(template)", token.value, null, token);
+
+      case Token.TemplateMiddle:
+        this.trigger("TemplateMiddle", {
+          line: this.line,
+          char: this.char,
+          from: this.from,
+          startLine: token.startLine,
+          startChar: token.startChar,
+          value: token.value
+        });
+        return create("(template middle)", token.value, null, token);
+
+      case Token.TemplateTail:
+        this.trigger("TemplateTail", {
+          line: this.line,
+          char: this.char,
+          from: this.from,
+          startLine: token.startLine,
+          startChar: token.startChar,
+          value: token.value
+        });
+        return create("(template tail)", token.value, null, token);
+
+      case Token.NoSubstTemplate:
+        this.trigger("NoSubstTemplate", {
+          line: this.line,
+          char: this.char,
+          from: this.from,
+          startLine: token.startLine,
+          startChar: token.startChar,
+          value: token.value
+        });
+        return create("(no subst template)", token.value, null, token);
+
+      case Token.Identifier:
+        this.triggerAsync("Identifier", {
+          line: this.line,
+          char: this.char,
+          from: this.form,
+          name: token.value,
+          raw_name: token.text,
+          isProperty: state.tokens.curr.id === "."
+        }, checks, function() { return true; });
+      case Token.Keyword:
+      case Token.NullLiteral:
+      case Token.BooleanLiteral:
+        return create("(identifier)", token.value, state.tokens.curr.id === ".", token);
+
+      case Token.NumericLiteral:
+        if (token.isMalformed) {
+          this.trigger("warning", {
+            code: "W045",
+            line: this.line,
+            character: this.char,
+            data: [ token.value ]
+          });
+        }
+
+        this.triggerAsync("warning", {
+          code: "W114",
+          line: this.line,
+          character: this.char,
+          data: [ "0x-" ]
+        }, checks, function() { return token.base === 16 && state.jsonMode; });
+
+        this.triggerAsync("warning", {
+          code: "W115",
+          line: this.line,
+          character: this.char
+        }, checks, function() {
+          return state.isStrict() && token.base === 8 && token.isLegacy;
+        });
+
+        this.trigger("Number", {
+          line: this.line,
+          char: this.char,
+          from: this.from,
+          value: token.value,
+          base: token.base,
+          isMalformed: token.malformed
+        });
+
+        return create("(number)", token.value);
+
+      case Token.RegExp:
+        return create("(regexp)", token.value);
+
+      case Token.Comment:
+        state.tokens.curr.comment = true;
+
+        if (token.isSpecial) {
+          return {
+            id: '(comment)',
+            value: token.value,
+            body: token.body,
+            type: token.commentType,
+            isSpecial: token.isSpecial,
+            line: this.line,
+            character: this.char,
+            from: this.from
+          };
+        }
+
+        break;
+
+      case "":
+        break;
+
+      default:
+        return create("(punctuator)", token.value);
+      }
+    }
+  }
+};
+
+exports.Lexer = Lexer;
+exports.Context = Context;
+
+},{"../data/ascii-identifier-data.js":"/node_modules/jshint/data/ascii-identifier-data.js","../lodash":"/node_modules/jshint/lodash.js","./reg.js":"/node_modules/jshint/src/reg.js","./state.js":"/node_modules/jshint/src/state.js","events":"/node_modules/browserify/node_modules/events/events.js"}],"/node_modules/jshint/src/messages.js":[function(_dereq_,module,exports){
+"use strict";
+
+var _ = _dereq_("../lodash");
+
+var errors = {
+  E001: "Bad option: '{a}'.",
+  E002: "Bad option value.",
+  E003: "Expected a JSON value.",
+  E004: "Input is neither a string nor an array of strings.",
+  E005: "Input is empty.",
+  E006: "Unexpected early end of program.",
+  E007: "Missing \"use strict\" statement.",
+  E008: "Strict violation.",
+  E009: "Option 'validthis' can't be used in a global scope.",
+  E010: "'with' is not allowed in strict mode.",
+  E011: "'{a}' has already been declared.",
+  E012: "const '{a}' is initialized to 'undefined'.",
+  E013: "Attempting to override '{a}' which is a constant.",
+  E014: "A regular expression literal can be confused with '/='.",
+  E015: "Unclosed regular expression.",
+  E016: "Invalid regular expression.",
+  E017: "Unclosed comment.",
+  E018: "Unbegun comment.",
+  E019: "Unmatched '{a}'.",
+  E020: "Expected '{a}' to match '{b}' from line {c} and instead saw '{d}'.",
+  E021: "Expected '{a}' and instead saw '{b}'.",
+  E022: "Line breaking error '{a}'.",
+  E023: "Missing '{a}'.",
+  E024: "Unexpected '{a}'.",
+  E025: "Missing ':' on a case clause.",
+  E026: "Missing '}' to match '{' from line {a}.",
+  E027: "Missing ']' to match '[' from line {a}.",
+  E028: "Illegal comma.",
+  E029: "Unclosed string.",
+  E030: "Expected an identifier and instead saw '{a}'.",
+  E031: "Bad assignment.", // FIXME: Rephrase
+  E032: "Expected a small integer or 'false' and instead saw '{a}'.",
+  E033: "Expected an operator and instead saw '{a}'.",
+  E034: "get/set are ES5 features.",
+  E035: "Missing property name.",
+  E036: "Expected to see a statement and instead saw a block.",
+  E037: null,
+  E038: null,
+  E039: "Function declarations are not invocable. Wrap the whole function invocation in parens.",
+  E040: "Each value should have its own case label.",
+  E041: "Unrecoverable syntax error.",
+  E042: "Stopping.",
+  E043: "Too many errors.",
+  E044: null,
+  E045: "Invalid for each loop.",
+  E046: "A yield statement shall be within a generator function (with syntax: `function*`)",
+  E047: null,
+  E048: "{a} declaration not directly within block.",
+  E049: "A {a} cannot be named '{b}'.",
+  E050: "Mozilla requires the yield expression to be parenthesized here.",
+  E051: null,
+  E052: "Unclosed template literal.",
+  E053: "Export declaration must be in global scope.",
+  E054: "Class properties must be methods. Expected '(' but instead saw '{a}'.",
+  E055: "The '{a}' option cannot be set after any executable code.",
+  E056: "'{a}' was used before it was declared, which is illegal for '{b}' variables.",
+  E057: "Invalid meta property: '{a}.{b}'.",
+  E058: "Missing semicolon."
+};
+
+var warnings = {
+  W001: "'hasOwnProperty' is a really bad name.",
+  W002: "Value of '{a}' may be overwritten in IE 8 and earlier.",
+  W003: "'{a}' was used before it was defined.",
+  W004: "'{a}' is already defined.",
+  W005: "A dot following a number can be confused with a decimal point.",
+  W006: "Confusing minuses.",
+  W007: "Confusing plusses.",
+  W008: "A leading decimal point can be confused with a dot: '{a}'.",
+  W009: "The array literal notation [] is preferable.",
+  W010: "The object literal notation {} is preferable.",
+  W011: null,
+  W012: null,
+  W013: null,
+  W014: "Bad line breaking before '{a}'.",
+  W015: null,
+  W016: "Unexpected use of '{a}'.",
+  W017: "Bad operand.",
+  W018: "Confusing use of '{a}'.",
+  W019: "Use the isNaN function to compare with NaN.",
+  W020: "Read only.",
+  W021: "Reassignment of '{a}', which is is a {b}. " +
+    "Use 'var' or 'let' to declare bindings that may change.",
+  W022: "Do not assign to the exception parameter.",
+  W023: "Expected an identifier in an assignment and instead saw a function invocation.",
+  W024: "Expected an identifier and instead saw '{a}' (a reserved word).",
+  W025: "Missing name in function declaration.",
+  W026: "Inner functions should be listed at the top of the outer function.",
+  W027: "Unreachable '{a}' after '{b}'.",
+  W028: "Label '{a}' on {b} statement.",
+  W030: "Expected an assignment or function call and instead saw an expression.",
+  W031: "Do not use 'new' for side effects.",
+  W032: "Unnecessary semicolon.",
+  W033: "Missing semicolon.",
+  W034: "Unnecessary directive \"{a}\".",
+  W035: "Empty block.",
+  W036: "Unexpected /*member '{a}'.",
+  W037: "'{a}' is a statement label.",
+  W038: "'{a}' used out of scope.",
+  W039: "'{a}' is not allowed.",
+  W040: "Possible strict violation.",
+  W041: "Use '{a}' to compare with '{b}'.",
+  W042: "Avoid EOL escaping.",
+  W043: "Bad escaping of EOL. Use option multistr if needed.",
+  W044: "Bad or unnecessary escaping.", /* TODO(caitp): remove W044 */
+  W045: "Bad number '{a}'.",
+  W046: "Don't use extra leading zeros '{a}'.",
+  W047: "A trailing decimal point can be confused with a dot: '{a}'.",
+  W048: "Unexpected control character in regular expression.",
+  W049: "Unexpected escaped character '{a}' in regular expression.",
+  W050: "JavaScript URL.",
+  W051: "Variables should not be deleted.",
+  W052: "Unexpected '{a}'.",
+  W053: "Do not use {a} as a constructor.",
+  W054: "The Function constructor is a form of eval.",
+  W055: "A constructor name should start with an uppercase letter.",
+  W056: "Bad constructor.",
+  W057: "Weird construction. Is 'new' necessary?",
+  W058: "Missing '()' invoking a constructor.",
+  W059: "Avoid arguments.{a}.",
+  W060: "document.write can be a form of eval.",
+  W061: "eval can be harmful.",
+  W062: "Wrap an immediate function invocation in parens " +
+    "to assist the reader in understanding that the expression " +
+    "is the result of a function, and not the function itself.",
+  W063: "Math is not a function.",
+  W064: "Missing 'new' prefix when invoking a constructor.",
+  W065: "Missing radix parameter.",
+  W066: "Implied eval. Consider passing a function instead of a string.",
+  W067: "Bad invocation.",
+  W068: "Wrapping non-IIFE function literals in parens is unnecessary.",
+  W069: "['{a}'] is better written in dot notation.",
+  W070: "Extra comma. (it breaks older versions of IE)",
+  W071: "This function has too many statements. ({a})",
+  W072: "This function has too many parameters. ({a})",
+  W073: "Blocks are nested too deeply. ({a})",
+  W074: "This function's cyclomatic complexity is too high. ({a})",
+  W075: "Duplicate {a} '{b}'.",
+  W076: "Unexpected parameter '{a}' in get {b} function.",
+  W077: "Expected a single parameter in set {a} function.",
+  W078: "Setter is defined without getter.",
+  W079: "Redefinition of '{a}'.",
+  W080: "It's not necessary to initialize '{a}' to 'undefined'.",
+  W081: null,
+  W082: "Function declarations should not be placed in blocks. " +
+    "Use a function expression or move the statement to the top of " +
+    "the outer function.",
+  W083: "Don't make functions within a loop.",
+  W084: "Assignment in conditional expression",
+  W085: "Don't use 'with'.",
+  W086: "Expected a 'break' statement before '{a}'.",
+  W087: "Forgotten 'debugger' statement?",
+  W088: "Creating global 'for' variable. Should be 'for (var {a} ...'.",
+  W089: "The body of a for in should be wrapped in an if statement to filter " +
+    "unwanted properties from the prototype.",
+  W090: "'{a}' is not a statement label.",
+  W091: null,
+  W093: "Did you mean to return a conditional instead of an assignment?",
+  W094: "Unexpected comma.",
+  W095: "Expected a string and instead saw {a}.",
+  W096: "The '{a}' key may produce unexpected results.",
+  W097: "Use the function form of \"use strict\".",
+  W098: "'{a}' is defined but never used.",
+  W099: null,
+  W100: "This character may get silently deleted by one or more browsers.",
+  W101: "Line is too long.",
+  W102: null,
+  W103: "The '{a}' property is deprecated.",
+  W104: "'{a}' is available in ES{b} (use 'esversion: {b}') or Mozilla JS extensions (use moz).",
+  W105: "Unexpected {a} in '{b}'.",
+  W106: "Identifier '{a}' is not in camel case.",
+  W107: "Script URL.",
+  W108: "Strings must use doublequote.",
+  W109: "Strings must use singlequote.",
+  W110: "Mixed double and single quotes.",
+  W112: "Unclosed string.",
+  W113: "Control character in string: {a}.",
+  W114: "Avoid {a}.",
+  W115: "Octal literals are not allowed in strict mode.",
+  W116: "Expected '{a}' and instead saw '{b}'.",
+  W117: "'{a}' is not defined.",
+  W118: "'{a}' is only available in Mozilla JavaScript extensions (use moz option).",
+  W119: "'{a}' is only available in ES{b} (use 'esversion: {b}').",
+  W120: "You might be leaking a variable ({a}) here.",
+  W121: "Extending prototype of native object: '{a}'.",
+  W122: "Invalid typeof value '{a}'",
+  W123: "'{a}' is already defined in outer scope.",
+  W124: "A generator function shall contain a yield statement.",
+  W125: "This line contains non-breaking spaces: http://jshint.com/doc/options/#nonbsp",
+  W126: "Unnecessary grouping operator.",
+  W127: "Unexpected use of a comma operator.",
+  W128: "Empty array elements require elision=true.",
+  W129: "'{a}' is defined in a future version of JavaScript. Use a " +
+    "different variable name to avoid migration issues.",
+  W130: "Invalid element after rest element.",
+  W131: "Invalid parameter after rest parameter.",
+  W132: "`var` declarations are forbidden. Use `let` or `const` instead.",
+  W133: "Invalid for-{a} loop left-hand-side: {b}.",
+  W134: "The '{a}' option is only available when linting ECMAScript {b} code.",
+  W135: "{a} may not be supported by non-browser environments.",
+  W136: "'{a}' must be in function scope.",
+  W137: "Empty destructuring.",
+  W138: "Regular parameters should not come after default parameters."
+};
+
+var info = {
+  I001: "Comma warnings can be turned off with 'laxcomma'.",
+  I002: null,
+  I003: "ES5 option is now set per default"
+};
+
+exports.errors = {};
+exports.warnings = {};
+exports.info = {};
+
+_.each(errors, function(desc, code) {
+  exports.errors[code] = { code: code, desc: desc };
+});
+
+_.each(warnings, function(desc, code) {
+  exports.warnings[code] = { code: code, desc: desc };
+});
+
+_.each(info, function(desc, code) {
+  exports.info[code] = { code: code, desc: desc };
+});
+
+},{"../lodash":"/node_modules/jshint/lodash.js"}],"/node_modules/jshint/src/name-stack.js":[function(_dereq_,module,exports){
+"use strict";
+
+function NameStack() {
+  this._stack = [];
+}
+
+Object.defineProperty(NameStack.prototype, "length", {
+  get: function() {
+    return this._stack.length;
+  }
+});
+NameStack.prototype.push = function() {
+  this._stack.push(null);
+};
+NameStack.prototype.pop = function() {
+  this._stack.pop();
+};
+NameStack.prototype.set = function(token) {
+  this._stack[this.length - 1] = token;
+};
+NameStack.prototype.infer = function() {
+  var nameToken = this._stack[this.length - 1];
+  var prefix = "";
+  var type;
+  if (!nameToken || nameToken.type === "class") {
+    nameToken = this._stack[this.length - 2];
+  }
+
+  if (!nameToken) {
+    return "(empty)";
+  }
+
+  type = nameToken.type;
+
+  if (type !== "(string)" && type !== "(number)" && type !== "(identifier)" && type !== "default") {
+    return "(expression)";
+  }
+
+  if (nameToken.accessorType) {
+    prefix = nameToken.accessorType + " ";
+  }
+
+  return prefix + nameToken.value;
+};
+
+module.exports = NameStack;
+
+},{}],"/node_modules/jshint/src/options.js":[function(_dereq_,module,exports){
+"use strict";
+exports.bool = {
+  enforcing: {
+    bitwise     : true,
+    freeze      : true,
+    camelcase   : true,
+    curly       : true,
+    eqeqeq      : true,
+    futurehostile: true,
+    notypeof    : true,
+    es3         : true,
+    es5         : true,
+    forin       : true,
+    funcscope   : true,
+    immed       : true,
+    iterator    : true,
+    newcap      : true,
+    noarg       : true,
+    nocomma     : true,
+    noempty     : true,
+    nonbsp      : true,
+    nonew       : true,
+    undef       : true,
+    singleGroups: false,
+    varstmt: false,
+    enforceall : false
+  },
+  relaxing: {
+    asi         : true,
+    multistr    : true,
+    debug       : true,
+    boss        : true,
+    evil        : true,
+    globalstrict: true,
+    plusplus    : true,
+    proto       : true,
+    scripturl   : true,
+    sub         : true,
+    supernew    : true,
+    laxbreak    : true,
+    laxcomma    : true,
+    validthis   : true,
+    withstmt    : true,
+    moz         : true,
+    noyield     : true,
+    eqnull      : true,
+    lastsemic   : true,
+    loopfunc    : true,
+    expr        : true,
+    esnext      : true,
+    elision     : true,
+  },
+  environments: {
+    mootools    : true,
+    couch       : true,
+    jasmine     : true,
+    jquery      : true,
+    node        : true,
+    qunit       : true,
+    rhino       : true,
+    shelljs     : true,
+    prototypejs : true,
+    yui         : true,
+    mocha       : true,
+    module      : true,
+    wsh         : true,
+    worker      : true,
+    nonstandard : true,
+    browser     : true,
+    browserify  : true,
+    devel       : true,
+    dojo        : true,
+    typed       : true,
+    phantom     : true
+  },
+  obsolete: {
+    onecase     : true, // if one case switch statements should be allowed
+    regexp      : true, // if the . should not be allowed in regexp literals
+    regexdash   : true  // if unescaped first/last dash (-) inside brackets
+  }
+};
+exports.val = {
+  maxlen       : false,
+  indent       : false,
+  maxerr       : false,
+  predef       : false,
+  globals      : false,
+  quotmark     : false,
+
+  scope        : false,
+  maxstatements: false,
+  maxdepth     : false,
+  maxparams    : false,
+  maxcomplexity: false,
+  shadow       : false,
+  strict      : true,
+  unused       : true,
+  latedef      : false,
+
+  ignore       : false, // start/end ignoring lines of code, bypassing the lexer
+
+  ignoreDelimiters: false, // array of start/end delimiters used to ignore
+  esversion: 5
+};
+exports.inverted = {
+  bitwise : true,
+  forin   : true,
+  newcap  : true,
+  plusplus: true,
+  regexp  : true,
+  undef   : true,
+  eqeqeq  : true,
+  strict  : true
+};
+
+exports.validNames = Object.keys(exports.val)
+  .concat(Object.keys(exports.bool.relaxing))
+  .concat(Object.keys(exports.bool.enforcing))
+  .concat(Object.keys(exports.bool.obsolete))
+  .concat(Object.keys(exports.bool.environments));
+exports.renamed = {
+  eqeq   : "eqeqeq",
+  windows: "wsh",
+  sloppy : "strict"
+};
+
+exports.removed = {
+  nomen: true,
+  onevar: true,
+  passfail: true,
+  white: true,
+  gcl: true,
+  smarttabs: true,
+  trailing: true
+};
+exports.noenforceall = {
+  varstmt: true,
+  strict: true
+};
+
+},{}],"/node_modules/jshint/src/reg.js":[function(_dereq_,module,exports){
+
+"use strict";
+exports.unsafeString =
+  /@cc|<\/?|script|\]\s*\]|<\s*!|&lt/i;
+exports.unsafeChars =
+  /[\u0000-\u001f\u007f-\u009f\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/;
+exports.needEsc =
+  /[\u0000-\u001f&<"\/\\\u007f-\u009f\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/;
+
+exports.needEscGlobal =
+  /[\u0000-\u001f&<"\/\\\u007f-\u009f\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g;
+exports.starSlash = /\*\//;
+exports.identifier = /^([a-zA-Z_$][a-zA-Z0-9_$]*)$/;
+exports.javascriptURL = /^(?:javascript|jscript|ecmascript|vbscript|livescript)\s*:/i;
+exports.fallsThrough = /^\s*falls?\sthrough\s*$/;
+exports.maxlenException = /^(?:(?:\/\/|\/\*|\*) ?)?[^ ]+$/;
+
+},{}],"/node_modules/jshint/src/scope-manager.js":[function(_dereq_,module,exports){
+"use strict";
+
+var _      = _dereq_("../lodash");
+var events = _dereq_("events");
+var marker = {};
+var scopeManager = function(state, predefined, exported, declared) {
+
+  var _current;
+  var _scopeStack = [];
+
+  function _newScope(type) {
+    _current = {
+      "(labels)": Object.create(null),
+      "(usages)": Object.create(null),
+      "(breakLabels)": Object.create(null),
+      "(parent)": _current,
+      "(type)": type,
+      "(params)": (type === "functionparams" || type === "catchparams") ? [] : null
+    };
+    _scopeStack.push(_current);
+  }
+
+  _newScope("global");
+  _current["(predefined)"] = predefined;
+
+  var _currentFunctBody = _current; // this is the block after the params = function
+
+  var usedPredefinedAndGlobals = Object.create(null);
+  var impliedGlobals = Object.create(null);
+  var unuseds = [];
+  var emitter = new events.EventEmitter();
+
+  function warning(code, token) {
+    emitter.emit("warning", {
+      code: code,
+      token: token,
+      data: _.slice(arguments, 2)
+    });
+  }
+
+  function error(code, token) {
+    emitter.emit("warning", {
+      code: code,
+      token: token,
+      data: _.slice(arguments, 2)
+    });
+  }
+
+  function _setupUsages(labelName) {
+    if (!_current["(usages)"][labelName]) {
+      _current["(usages)"][labelName] = {
+        "(modified)": [],
+        "(reassigned)": [],
+        "(tokens)": []
+      };
+    }
+  }
+
+  var _getUnusedOption = function(unused_opt) {
+    if (unused_opt === undefined) {
+      unused_opt = state.option.unused;
+    }
+
+    if (unused_opt === true) {
+      unused_opt = "last-param";
+    }
+
+    return unused_opt;
+  };
+
+  var _warnUnused = function(name, tkn, type, unused_opt) {
+    var line = tkn.line;
+    var chr  = tkn.from;
+    var raw_name = tkn.raw_text || name;
+
+    unused_opt = _getUnusedOption(unused_opt);
+
+    var warnable_types = {
+      "vars": ["var"],
+      "last-param": ["var", "param"],
+      "strict": ["var", "param", "last-param"]
+    };
+
+    if (unused_opt) {
+      if (warnable_types[unused_opt] && warnable_types[unused_opt].indexOf(type) !== -1) {
+        warning("W098", { line: line, from: chr }, raw_name);
+      }
+    }
+    if (unused_opt || type === "var") {
+      unuseds.push({
+        name: name,
+        line: line,
+        character: chr
+      });
+    }
+  };
+  function _checkForUnused() {
+    if (_current["(type)"] === "functionparams") {
+      _checkParams();
+      return;
+    }
+    var curentLabels = _current["(labels)"];
+    for (var labelName in curentLabels) {
+      if (curentLabels[labelName]) {
+        if (curentLabels[labelName]["(type)"] !== "exception" &&
+          curentLabels[labelName]["(unused)"]) {
+          _warnUnused(labelName, curentLabels[labelName]["(token)"], "var");
+        }
+      }
+    }
+  }
+  function _checkParams() {
+    var params = _current["(params)"];
+
+    if (!params) {
+      return;
+    }
+
+    var param = params.pop();
+    var unused_opt;
+
+    while (param) {
+      var label = _current["(labels)"][param];
+
+      unused_opt = _getUnusedOption(state.funct["(unusedOption)"]);
+      if (param === "undefined")
+        return;
+
+      if (label["(unused)"]) {
+        _warnUnused(param, label["(token)"], "param", state.funct["(unusedOption)"]);
+      } else if (unused_opt === "last-param") {
+        return;
+      }
+
+      param = params.pop();
+    }
+  }
+  function _getLabel(labelName) {
+    for (var i = _scopeStack.length - 1 ; i >= 0; --i) {
+      var scopeLabels = _scopeStack[i]["(labels)"];
+      if (scopeLabels[labelName]) {
+        return scopeLabels;
+      }
+    }
+  }
+
+  function usedSoFarInCurrentFunction(labelName) {
+    for (var i = _scopeStack.length - 1; i >= 0; i--) {
+      var current = _scopeStack[i];
+      if (current["(usages)"][labelName]) {
+        return current["(usages)"][labelName];
+      }
+      if (current === _currentFunctBody) {
+        break;
+      }
+    }
+    return false;
+  }
+
+  function _checkOuterShadow(labelName, token) {
+    if (state.option.shadow !== "outer") {
+      return;
+    }
+
+    var isGlobal = _currentFunctBody["(type)"] === "global",
+      isNewFunction = _current["(type)"] === "functionparams";
+
+    var outsideCurrentFunction = !isGlobal;
+    for (var i = 0; i < _scopeStack.length; i++) {
+      var stackItem = _scopeStack[i];
+
+      if (!isNewFunction && _scopeStack[i + 1] === _currentFunctBody) {
+        outsideCurrentFunction = false;
+      }
+      if (outsideCurrentFunction && stackItem["(labels)"][labelName]) {
+        warning("W123", token, labelName);
+      }
+      if (stackItem["(breakLabels)"][labelName]) {
+        warning("W123", token, labelName);
+      }
+    }
+  }
+
+  function _latedefWarning(type, labelName, token) {
+    if (state.option.latedef) {
+      if ((state.option.latedef === true && type === "function") ||
+        type !== "function") {
+        warning("W003", token, labelName);
+      }
+    }
+  }
+
+  var scopeManagerInst = {
+
+    on: function(names, listener) {
+      names.split(" ").forEach(function(name) {
+        emitter.on(name, listener);
+      });
+    },
+
+    isPredefined: function(labelName) {
+      return !this.has(labelName) && _.has(_scopeStack[0]["(predefined)"], labelName);
+    },
+    stack: function(type) {
+      var previousScope = _current;
+      _newScope(type);
+
+      if (!type && previousScope["(type)"] === "functionparams") {
+
+        _current["(isFuncBody)"] = true;
+        _current["(context)"] = _currentFunctBody;
+        _currentFunctBody = _current;
+      }
+    },
+
+    unstack: function() {
+      var subScope = _scopeStack.length > 1 ? _scopeStack[_scopeStack.length - 2] : null;
+      var isUnstackingFunctionBody = _current === _currentFunctBody,
+        isUnstackingFunctionParams = _current["(type)"] === "functionparams",
+        isUnstackingFunctionOuter = _current["(type)"] === "functionouter";
+
+      var i, j;
+      var currentUsages = _current["(usages)"];
+      var currentLabels = _current["(labels)"];
+      var usedLabelNameList = Object.keys(currentUsages);
+
+      if (currentUsages.__proto__ && usedLabelNameList.indexOf("__proto__") === -1) {
+        usedLabelNameList.push("__proto__");
+      }
+
+      for (i = 0; i < usedLabelNameList.length; i++) {
+        var usedLabelName = usedLabelNameList[i];
+
+        var usage = currentUsages[usedLabelName];
+        var usedLabel = currentLabels[usedLabelName];
+        if (usedLabel) {
+          var usedLabelType = usedLabel["(type)"];
+
+          if (usedLabel["(useOutsideOfScope)"] && !state.option.funcscope) {
+            var usedTokens = usage["(tokens)"];
+            if (usedTokens) {
+              for (j = 0; j < usedTokens.length; j++) {
+                if (usedLabel["(function)"] === usedTokens[j]["(function)"]) {
+                  error("W038", usedTokens[j], usedLabelName);
+                }
+              }
+            }
+          }
+          _current["(labels)"][usedLabelName]["(unused)"] = false;
+          if (usedLabelType === "const" && usage["(modified)"]) {
+            for (j = 0; j < usage["(modified)"].length; j++) {
+              error("E013", usage["(modified)"][j], usedLabelName);
+            }
+          }
+          if ((usedLabelType === "function" || usedLabelType === "class") &&
+              usage["(reassigned)"]) {
+            for (j = 0; j < usage["(reassigned)"].length; j++) {
+              error("W021", usage["(reassigned)"][j], usedLabelName, usedLabelType);
+            }
+          }
+          continue;
+        }
+
+        if (isUnstackingFunctionOuter) {
+          state.funct["(isCapturing)"] = true;
+        }
+
+        if (subScope) {
+          if (!subScope["(usages)"][usedLabelName]) {
+            subScope["(usages)"][usedLabelName] = usage;
+            if (isUnstackingFunctionBody) {
+              subScope["(usages)"][usedLabelName]["(onlyUsedSubFunction)"] = true;
+            }
+          } else {
+            var subScopeUsage = subScope["(usages)"][usedLabelName];
+            subScopeUsage["(modified)"] = subScopeUsage["(modified)"].concat(usage["(modified)"]);
+            subScopeUsage["(tokens)"] = subScopeUsage["(tokens)"].concat(usage["(tokens)"]);
+            subScopeUsage["(reassigned)"] =
+              subScopeUsage["(reassigned)"].concat(usage["(reassigned)"]);
+            subScopeUsage["(onlyUsedSubFunction)"] = false;
+          }
+        } else {
+          if (typeof _current["(predefined)"][usedLabelName] === "boolean") {
+            delete declared[usedLabelName];
+            usedPredefinedAndGlobals[usedLabelName] = marker;
+            if (_current["(predefined)"][usedLabelName] === false && usage["(reassigned)"]) {
+              for (j = 0; j < usage["(reassigned)"].length; j++) {
+                warning("W020", usage["(reassigned)"][j]);
+              }
+            }
+          }
+          else {
+            if (usage["(tokens)"]) {
+              for (j = 0; j < usage["(tokens)"].length; j++) {
+                var undefinedToken = usage["(tokens)"][j];
+                if (!undefinedToken.forgiveUndef) {
+                  if (state.option.undef && !undefinedToken.ignoreUndef) {
+                    warning("W117", undefinedToken, usedLabelName);
+                  }
+                  if (impliedGlobals[usedLabelName]) {
+                    impliedGlobals[usedLabelName].line.push(undefinedToken.line);
+                  } else {
+                    impliedGlobals[usedLabelName] = {
+                      name: usedLabelName,
+                      line: [undefinedToken.line]
+                    };
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+      if (!subScope) {
+        Object.keys(declared)
+          .forEach(function(labelNotUsed) {
+            _warnUnused(labelNotUsed, declared[labelNotUsed], "var");
+          });
+      }
+      if (subScope && !isUnstackingFunctionBody &&
+        !isUnstackingFunctionParams && !isUnstackingFunctionOuter) {
+        var labelNames = Object.keys(currentLabels);
+        for (i = 0; i < labelNames.length; i++) {
+
+          var defLabelName = labelNames[i];
+          if (!currentLabels[defLabelName]["(blockscoped)"] &&
+            currentLabels[defLabelName]["(type)"] !== "exception" &&
+            !this.funct.has(defLabelName, { excludeCurrent: true })) {
+            subScope["(labels)"][defLabelName] = currentLabels[defLabelName];
+            if (_currentFunctBody["(type)"] !== "global") {
+              subScope["(labels)"][defLabelName]["(useOutsideOfScope)"] = true;
+            }
+            delete currentLabels[defLabelName];
+          }
+        }
+      }
+
+      _checkForUnused();
+
+      _scopeStack.pop();
+      if (isUnstackingFunctionBody) {
+        _currentFunctBody = _scopeStack[_.findLastIndex(_scopeStack, function(scope) {
+          return scope["(isFuncBody)"] || scope["(type)"] === "global";
+        })];
+      }
+
+      _current = subScope;
+    },
+    addParam: function(labelName, token, type) {
+      type = type || "param";
+
+      if (type === "exception") {
+        var previouslyDefinedLabelType = this.funct.labeltype(labelName);
+        if (previouslyDefinedLabelType && previouslyDefinedLabelType !== "exception") {
+          if (!state.option.node) {
+            warning("W002", state.tokens.next, labelName);
+          }
+        }
+      }
+      if (_.has(_current["(labels)"], labelName)) {
+        _current["(labels)"][labelName].duplicated = true;
+      } else {
+        _checkOuterShadow(labelName, token, type);
+
+        _current["(labels)"][labelName] = {
+          "(type)" : type,
+          "(token)": token,
+          "(unused)": true };
+
+        _current["(params)"].push(labelName);
+      }
+
+      if (_.has(_current["(usages)"], labelName)) {
+        var usage = _current["(usages)"][labelName];
+        if (usage["(onlyUsedSubFunction)"]) {
+          _latedefWarning(type, labelName, token);
+        } else {
+          warning("E056", token, labelName, type);
+        }
+      }
+    },
+
+    validateParams: function() {
+      if (_currentFunctBody["(type)"] === "global") {
+        return;
+      }
+
+      var isStrict = state.isStrict();
+      var currentFunctParamScope = _currentFunctBody["(parent)"];
+
+      if (!currentFunctParamScope["(params)"]) {
+        return;
+      }
+
+      currentFunctParamScope["(params)"].forEach(function(labelName) {
+        var label = currentFunctParamScope["(labels)"][labelName];
+
+        if (label && label.duplicated) {
+          if (isStrict) {
+            warning("E011", label["(token)"], labelName);
+          } else if (state.option.shadow !== true) {
+            warning("W004", label["(token)"], labelName);
+          }
+        }
+      });
+    },
+
+    getUsedOrDefinedGlobals: function() {
+      var list = Object.keys(usedPredefinedAndGlobals);
+      if (usedPredefinedAndGlobals.__proto__ === marker &&
+        list.indexOf("__proto__") === -1) {
+        list.push("__proto__");
+      }
+
+      return list;
+    },
+    getImpliedGlobals: function() {
+      var values = _.values(impliedGlobals);
+      var hasProto = false;
+      if (impliedGlobals.__proto__) {
+        hasProto = values.some(function(value) {
+          return value.name === "__proto__";
+        });
+
+        if (!hasProto) {
+          values.push(impliedGlobals.__proto__);
+        }
+      }
+
+      return values;
+    },
+    getUnuseds: function() {
+      return unuseds;
+    },
+
+    has: function(labelName) {
+      return Boolean(_getLabel(labelName));
+    },
+
+    labeltype: function(labelName) {
+      var scopeLabels = _getLabel(labelName);
+      if (scopeLabels) {
+        return scopeLabels[labelName]["(type)"];
+      }
+      return null;
+    },
+    addExported: function(labelName) {
+      var globalLabels = _scopeStack[0]["(labels)"];
+      if (_.has(declared, labelName)) {
+        delete declared[labelName];
+      } else if (_.has(globalLabels, labelName)) {
+        globalLabels[labelName]["(unused)"] = false;
+      } else {
+        for (var i = 1; i < _scopeStack.length; i++) {
+          var scope = _scopeStack[i];
+          if (!scope["(type)"]) {
+            if (_.has(scope["(labels)"], labelName) &&
+                !scope["(labels)"][labelName]["(blockscoped)"]) {
+              scope["(labels)"][labelName]["(unused)"] = false;
+              return;
+            }
+          } else {
+            break;
+          }
+        }
+        exported[labelName] = true;
+      }
+    },
+    setExported: function(labelName, token) {
+      this.block.use(labelName, token);
+    },
+    addlabel: function(labelName, opts) {
+
+      var type  = opts.type;
+      var token = opts.token;
+      var isblockscoped = type === "let" || type === "const" || type === "class";
+      var isexported    = (isblockscoped ? _current : _currentFunctBody)["(type)"] === "global" &&
+                          _.has(exported, labelName);
+      _checkOuterShadow(labelName, token, type);
+      if (isblockscoped) {
+
+        var declaredInCurrentScope = _current["(labels)"][labelName];
+        if (!declaredInCurrentScope && _current === _currentFunctBody &&
+          _current["(type)"] !== "global") {
+          declaredInCurrentScope = !!_currentFunctBody["(parent)"]["(labels)"][labelName];
+        }
+        if (!declaredInCurrentScope && _current["(usages)"][labelName]) {
+          var usage = _current["(usages)"][labelName];
+          if (usage["(onlyUsedSubFunction)"]) {
+            _latedefWarning(type, labelName, token);
+          } else {
+            warning("E056", token, labelName, type);
+          }
+        }
+        if (declaredInCurrentScope) {
+          warning("E011", token, labelName);
+        }
+        else if (state.option.shadow === "outer") {
+          if (scopeManagerInst.funct.has(labelName)) {
+            warning("W004", token, labelName);
+          }
+        }
+
+        scopeManagerInst.block.add(labelName, type, token, !isexported);
+
+      } else {
+
+        var declaredInCurrentFunctionScope = scopeManagerInst.funct.has(labelName);
+        if (!declaredInCurrentFunctionScope && usedSoFarInCurrentFunction(labelName)) {
+          _latedefWarning(type, labelName, token);
+        }
+        if (scopeManagerInst.funct.has(labelName, { onlyBlockscoped: true })) {
+          warning("E011", token, labelName);
+        } else if (state.option.shadow !== true) {
+          if (declaredInCurrentFunctionScope && labelName !== "__proto__") {
+            if (_currentFunctBody["(type)"] !== "global") {
+              warning("W004", token, labelName);
+            }
+          }
+        }
+
+        scopeManagerInst.funct.add(labelName, type, token, !isexported);
+
+        if (_currentFunctBody["(type)"] === "global") {
+          usedPredefinedAndGlobals[labelName] = marker;
+        }
+      }
+    },
+
+    funct: {
+      labeltype: function(labelName, options) {
+        var onlyBlockscoped = options && options.onlyBlockscoped;
+        var excludeParams = options && options.excludeParams;
+        var currentScopeIndex = _scopeStack.length - (options && options.excludeCurrent ? 2 : 1);
+        for (var i = currentScopeIndex; i >= 0; i--) {
+          var current = _scopeStack[i];
+          if (current["(labels)"][labelName] &&
+            (!onlyBlockscoped || current["(labels)"][labelName]["(blockscoped)"])) {
+            return current["(labels)"][labelName]["(type)"];
+          }
+          var scopeCheck = excludeParams ? _scopeStack[ i - 1 ] : current;
+          if (scopeCheck && scopeCheck["(type)"] === "functionparams") {
+            return null;
+          }
+        }
+        return null;
+      },
+      hasBreakLabel: function(labelName) {
+        for (var i = _scopeStack.length - 1; i >= 0; i--) {
+          var current = _scopeStack[i];
+
+          if (current["(breakLabels)"][labelName]) {
+            return true;
+          }
+          if (current["(type)"] === "functionparams") {
+            return false;
+          }
+        }
+        return false;
+      },
+      has: function(labelName, options) {
+        return Boolean(this.labeltype(labelName, options));
+      },
+      add: function(labelName, type, tok, unused) {
+        _current["(labels)"][labelName] = {
+          "(type)" : type,
+          "(token)": tok,
+          "(blockscoped)": false,
+          "(function)": _currentFunctBody,
+          "(unused)": unused };
+      }
+    },
+
+    block: {
+      isGlobal: function() {
+        return _current["(type)"] === "global";
+      },
+
+      use: function(labelName, token) {
+        var paramScope = _currentFunctBody["(parent)"];
+        if (paramScope && paramScope["(labels)"][labelName] &&
+          paramScope["(labels)"][labelName]["(type)"] === "param") {
+          if (!scopeManagerInst.funct.has(labelName,
+                { excludeParams: true, onlyBlockscoped: true })) {
+            paramScope["(labels)"][labelName]["(unused)"] = false;
+          }
+        }
+
+        if (token && (state.ignored.W117 || state.option.undef === false)) {
+          token.ignoreUndef = true;
+        }
+
+        _setupUsages(labelName);
+
+        if (token) {
+          token["(function)"] = _currentFunctBody;
+          _current["(usages)"][labelName]["(tokens)"].push(token);
+        }
+      },
+
+      reassign: function(labelName, token) {
+
+        this.modify(labelName, token);
+
+        _current["(usages)"][labelName]["(reassigned)"].push(token);
+      },
+
+      modify: function(labelName, token) {
+
+        _setupUsages(labelName);
+
+        _current["(usages)"][labelName]["(modified)"].push(token);
+      },
+      add: function(labelName, type, tok, unused) {
+        _current["(labels)"][labelName] = {
+          "(type)" : type,
+          "(token)": tok,
+          "(blockscoped)": true,
+          "(unused)": unused };
+      },
+
+      addBreakLabel: function(labelName, opts) {
+        var token = opts.token;
+        if (scopeManagerInst.funct.hasBreakLabel(labelName)) {
+          warning("E011", token, labelName);
+        }
+        else if (state.option.shadow === "outer") {
+          if (scopeManagerInst.funct.has(labelName)) {
+            warning("W004", token, labelName);
+          } else {
+            _checkOuterShadow(labelName, token);
+          }
+        }
+        _current["(breakLabels)"][labelName] = token;
+      }
+    }
+  };
+  return scopeManagerInst;
+};
+
+module.exports = scopeManager;
+
+},{"../lodash":"/node_modules/jshint/lodash.js","events":"/node_modules/browserify/node_modules/events/events.js"}],"/node_modules/jshint/src/state.js":[function(_dereq_,module,exports){
+"use strict";
+var NameStack = _dereq_("./name-stack.js");
+
+var state = {
+  syntax: {},
+  isStrict: function() {
+    return this.directive["use strict"] || this.inClassBody ||
+      this.option.module || this.option.strict === "implied";
+  },
+
+  inMoz: function() {
+    return this.option.moz;
+  },
+  inES6: function() {
+    return this.option.moz || this.option.esversion >= 6;
+  },
+  inES5: function(strict) {
+    if (strict) {
+      return (!this.option.esversion || this.option.esversion === 5) && !this.option.moz;
+    }
+    return !this.option.esversion || this.option.esversion >= 5 || this.option.moz;
+  },
+
+
+  reset: function() {
+    this.tokens = {
+      prev: null,
+      next: null,
+      curr: null
+    };
+
+    this.option = {};
+    this.funct = null;
+    this.ignored = {};
+    this.directive = {};
+    this.jsonMode = false;
+    this.jsonWarnings = [];
+    this.lines = [];
+    this.tab = "";
+    this.cache = {}; // Node.JS doesn't have Map. Sniff.
+    this.ignoredLines = {};
+    this.forinifcheckneeded = false;
+    this.nameStack = new NameStack();
+    this.inClassBody = false;
+  }
+};
+
+exports.state = state;
+
+},{"./name-stack.js":"/node_modules/jshint/src/name-stack.js"}],"/node_modules/jshint/src/style.js":[function(_dereq_,module,exports){
+"use strict";
+
+exports.register = function(linter) {
+
+  linter.on("Identifier", function style_scanProto(data) {
+    if (linter.getOption("proto")) {
+      return;
+    }
+
+    if (data.name === "__proto__") {
+      linter.warn("W103", {
+        line: data.line,
+        char: data.char,
+        data: [ data.name, "6" ]
+      });
+    }
+  });
+
+  linter.on("Identifier", function style_scanIterator(data) {
+    if (linter.getOption("iterator")) {
+      return;
+    }
+
+    if (data.name === "__iterator__") {
+      linter.warn("W103", {
+        line: data.line,
+        char: data.char,
+        data: [ data.name ]
+      });
+    }
+  });
+
+  linter.on("Identifier", function style_scanCamelCase(data) {
+    if (!linter.getOption("camelcase")) {
+      return;
+    }
+
+    if (data.name.replace(/^_+|_+$/g, "").indexOf("_") > -1 && !data.name.match(/^[A-Z0-9_]*$/)) {
+      linter.warn("W106", {
+        line: data.line,
+        char: data.from,
+        data: [ data.name ]
+      });
+    }
+  });
+
+  linter.on("String", function style_scanQuotes(data) {
+    var quotmark = linter.getOption("quotmark");
+    var code;
+
+    if (!quotmark) {
+      return;
+    }
+
+    if (quotmark === "single" && data.quote !== "'") {
+      code = "W109";
+    }
+
+    if (quotmark === "double" && data.quote !== "\"") {
+      code = "W108";
+    }
+
+    if (quotmark === true) {
+      if (!linter.getCache("quotmark")) {
+        linter.setCache("quotmark", data.quote);
+      }
+
+      if (linter.getCache("quotmark") !== data.quote) {
+        code = "W110";
+      }
+    }
+
+    if (code) {
+      linter.warn(code, {
+        line: data.line,
+        char: data.char,
+      });
+    }
+  });
+
+  linter.on("Number", function style_scanNumbers(data) {
+    if (data.value.charAt(0) === ".") {
+      linter.warn("W008", {
+        line: data.line,
+        char: data.char,
+        data: [ data.value ]
+      });
+    }
+
+    if (data.value.substr(data.value.length - 1) === ".") {
+      linter.warn("W047", {
+        line: data.line,
+        char: data.char,
+        data: [ data.value ]
+      });
+    }
+
+    if (/^00+/.test(data.value)) {
+      linter.warn("W046", {
+        line: data.line,
+        char: data.char,
+        data: [ data.value ]
+      });
+    }
+  });
+
+  linter.on("String", function style_scanJavaScriptURLs(data) {
+    var re = /^(?:javascript|jscript|ecmascript|vbscript|livescript)\s*:/i;
+
+    if (linter.getOption("scripturl")) {
+      return;
+    }
+
+    if (re.test(data.value)) {
+      linter.warn("W107", {
+        line: data.line,
+        char: data.char
+      });
+    }
+  });
+};
+
+},{}],"/node_modules/jshint/src/vars.js":[function(_dereq_,module,exports){
+
+"use strict";
+
+exports.reservedVars = {
+  arguments : false,
+  NaN       : false
+};
+
+exports.ecmaIdentifiers = {
+  3: {
+    Array              : false,
+    Boolean            : false,
+    Date               : false,
+    decodeURI          : false,
+    decodeURIComponent : false,
+    encodeURI          : false,
+    encodeURIComponent : false,
+    Error              : false,
+    "eval"             : false,
+    EvalError          : false,
+    Function           : false,
+    hasOwnProperty     : false,
+    isFinite           : false,
+    isNaN              : false,
+    Math               : false,
+    Number             : false,
+    Object             : false,
+    parseInt           : false,
+    parseFloat         : false,
+    RangeError         : false,
+    ReferenceError     : false,
+    RegExp             : false,
+    String             : false,
+    SyntaxError        : false,
+    TypeError          : false,
+    URIError           : false
+  },
+  5: {
+    JSON               : false
+  },
+  6: {
+    Map                : false,
+    Promise            : false,
+    Proxy              : false,
+    Reflect            : false,
+    Set                : false,
+    Symbol             : false,
+    WeakMap            : false,
+    WeakSet            : false
+  }
+};
+
+exports.browser = {
+  Audio                : false,
+  Blob                 : false,
+  addEventListener     : false,
+  applicationCache     : false,
+  atob                 : false,
+  blur                 : false,
+  btoa                 : false,
+  cancelAnimationFrame : false,
+  CanvasGradient       : false,
+  CanvasPattern        : false,
+  CanvasRenderingContext2D: false,
+  CSS                  : false,
+  clearInterval        : false,
+  clearTimeout         : false,
+  close                : false,
+  closed               : false,
+  Comment              : false,
+  CustomEvent          : false,
+  DOMParser            : false,
+  defaultStatus        : false,
+  Document             : false,
+  document             : false,
+  DocumentFragment     : false,
+  Element              : false,
+  ElementTimeControl   : false,
+  Event                : false,
+  event                : false,
+  fetch                : false,
+  FileReader           : false,
+  FormData             : false,
+  focus                : false,
+  frames               : false,
+  getComputedStyle     : false,
+  HTMLElement          : false,
+  HTMLAnchorElement    : false,
+  HTMLBaseElement      : false,
+  HTMLBlockquoteElement: false,
+  HTMLBodyElement      : false,
+  HTMLBRElement        : false,
+  HTMLButtonElement    : false,
+  HTMLCanvasElement    : false,
+  HTMLCollection       : false,
+  HTMLDirectoryElement : false,
+  HTMLDivElement       : false,
+  HTMLDListElement     : false,
+  HTMLFieldSetElement  : false,
+  HTMLFontElement      : false,
+  HTMLFormElement      : false,
+  HTMLFrameElement     : false,
+  HTMLFrameSetElement  : false,
+  HTMLHeadElement      : false,
+  HTMLHeadingElement   : false,
+  HTMLHRElement        : false,
+  HTMLHtmlElement      : false,
+  HTMLIFrameElement    : false,
+  HTMLImageElement     : false,
+  HTMLInputElement     : false,
+  HTMLIsIndexElement   : false,
+  HTMLLabelElement     : false,
+  HTMLLayerElement     : false,
+  HTMLLegendElement    : false,
+  HTMLLIElement        : false,
+  HTMLLinkElement      : false,
+  HTMLMapElement       : false,
+  HTMLMenuElement      : false,
+  HTMLMetaElement      : false,
+  HTMLModElement       : false,
+  HTMLObjectElement    : false,
+  HTMLOListElement     : false,
+  HTMLOptGroupElement  : false,
+  HTMLOptionElement    : false,
+  HTMLParagraphElement : false,
+  HTMLParamElement     : false,
+  HTMLPreElement       : false,
+  HTMLQuoteElement     : false,
+  HTMLScriptElement    : false,
+  HTMLSelectElement    : false,
+  HTMLStyleElement     : false,
+  HTMLTableCaptionElement: false,
+  HTMLTableCellElement : false,
+  HTMLTableColElement  : false,
+  HTMLTableElement     : false,
+  HTMLTableRowElement  : false,
+  HTMLTableSectionElement: false,
+  HTMLTemplateElement  : false,
+  HTMLTextAreaElement  : false,
+  HTMLTitleElement     : false,
+  HTMLUListElement     : false,
+  HTMLVideoElement     : false,
+  history              : false,
+  Image                : false,
+  Intl                 : false,
+  length               : false,
+  localStorage         : false,
+  location             : false,
+  matchMedia           : false,
+  MessageChannel       : false,
+  MessageEvent         : false,
+  MessagePort          : false,
+  MouseEvent           : false,
+  moveBy               : false,
+  moveTo               : false,
+  MutationObserver     : false,
+  name                 : false,
+  Node                 : false,
+  NodeFilter           : false,
+  NodeList             : false,
+  Notification         : false,
+  navigator            : false,
+  onbeforeunload       : true,
+  onblur               : true,
+  onerror              : true,
+  onfocus              : true,
+  onload               : true,
+  onresize             : true,
+  onunload             : true,
+  open                 : false,
+  openDatabase         : false,
+  opener               : false,
+  Option               : false,
+  parent               : false,
+  performance          : false,
+  print                : false,
+  Range                : false,
+  requestAnimationFrame : false,
+  removeEventListener  : false,
+  resizeBy             : false,
+  resizeTo             : false,
+  screen               : false,
+  scroll               : false,
+  scrollBy             : false,
+  scrollTo             : false,
+  sessionStorage       : false,
+  setInterval          : false,
+  setTimeout           : false,
+  SharedWorker         : false,
+  status               : false,
+  SVGAElement          : false,
+  SVGAltGlyphDefElement: false,
+  SVGAltGlyphElement   : false,
+  SVGAltGlyphItemElement: false,
+  SVGAngle             : false,
+  SVGAnimateColorElement: false,
+  SVGAnimateElement    : false,
+  SVGAnimateMotionElement: false,
+  SVGAnimateTransformElement: false,
+  SVGAnimatedAngle     : false,
+  SVGAnimatedBoolean   : false,
+  SVGAnimatedEnumeration: false,
+  SVGAnimatedInteger   : false,
+  SVGAnimatedLength    : false,
+  SVGAnimatedLengthList: false,
+  SVGAnimatedNumber    : false,
+  SVGAnimatedNumberList: false,
+  SVGAnimatedPathData  : false,
+  SVGAnimatedPoints    : false,
+  SVGAnimatedPreserveAspectRatio: false,
+  SVGAnimatedRect      : false,
+  SVGAnimatedString    : false,
+  SVGAnimatedTransformList: false,
+  SVGAnimationElement  : false,
+  SVGCSSRule           : false,
+  SVGCircleElement     : false,
+  SVGClipPathElement   : false,
+  SVGColor             : false,
+  SVGColorProfileElement: false,
+  SVGColorProfileRule  : false,
+  SVGComponentTransferFunctionElement: false,
+  SVGCursorElement     : false,
+  SVGDefsElement       : false,
+  SVGDescElement       : false,
+  SVGDocument          : false,
+  SVGElement           : false,
+  SVGElementInstance   : false,
+  SVGElementInstanceList: false,
+  SVGEllipseElement    : false,
+  SVGExternalResourcesRequired: false,
+  SVGFEBlendElement    : false,
+  SVGFEColorMatrixElement: false,
+  SVGFEComponentTransferElement: false,
+  SVGFECompositeElement: false,
+  SVGFEConvolveMatrixElement: false,
+  SVGFEDiffuseLightingElement: false,
+  SVGFEDisplacementMapElement: false,
+  SVGFEDistantLightElement: false,
+  SVGFEFloodElement    : false,
+  SVGFEFuncAElement    : false,
+  SVGFEFuncBElement    : false,
+  SVGFEFuncGElement    : false,
+  SVGFEFuncRElement    : false,
+  SVGFEGaussianBlurElement: false,
+  SVGFEImageElement    : false,
+  SVGFEMergeElement    : false,
+  SVGFEMergeNodeElement: false,
+  SVGFEMorphologyElement: false,
+  SVGFEOffsetElement   : false,
+  SVGFEPointLightElement: false,
+  SVGFESpecularLightingElement: false,
+  SVGFESpotLightElement: false,
+  SVGFETileElement     : false,
+  SVGFETurbulenceElement: false,
+  SVGFilterElement     : false,
+  SVGFilterPrimitiveStandardAttributes: false,
+  SVGFitToViewBox      : false,
+  SVGFontElement       : false,
+  SVGFontFaceElement   : false,
+  SVGFontFaceFormatElement: false,
+  SVGFontFaceNameElement: false,
+  SVGFontFaceSrcElement: false,
+  SVGFontFaceUriElement: false,
+  SVGForeignObjectElement: false,
+  SVGGElement          : false,
+  SVGGlyphElement      : false,
+  SVGGlyphRefElement   : false,
+  SVGGradientElement   : false,
+  SVGHKernElement      : false,
+  SVGICCColor          : false,
+  SVGImageElement      : false,
+  SVGLangSpace         : false,
+  SVGLength            : false,
+  SVGLengthList        : false,
+  SVGLineElement       : false,
+  SVGLinearGradientElement: false,
+  SVGLocatable         : false,
+  SVGMPathElement      : false,
+  SVGMarkerElement     : false,
+  SVGMaskElement       : false,
+  SVGMatrix            : false,
+  SVGMetadataElement   : false,
+  SVGMissingGlyphElement: false,
+  SVGNumber            : false,
+  SVGNumberList        : false,
+  SVGPaint             : false,
+  SVGPathElement       : false,
+  SVGPathSeg           : false,
+  SVGPathSegArcAbs     : false,
+  SVGPathSegArcRel     : false,
+  SVGPathSegClosePath  : false,
+  SVGPathSegCurvetoCubicAbs: false,
+  SVGPathSegCurvetoCubicRel: false,
+  SVGPathSegCurvetoCubicSmoothAbs: false,
+  SVGPathSegCurvetoCubicSmoothRel: false,
+  SVGPathSegCurvetoQuadraticAbs: false,
+  SVGPathSegCurvetoQuadraticRel: false,
+  SVGPathSegCurvetoQuadraticSmoothAbs: false,
+  SVGPathSegCurvetoQuadraticSmoothRel: false,
+  SVGPathSegLinetoAbs  : false,
+  SVGPathSegLinetoHorizontalAbs: false,
+  SVGPathSegLinetoHorizontalRel: false,
+  SVGPathSegLinetoRel  : false,
+  SVGPathSegLinetoVerticalAbs: false,
+  SVGPathSegLinetoVerticalRel: false,
+  SVGPathSegList       : false,
+  SVGPathSegMovetoAbs  : false,
+  SVGPathSegMovetoRel  : false,
+  SVGPatternElement    : false,
+  SVGPoint             : false,
+  SVGPointList         : false,
+  SVGPolygonElement    : false,
+  SVGPolylineElement   : false,
+  SVGPreserveAspectRatio: false,
+  SVGRadialGradientElement: false,
+  SVGRect              : false,
+  SVGRectElement       : false,
+  SVGRenderingIntent   : false,
+  SVGSVGElement        : false,
+  SVGScriptElement     : false,
+  SVGSetElement        : false,
+  SVGStopElement       : false,
+  SVGStringList        : false,
+  SVGStylable          : false,
+  SVGStyleElement      : false,
+  SVGSwitchElement     : false,
+  SVGSymbolElement     : false,
+  SVGTRefElement       : false,
+  SVGTSpanElement      : false,
+  SVGTests             : false,
+  SVGTextContentElement: false,
+  SVGTextElement       : false,
+  SVGTextPathElement   : false,
+  SVGTextPositioningElement: false,
+  SVGTitleElement      : false,
+  SVGTransform         : false,
+  SVGTransformList     : false,
+  SVGTransformable     : false,
+  SVGURIReference      : false,
+  SVGUnitTypes         : false,
+  SVGUseElement        : false,
+  SVGVKernElement      : false,
+  SVGViewElement       : false,
+  SVGViewSpec          : false,
+  SVGZoomAndPan        : false,
+  Text                 : false,
+  TextDecoder          : false,
+  TextEncoder          : false,
+  TimeEvent            : false,
+  top                  : false,
+  URL                  : false,
+  WebGLActiveInfo      : false,
+  WebGLBuffer          : false,
+  WebGLContextEvent    : false,
+  WebGLFramebuffer     : false,
+  WebGLProgram         : false,
+  WebGLRenderbuffer    : false,
+  WebGLRenderingContext: false,
+  WebGLShader          : false,
+  WebGLShaderPrecisionFormat: false,
+  WebGLTexture         : false,
+  WebGLUniformLocation : false,
+  WebSocket            : false,
+  window               : false,
+  Window               : false,
+  Worker               : false,
+  XDomainRequest       : false,
+  XMLHttpRequest       : false,
+  XMLSerializer        : false,
+  XPathEvaluator       : false,
+  XPathException       : false,
+  XPathExpression      : false,
+  XPathNamespace       : false,
+  XPathNSResolver      : false,
+  XPathResult          : false
+};
+
+exports.devel = {
+  alert  : false,
+  confirm: false,
+  console: false,
+  Debug  : false,
+  opera  : false,
+  prompt : false
+};
+
+exports.worker = {
+  importScripts  : true,
+  postMessage    : true,
+  self           : true,
+  FileReaderSync : true
+};
+exports.nonstandard = {
+  escape  : false,
+  unescape: false
+};
+
+exports.couch = {
+  "require" : false,
+  respond   : false,
+  getRow    : false,
+  emit      : false,
+  send      : false,
+  start     : false,
+  sum       : false,
+  log       : false,
+  exports   : false,
+  module    : false,
+  provides  : false
+};
+
+exports.node = {
+  __filename    : false,
+  __dirname     : false,
+  GLOBAL        : false,
+  global        : false,
+  module        : false,
+  require       : false,
+
+  Buffer        : true,
+  console       : true,
+  exports       : true,
+  process       : true,
+  setTimeout    : true,
+  clearTimeout  : true,
+  setInterval   : true,
+  clearInterval : true,
+  setImmediate  : true, // v0.9.1+
+  clearImmediate: true  // v0.9.1+
+};
+
+exports.browserify = {
+  __filename    : false,
+  __dirname     : false,
+  global        : false,
+  module        : false,
+  require       : false,
+  Buffer        : true,
+  exports       : true,
+  process       : true
+};
+
+exports.phantom = {
+  phantom      : true,
+  require      : true,
+  WebPage      : true,
+  console      : true, // in examples, but undocumented
+  exports      : true  // v1.7+
+};
+
+exports.qunit = {
+  asyncTest      : false,
+  deepEqual      : false,
+  equal          : false,
+  expect         : false,
+  module         : false,
+  notDeepEqual   : false,
+  notEqual       : false,
+  notPropEqual   : false,
+  notStrictEqual : false,
+  ok             : false,
+  propEqual      : false,
+  QUnit          : false,
+  raises         : false,
+  start          : false,
+  stop           : false,
+  strictEqual    : false,
+  test           : false,
+  "throws"       : false
+};
+
+exports.rhino = {
+  defineClass  : false,
+  deserialize  : false,
+  gc           : false,
+  help         : false,
+  importClass  : false,
+  importPackage: false,
+  "java"       : false,
+  load         : false,
+  loadClass    : false,
+  Packages     : false,
+  print        : false,
+  quit         : false,
+  readFile     : false,
+  readUrl      : false,
+  runCommand   : false,
+  seal         : false,
+  serialize    : false,
+  spawn        : false,
+  sync         : false,
+  toint32      : false,
+  version      : false
+};
+
+exports.shelljs = {
+  target       : false,
+  echo         : false,
+  exit         : false,
+  cd           : false,
+  pwd          : false,
+  ls           : false,
+  find         : false,
+  cp           : false,
+  rm           : false,
+  mv           : false,
+  mkdir        : false,
+  test         : false,
+  cat          : false,
+  sed          : false,
+  grep         : false,
+  which        : false,
+  dirs         : false,
+  pushd        : false,
+  popd         : false,
+  env          : false,
+  exec         : false,
+  chmod        : false,
+  config       : false,
+  error        : false,
+  tempdir      : false
+};
+
+exports.typed = {
+  ArrayBuffer         : false,
+  ArrayBufferView     : false,
+  DataView            : false,
+  Float32Array        : false,
+  Float64Array        : false,
+  Int16Array          : false,
+  Int32Array          : false,
+  Int8Array           : false,
+  Uint16Array         : false,
+  Uint32Array         : false,
+  Uint8Array          : false,
+  Uint8ClampedArray   : false
+};
+
+exports.wsh = {
+  ActiveXObject            : true,
+  Enumerator               : true,
+  GetObject                : true,
+  ScriptEngine             : true,
+  ScriptEngineBuildVersion : true,
+  ScriptEngineMajorVersion : true,
+  ScriptEngineMinorVersion : true,
+  VBArray                  : true,
+  WSH                      : true,
+  WScript                  : true,
+  XDomainRequest           : true
+};
+
+exports.dojo = {
+  dojo     : false,
+  dijit    : false,
+  dojox    : false,
+  define   : false,
+  "require": false
+};
+
+exports.jquery = {
+  "$"    : false,
+  jQuery : false
+};
+
+exports.mootools = {
+  "$"           : false,
+  "$$"          : false,
+  Asset         : false,
+  Browser       : false,
+  Chain         : false,
+  Class         : false,
+  Color         : false,
+  Cookie        : false,
+  Core          : false,
+  Document      : false,
+  DomReady      : false,
+  DOMEvent      : false,
+  DOMReady      : false,
+  Drag          : false,
+  Element       : false,
+  Elements      : false,
+  Event         : false,
+  Events        : false,
+  Fx            : false,
+  Group         : false,
+  Hash          : false,
+  HtmlTable     : false,
+  IFrame        : false,
+  IframeShim    : false,
+  InputValidator: false,
+  instanceOf    : false,
+  Keyboard      : false,
+  Locale        : false,
+  Mask          : false,
+  MooTools      : false,
+  Native        : false,
+  Options       : false,
+  OverText      : false,
+  Request       : false,
+  Scroller      : false,
+  Slick         : false,
+  Slider        : false,
+  Sortables     : false,
+  Spinner       : false,
+  Swiff         : false,
+  Tips          : false,
+  Type          : false,
+  typeOf        : false,
+  URI           : false,
+  Window        : false
+};
+
+exports.prototypejs = {
+  "$"               : false,
+  "$$"              : false,
+  "$A"              : false,
+  "$F"              : false,
+  "$H"              : false,
+  "$R"              : false,
+  "$break"          : false,
+  "$continue"       : false,
+  "$w"              : false,
+  Abstract          : false,
+  Ajax              : false,
+  Class             : false,
+  Enumerable        : false,
+  Element           : false,
+  Event             : false,
+  Field             : false,
+  Form              : false,
+  Hash              : false,
+  Insertion         : false,
+  ObjectRange       : false,
+  PeriodicalExecuter: false,
+  Position          : false,
+  Prototype         : false,
+  Selector          : false,
+  Template          : false,
+  Toggle            : false,
+  Try               : false,
+  Autocompleter     : false,
+  Builder           : false,
+  Control           : false,
+  Draggable         : false,
+  Draggables        : false,
+  Droppables        : false,
+  Effect            : false,
+  Sortable          : false,
+  SortableObserver  : false,
+  Sound             : false,
+  Scriptaculous     : false
+};
+
+exports.yui = {
+  YUI       : false,
+  Y         : false,
+  YUI_config: false
+};
+
+exports.mocha = {
+  mocha       : false,
+  describe    : false,
+  xdescribe   : false,
+  it          : false,
+  xit         : false,
+  context     : false,
+  xcontext    : false,
+  before      : false,
+  after       : false,
+  beforeEach  : false,
+  afterEach   : false,
+  suite         : false,
+  test          : false,
+  setup         : false,
+  teardown      : false,
+  suiteSetup    : false,
+  suiteTeardown : false
+};
+
+exports.jasmine = {
+  jasmine     : false,
+  describe    : false,
+  xdescribe   : false,
+  it          : false,
+  xit         : false,
+  beforeEach  : false,
+  afterEach   : false,
+  setFixtures : false,
+  loadFixtures: false,
+  spyOn       : false,
+  expect      : false,
+  runs        : false,
+  waitsFor    : false,
+  waits       : false,
+  beforeAll   : false,
+  afterAll    : false,
+  fail        : false,
+  fdescribe   : false,
+  fit         : false,
+  pending     : false
+};
+
+},{}]},{},["/node_modules/jshint/src/jshint.js"]);
+
+});
+
+define("ace/mode/javascript_worker",["require","exports","module","ace/lib/oop","ace/worker/mirror","ace/mode/javascript/jshint"], function(require, exports, module) {
+"use strict";
+
+var oop = require("../lib/oop");
+var Mirror = require("../worker/mirror").Mirror;
+var lint = require("./javascript/jshint").JSHINT;
+
+function startRegex(arr) {
+    return RegExp("^(" + arr.join("|") + ")");
+}
+
+var disabledWarningsRe = startRegex([
+    "Bad for in variable '(.+)'.",
+    'Missing "use strict"'
+]);
+var errorsRe = startRegex([
+    "Unexpected",
+    "Expected ",
+    "Confusing (plus|minus)",
+    "\\{a\\} unterminated regular expression",
+    "Unclosed ",
+    "Unmatched ",
+    "Unbegun comment",
+    "Bad invocation",
+    "Missing space after",
+    "Missing operator at"
+]);
+var infoRe = startRegex([
+    "Expected an assignment",
+    "Bad escapement of EOL",
+    "Unexpected comma",
+    "Unexpected space",
+    "Missing radix parameter.",
+    "A leading decimal point can",
+    "\\['{a}'\\] is better written in dot notation.",
+    "'{a}' used out of scope"
+]);
+
+var JavaScriptWorker = exports.JavaScriptWorker = function(sender) {
+    Mirror.call(this, sender);
+    this.setTimeout(500);
+    this.setOptions();
+};
+
+oop.inherits(JavaScriptWorker, Mirror);
+
+(function() {
+    this.setOptions = function(options) {
+        this.options = options || {
+            esnext: true,
+            moz: true,
+            devel: true,
+            browser: true,
+            node: true,
+            laxcomma: true,
+            laxbreak: true,
+            lastsemic: true,
+            onevar: false,
+            passfail: false,
+            maxerr: 100,
+            expr: true,
+            multistr: true,
+            globalstrict: true
+        };
+        this.doc.getValue() && this.deferredUpdate.schedule(100);
+    };
+
+    this.changeOptions = function(newOptions) {
+        oop.mixin(this.options, newOptions);
+        this.doc.getValue() && this.deferredUpdate.schedule(100);
+    };
+
+    this.isValidJS = function(str) {
+        try {
+            eval("throw 0;" + str);
+        } catch(e) {
+            if (e === 0)
+                return true;
+        }
+        return false
+    };
+
+    this.onUpdate = function() {
+        var value = this.doc.getValue();
+        value = value.replace(/^#!.*\n/, "\n");
+        if (!value)
+            return this.sender.emit("annotate", []);
+
+        var errors = [];
+        var maxErrorLevel = this.isValidJS(value) ? "warning" : "error";
+        lint(value, this.options, this.options.globals);
+        var results = lint.errors;
+
+        var errorAdded = false
+        for (var i = 0; i < results.length; i++) {
+            var error = results[i];
+            if (!error)
+                continue;
+            var raw = error.raw;
+            var type = "warning";
+
+            if (raw == "Missing semicolon.") {
+                var str = error.evidence.substr(error.character);
+                str = str.charAt(str.search(/\S/));
+                if (maxErrorLevel == "error" && str && /[\w\d{(['"]/.test(str)) {
+                    error.reason = 'Missing ";" before statement';
+                    type = "error";
+                } else {
+                    type = "info";
+                }
+            }
+            else if (disabledWarningsRe.test(raw)) {
+                continue;
+            }
+            else if (infoRe.test(raw)) {
+                type = "info"
+            }
+            else if (errorsRe.test(raw)) {
+                errorAdded  = true;
+                type = maxErrorLevel;
+            }
+            else if (raw == "'{a}' is not defined.") {
+                type = "warning";
+            }
+            else if (raw == "'{a}' is defined but never used.") {
+                type = "info";
+            }
+
+            errors.push({
+                row: error.line-1,
+                column: error.character-1,
+                text: error.reason,
+                type: type,
+                raw: raw
+            });
+
+            if (errorAdded) {
+            }
+        }
+
+        this.sender.emit("annotate", errors);
+    };
+
+}).call(JavaScriptWorker.prototype);
+
+});
+
+define("ace/lib/es5-shim",["require","exports","module"], function(require, exports, module) {
+
+function Empty() {}
+
+if (!Function.prototype.bind) {
+    Function.prototype.bind = function bind(that) { // .length is 1
+        var target = this;
+        if (typeof target != "function") {
+            throw new TypeError("Function.prototype.bind called on incompatible " + target);
+        }
+        var args = slice.call(arguments, 1); // for normal call
+        var bound = function () {
+
+            if (this instanceof bound) {
+
+                var result = target.apply(
+                    this,
+                    args.concat(slice.call(arguments))
+                );
+                if (Object(result) === result) {
+                    return result;
+                }
+                return this;
+
+            } else {
+                return target.apply(
+                    that,
+                    args.concat(slice.call(arguments))
+                );
+
+            }
+
+        };
+        if(target.prototype) {
+            Empty.prototype = target.prototype;
+            bound.prototype = new Empty();
+            Empty.prototype = null;
+        }
+        return bound;
+    };
+}
+var call = Function.prototype.call;
+var prototypeOfArray = Array.prototype;
+var prototypeOfObject = Object.prototype;
+var slice = prototypeOfArray.slice;
+var _toString = call.bind(prototypeOfObject.toString);
+var owns = call.bind(prototypeOfObject.hasOwnProperty);
+var defineGetter;
+var defineSetter;
+var lookupGetter;
+var lookupSetter;
+var supportsAccessors;
+if ((supportsAccessors = owns(prototypeOfObject, "__defineGetter__"))) {
+    defineGetter = call.bind(prototypeOfObject.__defineGetter__);
+    defineSetter = call.bind(prototypeOfObject.__defineSetter__);
+    lookupGetter = call.bind(prototypeOfObject.__lookupGetter__);
+    lookupSetter = call.bind(prototypeOfObject.__lookupSetter__);
+}
+if ([1,2].splice(0).length != 2) {
+    if(function() { // test IE < 9 to splice bug - see issue #138
+        function makeArray(l) {
+            var a = new Array(l+2);
+            a[0] = a[1] = 0;
+            return a;
+        }
+        var array = [], lengthBefore;
+        
+        array.splice.apply(array, makeArray(20));
+        array.splice.apply(array, makeArray(26));
+
+        lengthBefore = array.length; //46
+        array.splice(5, 0, "XXX"); // add one element
+
+        lengthBefore + 1 == array.length
+
+        if (lengthBefore + 1 == array.length) {
+            return true;// has right splice implementation without bugs
+        }
+    }()) {//IE 6/7
+        var array_splice = Array.prototype.splice;
+        Array.prototype.splice = function(start, deleteCount) {
+            if (!arguments.length) {
+                return [];
+            } else {
+                return array_splice.apply(this, [
+                    start === void 0 ? 0 : start,
+                    deleteCount === void 0 ? (this.length - start) : deleteCount
+                ].concat(slice.call(arguments, 2)))
+            }
+        };
+    } else {//IE8
+        Array.prototype.splice = function(pos, removeCount){
+            var length = this.length;
+            if (pos > 0) {
+                if (pos > length)
+                    pos = length;
+            } else if (pos == void 0) {
+                pos = 0;
+            } else if (pos < 0) {
+                pos = Math.max(length + pos, 0);
+            }
+
+            if (!(pos+removeCount < length))
+                removeCount = length - pos;
+
+            var removed = this.slice(pos, pos+removeCount);
+            var insert = slice.call(arguments, 2);
+            var add = insert.length;            
+            if (pos === length) {
+                if (add) {
+                    this.push.apply(this, insert);
+                }
+            } else {
+                var remove = Math.min(removeCount, length - pos);
+                var tailOldPos = pos + remove;
+                var tailNewPos = tailOldPos + add - remove;
+                var tailCount = length - tailOldPos;
+                var lengthAfterRemove = length - remove;
+
+                if (tailNewPos < tailOldPos) { // case A
+                    for (var i = 0; i < tailCount; ++i) {
+                        this[tailNewPos+i] = this[tailOldPos+i];
+                    }
+                } else if (tailNewPos > tailOldPos) { // case B
+                    for (i = tailCount; i--; ) {
+                        this[tailNewPos+i] = this[tailOldPos+i];
+                    }
+                } // else, add == remove (nothing to do)
+
+                if (add && pos === lengthAfterRemove) {
+                    this.length = lengthAfterRemove; // truncate array
+                    this.push.apply(this, insert);
+                } else {
+                    this.length = lengthAfterRemove + add; // reserves space
+                    for (i = 0; i < add; ++i) {
+                        this[pos+i] = insert[i];
+                    }
+                }
+            }
+            return removed;
+        };
+    }
+}
+if (!Array.isArray) {
+    Array.isArray = function isArray(obj) {
+        return _toString(obj) == "[object Array]";
+    };
+}
+var boxedString = Object("a"),
+    splitString = boxedString[0] != "a" || !(0 in boxedString);
+
+if (!Array.prototype.forEach) {
+    Array.prototype.forEach = function forEach(fun /*, thisp*/) {
+        var object = toObject(this),
+            self = splitString && _toString(this) == "[object String]" ?
+                this.split("") :
+                object,
+            thisp = arguments[1],
+            i = -1,
+            length = self.length >>> 0;
+        if (_toString(fun) != "[object Function]") {
+            throw new TypeError(); // TODO message
+        }
+
+        while (++i < length) {
+            if (i in self) {
+                fun.call(thisp, self[i], i, object);
+            }
+        }
+    };
+}
+if (!Array.prototype.map) {
+    Array.prototype.map = function map(fun /*, thisp*/) {
+        var object = toObject(this),
+            self = splitString && _toString(this) == "[object String]" ?
+                this.split("") :
+                object,
+            length = self.length >>> 0,
+            result = Array(length),
+            thisp = arguments[1];
+        if (_toString(fun) != "[object Function]") {
+            throw new TypeError(fun + " is not a function");
+        }
+
+        for (var i = 0; i < length; i++) {
+            if (i in self)
+                result[i] = fun.call(thisp, self[i], i, object);
+        }
+        return result;
+    };
+}
+if (!Array.prototype.filter) {
+    Array.prototype.filter = function filter(fun /*, thisp */) {
+        var object = toObject(this),
+            self = splitString && _toString(this) == "[object String]" ?
+                this.split("") :
+                    object,
+            length = self.length >>> 0,
+            result = [],
+            value,
+            thisp = arguments[1];
+        if (_toString(fun) != "[object Function]") {
+            throw new TypeError(fun + " is not a function");
+        }
+
+        for (var i = 0; i < length; i++) {
+            if (i in self) {
+                value = self[i];
+                if (fun.call(thisp, value, i, object)) {
+                    result.push(value);
+                }
+            }
+        }
+        return result;
+    };
+}
+if (!Array.prototype.every) {
+    Array.prototype.every = function every(fun /*, thisp */) {
+        var object = toObject(this),
+            self = splitString && _toString(this) == "[object String]" ?
+                this.split("") :
+                object,
+            length = self.length >>> 0,
+            thisp = arguments[1];
+        if (_toString(fun) != "[object Function]") {
+            throw new TypeError(fun + " is not a function");
+        }
+
+        for (var i = 0; i < length; i++) {
+            if (i in self && !fun.call(thisp, self[i], i, object)) {
+                return false;
+            }
+        }
+        return true;
+    };
+}
+if (!Array.prototype.some) {
+    Array.prototype.some = function some(fun /*, thisp */) {
+        var object = toObject(this),
+            self = splitString && _toString(this) == "[object String]" ?
+                this.split("") :
+                object,
+            length = self.length >>> 0,
+            thisp = arguments[1];
+        if (_toString(fun) != "[object Function]") {
+            throw new TypeError(fun + " is not a function");
+        }
+
+        for (var i = 0; i < length; i++) {
+            if (i in self && fun.call(thisp, self[i], i, object)) {
+                return true;
+            }
+        }
+        return false;
+    };
+}
+if (!Array.prototype.reduce) {
+    Array.prototype.reduce = function reduce(fun /*, initial*/) {
+        var object = toObject(this),
+            self = splitString && _toString(this) == "[object String]" ?
+                this.split("") :
+                object,
+            length = self.length >>> 0;
+        if (_toString(fun) != "[object Function]") {
+            throw new TypeError(fun + " is not a function");
+        }
+        if (!length && arguments.length == 1) {
+            throw new TypeError("reduce of empty array with no initial value");
+        }
+
+        var i = 0;
+        var result;
+        if (arguments.length >= 2) {
+            result = arguments[1];
+        } else {
+            do {
+                if (i in self) {
+                    result = self[i++];
+                    break;
+                }
+                if (++i >= length) {
+                    throw new TypeError("reduce of empty array with no initial value");
+                }
+            } while (true);
+        }
+
+        for (; i < length; i++) {
+            if (i in self) {
+                result = fun.call(void 0, result, self[i], i, object);
+            }
+        }
+
+        return result;
+    };
+}
+if (!Array.prototype.reduceRight) {
+    Array.prototype.reduceRight = function reduceRight(fun /*, initial*/) {
+        var object = toObject(this),
+            self = splitString && _toString(this) == "[object String]" ?
+                this.split("") :
+                object,
+            length = self.length >>> 0;
+        if (_toString(fun) != "[object Function]") {
+            throw new TypeError(fun + " is not a function");
+        }
+        if (!length && arguments.length == 1) {
+            throw new TypeError("reduceRight of empty array with no initial value");
+        }
+
+        var result, i = length - 1;
+        if (arguments.length >= 2) {
+            result = arguments[1];
+        } else {
+            do {
+                if (i in self) {
+                    result = self[i--];
+                    break;
+                }
+                if (--i < 0) {
+                    throw new TypeError("reduceRight of empty array with no initial value");
+                }
+            } while (true);
+        }
+
+        do {
+            if (i in this) {
+                result = fun.call(void 0, result, self[i], i, object);
+            }
+        } while (i--);
+
+        return result;
+    };
+}
+if (!Array.prototype.indexOf || ([0, 1].indexOf(1, 2) != -1)) {
+    Array.prototype.indexOf = function indexOf(sought /*, fromIndex */ ) {
+        var self = splitString && _toString(this) == "[object String]" ?
+                this.split("") :
+                toObject(this),
+            length = self.length >>> 0;
+
+        if (!length) {
+            return -1;
+        }
+
+        var i = 0;
+        if (arguments.length > 1) {
+            i = toInteger(arguments[1]);
+        }
+        i = i >= 0 ? i : Math.max(0, length + i);
+        for (; i < length; i++) {
+            if (i in self && self[i] === sought) {
+                return i;
+            }
+        }
+        return -1;
+    };
+}
+if (!Array.prototype.lastIndexOf || ([0, 1].lastIndexOf(0, -3) != -1)) {
+    Array.prototype.lastIndexOf = function lastIndexOf(sought /*, fromIndex */) {
+        var self = splitString && _toString(this) == "[object String]" ?
+                this.split("") :
+                toObject(this),
+            length = self.length >>> 0;
+
+        if (!length) {
+            return -1;
+        }
+        var i = length - 1;
+        if (arguments.length > 1) {
+            i = Math.min(i, toInteger(arguments[1]));
+        }
+        i = i >= 0 ? i : length - Math.abs(i);
+        for (; i >= 0; i--) {
+            if (i in self && sought === self[i]) {
+                return i;
+            }
+        }
+        return -1;
+    };
+}
+if (!Object.getPrototypeOf) {
+    Object.getPrototypeOf = function getPrototypeOf(object) {
+        return object.__proto__ || (
+            object.constructor ?
+            object.constructor.prototype :
+            prototypeOfObject
+        );
+    };
+}
+if (!Object.getOwnPropertyDescriptor) {
+    var ERR_NON_OBJECT = "Object.getOwnPropertyDescriptor called on a " +
+                         "non-object: ";
+    Object.getOwnPropertyDescriptor = function getOwnPropertyDescriptor(object, property) {
+        if ((typeof object != "object" && typeof object != "function") || object === null)
+            throw new TypeError(ERR_NON_OBJECT + object);
+        if (!owns(object, property))
+            return;
+
+        var descriptor, getter, setter;
+        descriptor =  { enumerable: true, configurable: true };
+        if (supportsAccessors) {
+            var prototype = object.__proto__;
+            object.__proto__ = prototypeOfObject;
+
+            var getter = lookupGetter(object, property);
+            var setter = lookupSetter(object, property);
+            object.__proto__ = prototype;
+
+            if (getter || setter) {
+                if (getter) descriptor.get = getter;
+                if (setter) descriptor.set = setter;
+                return descriptor;
+            }
+        }
+        descriptor.value = object[property];
+        return descriptor;
+    };
+}
+if (!Object.getOwnPropertyNames) {
+    Object.getOwnPropertyNames = function getOwnPropertyNames(object) {
+        return Object.keys(object);
+    };
+}
+if (!Object.create) {
+    var createEmpty;
+    if (Object.prototype.__proto__ === null) {
+        createEmpty = function () {
+            return { "__proto__": null };
+        };
+    } else {
+        createEmpty = function () {
+            var empty = {};
+            for (var i in empty)
+                empty[i] = null;
+            empty.constructor =
+            empty.hasOwnProperty =
+            empty.propertyIsEnumerable =
+            empty.isPrototypeOf =
+            empty.toLocaleString =
+            empty.toString =
+            empty.valueOf =
+            empty.__proto__ = null;
+            return empty;
+        }
+    }
+
+    Object.create = function create(prototype, properties) {
+        var object;
+        if (prototype === null) {
+            object = createEmpty();
+        } else {
+            if (typeof prototype != "object")
+                throw new TypeError("typeof prototype["+(typeof prototype)+"] != 'object'");
+            var Type = function () {};
+            Type.prototype = prototype;
+            object = new Type();
+            object.__proto__ = prototype;
+        }
+        if (properties !== void 0)
+            Object.defineProperties(object, properties);
+        return object;
+    };
+}
+
+function doesDefinePropertyWork(object) {
+    try {
+        Object.defineProperty(object, "sentinel", {});
+        return "sentinel" in object;
+    } catch (exception) {
+    }
+}
+if (Object.defineProperty) {
+    var definePropertyWorksOnObject = doesDefinePropertyWork({});
+    var definePropertyWorksOnDom = typeof document == "undefined" ||
+        doesDefinePropertyWork(document.createElement("div"));
+    if (!definePropertyWorksOnObject || !definePropertyWorksOnDom) {
+        var definePropertyFallback = Object.defineProperty;
+    }
+}
+
+if (!Object.defineProperty || definePropertyFallback) {
+    var ERR_NON_OBJECT_DESCRIPTOR = "Property description must be an object: ";
+    var ERR_NON_OBJECT_TARGET = "Object.defineProperty called on non-object: "
+    var ERR_ACCESSORS_NOT_SUPPORTED = "getters & setters can not be defined " +
+                                      "on this javascript engine";
+
+    Object.defineProperty = function defineProperty(object, property, descriptor) {
+        if ((typeof object != "object" && typeof object != "function") || object === null)
+            throw new TypeError(ERR_NON_OBJECT_TARGET + object);
+        if ((typeof descriptor != "object" && typeof descriptor != "function") || descriptor === null)
+            throw new TypeError(ERR_NON_OBJECT_DESCRIPTOR + descriptor);
+        if (definePropertyFallback) {
+            try {
+                return definePropertyFallback.call(Object, object, property, descriptor);
+            } catch (exception) {
+            }
+        }
+        if (owns(descriptor, "value")) {
+
+            if (supportsAccessors && (lookupGetter(object, property) ||
+                                      lookupSetter(object, property)))
+            {
+                var prototype = object.__proto__;
+                object.__proto__ = prototypeOfObject;
+                delete object[property];
+                object[property] = descriptor.value;
+                object.__proto__ = prototype;
+            } else {
+                object[property] = descriptor.value;
+            }
+        } else {
+            if (!supportsAccessors)
+                throw new TypeError(ERR_ACCESSORS_NOT_SUPPORTED);
+            if (owns(descriptor, "get"))
+                defineGetter(object, property, descriptor.get);
+            if (owns(descriptor, "set"))
+                defineSetter(object, property, descriptor.set);
+        }
+
+        return object;
+    };
+}
+if (!Object.defineProperties) {
+    Object.defineProperties = function defineProperties(object, properties) {
+        for (var property in properties) {
+            if (owns(properties, property))
+                Object.defineProperty(object, property, properties[property]);
+        }
+        return object;
+    };
+}
+if (!Object.seal) {
+    Object.seal = function seal(object) {
+        return object;
+    };
+}
+if (!Object.freeze) {
+    Object.freeze = function freeze(object) {
+        return object;
+    };
+}
+try {
+    Object.freeze(function () {});
+} catch (exception) {
+    Object.freeze = (function freeze(freezeObject) {
+        return function freeze(object) {
+            if (typeof object == "function") {
+                return object;
+            } else {
+                return freezeObject(object);
+            }
+        };
+    })(Object.freeze);
+}
+if (!Object.preventExtensions) {
+    Object.preventExtensions = function preventExtensions(object) {
+        return object;
+    };
+}
+if (!Object.isSealed) {
+    Object.isSealed = function isSealed(object) {
+        return false;
+    };
+}
+if (!Object.isFrozen) {
+    Object.isFrozen = function isFrozen(object) {
+        return false;
+    };
+}
+if (!Object.isExtensible) {
+    Object.isExtensible = function isExtensible(object) {
+        if (Object(object) === object) {
+            throw new TypeError(); // TODO message
+        }
+        var name = '';
+        while (owns(object, name)) {
+            name += '?';
+        }
+        object[name] = true;
+        var returnValue = owns(object, name);
+        delete object[name];
+        return returnValue;
+    };
+}
+if (!Object.keys) {
+    var hasDontEnumBug = true,
+        dontEnums = [
+            "toString",
+            "toLocaleString",
+            "valueOf",
+            "hasOwnProperty",
+            "isPrototypeOf",
+            "propertyIsEnumerable",
+            "constructor"
+        ],
+        dontEnumsLength = dontEnums.length;
+
+    for (var key in {"toString": null}) {
+        hasDontEnumBug = false;
+    }
+
+    Object.keys = function keys(object) {
+
+        if (
+            (typeof object != "object" && typeof object != "function") ||
+            object === null
+        ) {
+            throw new TypeError("Object.keys called on a non-object");
+        }
+
+        var keys = [];
+        for (var name in object) {
+            if (owns(object, name)) {
+                keys.push(name);
+            }
+        }
+
+        if (hasDontEnumBug) {
+            for (var i = 0, ii = dontEnumsLength; i < ii; i++) {
+                var dontEnum = dontEnums[i];
+                if (owns(object, dontEnum)) {
+                    keys.push(dontEnum);
+                }
+            }
+        }
+        return keys;
+    };
+
+}
+if (!Date.now) {
+    Date.now = function now() {
+        return new Date().getTime();
+    };
+}
+var ws = "\x09\x0A\x0B\x0C\x0D\x20\xA0\u1680\u180E\u2000\u2001\u2002\u2003" +
+    "\u2004\u2005\u2006\u2007\u2008\u2009\u200A\u202F\u205F\u3000\u2028" +
+    "\u2029\uFEFF";
+if (!String.prototype.trim || ws.trim()) {
+    ws = "[" + ws + "]";
+    var trimBeginRegexp = new RegExp("^" + ws + ws + "*"),
+        trimEndRegexp = new RegExp(ws + ws + "*$");
+    String.prototype.trim = function trim() {
+        return String(this).replace(trimBeginRegexp, "").replace(trimEndRegexp, "");
+    };
+}
+
+function toInteger(n) {
+    n = +n;
+    if (n !== n) { // isNaN
+        n = 0;
+    } else if (n !== 0 && n !== (1/0) && n !== -(1/0)) {
+        n = (n > 0 || -1) * Math.floor(Math.abs(n));
+    }
+    return n;
+}
+
+function isPrimitive(input) {
+    var type = typeof input;
+    return (
+        input === null ||
+        type === "undefined" ||
+        type === "boolean" ||
+        type === "number" ||
+        type === "string"
+    );
+}
+
+function toPrimitive(input) {
+    var val, valueOf, toString;
+    if (isPrimitive(input)) {
+        return input;
+    }
+    valueOf = input.valueOf;
+    if (typeof valueOf === "function") {
+        val = valueOf.call(input);
+        if (isPrimitive(val)) {
+            return val;
+        }
+    }
+    toString = input.toString;
+    if (typeof toString === "function") {
+        val = toString.call(input);
+        if (isPrimitive(val)) {
+            return val;
+        }
+    }
+    throw new TypeError();
+}
+var toObject = function (o) {
+    if (o == null) { // this matches both null and undefined
+        throw new TypeError("can't convert "+o+" to object");
+    }
+    return Object(o);
+};
+
+});
