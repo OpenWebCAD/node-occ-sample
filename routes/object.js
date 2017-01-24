@@ -1,27 +1,33 @@
-"use strict";
-var nodeocc  = require("node-occ");
-var occ = nodeocc.occ;
-var shapeFactory = nodeocc.shapeFactory;
-var scriptRunner = nodeocc.scriptRunner;
-var fast_occ = nodeocc.fastBuilder.occ;
+/* jslint esversion:6 */
+const nodeocc  = require("node-occ");
+const occ = nodeocc.occ;
+const shapeFactory = nodeocc.shapeFactory;
+const scriptRunner = nodeocc.scriptRunner;
+const fast_occ = nodeocc.fastBuilder.occ;
 
 
-var fs = require('fs');
-var path = require("path");
-var fileUtils = require ("file-utils");
+const fs = require('fs');
+const path = require("path");
+const fileUtils = require ("file-utils");
 
-var vm = require('vm');
-var util = require('util');
+const vm = require('vm');
+const util = require('util');
 
 
 function buildResponse(solids,logs) {
     
-    var response = { solids: [] , logs: [ ]};
-    var counter = 1;
+    let response = { solids: [] , logs: [ ]};
+    let counter = 1;
     solids.forEach(function(solid){
         solid.name = "S" + counter;
         counter++;
-        response.solids.push(occ.buildSolidMesh(solid));
+        try {
+            let mesh = occ.buildSolidMesh(solid);
+            response.solids.push(mesh);
+        }
+        catch(err) {
+            console.log(" EXCEPTION in MESHING ");
+        }
     });
     response.logs = logs;
     return response;
@@ -46,7 +52,7 @@ exports.buildCSG1 = function(req,res)
                 process.env.solids.push(objs);
             }
         },
-        shapeFactory: shapeFactory,
+        shapeFactory: shapeFactory
     });  
 
     var solidBuilderScript = ""+csgFuncScript+"";
@@ -69,7 +75,7 @@ exports.load_cadfile = function(req,res) {
     var filename = path.join(__dirname, "..", req.body.filename);
 
     function progress(percent) {
-       console.log(" -------------------> ", percent);
+       console.log(" -----------------> ", percent);
     }
 
     console.log(" loading ", filename);
