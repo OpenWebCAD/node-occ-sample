@@ -18,6 +18,6 @@
   "dependencies": {
     "ace": "^1.2.6",
     "bootstrap": "^3.3.7",
-    "threejs": "*"
+    "node-occ-threejs": "https://github.com/OpenWebCAD/node-occ-threejs.git"
   }
 }

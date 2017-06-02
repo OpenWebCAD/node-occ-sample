@@ -1,3 +1,4 @@
+const GeomView = require("node-occ-geomview").GeomView;
 /**
  *
  *
@@ -18,28 +19,28 @@ function bytesToSize(bytes, precision) {
 }
 
 function w(n,width) {
-return ("00"+n).substr(-width);
+    return ("00"+n).substr(-width);
 }
 function toReadableDuration(duration) {
-   var milliseconds = duration % 1000;
-   var seconds      = Math.floor(duration/1000)%60;
-   var minutes     = Math.floor(duration/1000/60);
-   return "00:"+w(minutes,2,"0")+":"+w(seconds,2,"0")+"."+w(milliseconds,3);
+    var milliseconds = duration % 1000;
+    var seconds      = Math.floor(duration/1000)%60;
+    var minutes     = Math.floor(duration/1000/60);
+    return "00:"+w(minutes,2,"0")+":"+w(seconds,2,"0")+"."+w(milliseconds,3);
 }
 var editor, myLayout;
 
 function installLayout() {
     // $('#container').layout({ applyDemoStyles: true });
     myLayout = $('body').layout(
-        {
-            west__onresize: function (x, ui) {
-                editor.resize();
-            },
-            center__onresize: function (x, ui) {
-                // resize webgl view
-                onWindowResize();
-            }
-        }
+      {
+          west__onresize: function (x, ui) {
+              editor.resize();
+          },
+          center__onresize: function (x, ui) {
+              // resize webgl view
+              onWindowResize();
+          }
+      }
     );
     myLayout.sizePane("west", 400);
 }
@@ -61,7 +62,7 @@ $(document).ready(function () {
     if (container.size() === 0) {
         throw Error("Cannot find graphical view div");
     }
-    view = new GEOMVIEW(container[0]);
+    view = new GeomView(container[0]);
 
     view.on("animate", function () {
         updateAJS();
@@ -367,13 +368,13 @@ var lastJQueryStart;
 function installSpinnerOnAjaxCall() {
 
     $('#loadingDiv')
-        .hide()  // hide it initially
-        .ajaxStart(function () {
-            $(this).show();
-            lastJQueryStart = new Date();
-        })
-        .ajaxStop(function () {
-            $(this).hide();
-            lastAjaxDuration = new Date() - lastJQueryStart;
-        });
+    .hide()  // hide it initially
+    .ajaxStart(function () {
+        $(this).show();
+        lastJQueryStart = new Date();
+    })
+    .ajaxStop(function () {
+        $(this).hide();
+        lastAjaxDuration = new Date() - lastJQueryStart;
+    });
 }

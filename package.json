@@ -6,25 +6,42 @@
   "scripts": {
     "start": "node app"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/openwebcad/node-occ-sample.git"
+  },
+  "author": "Etienne Rossignon",
+  "license": "MIT",
   "dependencies": {
-    "body-parser": "^1.15.2",
+    "body-parser": "^1.17.2",
     "compression": "^1.6.2",
     "connect-multiparty": "^2.0.0",
     "cookie-parser": "^1.4.3",
-    "cors": "^2.8.1",
+    "cors": "^2.8.3",
     "ejs": "*",
     "errorhandler": "^1.5.0",
-    "express": "4.14.0",
-    "express-session": "^1.14.2",
+    "express": "4.15.3",
+    "express-session": "^1.15.3",
     "file-utils": "*",
-    "formidable": "^1.0.17",
-    "method-override": "^2.3.7",
-    "moment": "^2.17.1",
-    "morgan": "^1.7.0",
-    "multer": "^1.2.1",
-    "node-occ": "0.1.2",
+    "formidable": "^1.1.1",
+    "method-override": "^2.3.9",
+    "moment": "^2.18.1",
+    "morgan": "^1.8.2",
+    "multer": "^1.3.0",
+    "node-occ": "0.2.0",
+    "node-occ-csg-editor": "git+https://github.com/OpenWebCAD/node-occ-csg-editor.git#master",
+    "node-occ-geomview": "git+https://github.com/OpenWebCAD/node-occ-geomview.git#master",
     "stack-trace": "*",
     "static-favicon": "^2.0.0-alpha"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "babel-cli": "^6.24.1",
+    "babel-eslint": "^7.2.3",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-stage-2": "^6.24.1",
+    "copy-webpack-plugin": "^4.0.1",
+    "eslint": "^3.19.0",
+    "webpack": "^2.6.1",
+    "webpack-node-externals": "^1.6.0"
+  }
 }
