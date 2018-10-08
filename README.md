@@ -2,10 +2,7 @@
 
 ```
 npm install
-cd node_modules 
-git clone https://github.com/ceremcem/node-occ 
-cd node-occ 
-npm install
+# manually install node-occ into node_modules, see https://github.com/ceremcem/node-occ#install
 ```
 
 # Build & Run 
