@@ -215,7 +215,7 @@ function send_and_build_up_csg_method2() {
     var endTime = 0;
     var serverTime = 0;
     $.ajax({
-        url: "/csg1",
+        url: "csg1",
         data: JSON.stringify({script: encoded_script}),
         type: "POST",
         contentType: "application/json",
