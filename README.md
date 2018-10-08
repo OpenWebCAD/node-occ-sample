@@ -1,7 +1,18 @@
-# Run
+# Install
 
 ```
 npm install
-# install node-occ manually
+# manually install node-occ into node_modules, see https://github.com/ceremcem/node-occ#install
+```
+
+# Build & Run 
+
+```
 npm start
 ```
+
+Go to localhost:3000 and see the application.
+
+# Live Demo 
+
+See https://aktos.io/webcad/
