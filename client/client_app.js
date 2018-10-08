@@ -122,10 +122,12 @@ function installACEEditor() {
     editor.getSession().on('changeAnnotation', function () {
         if (script_isValid()) {
             if (editor.isModified) {
-                $("#button").show();
+                $("#button").css('color', 'red');
+            } else {
+                $("#button").css('color', 'black');
             }
         } else {
-            $("#button").hide();
+            $("#button").css('color', 'black');
         }
     });
     editor.getSession().on('change', function (e) {
@@ -151,7 +153,7 @@ function updatePreview() {
     if (editor.isModified) {
         send_and_build_up_csg();
         editor.isModified = false;
-        $("#button").hide();
+        $("#button").css('color', 'black');
     }
 }
 
@@ -334,7 +336,7 @@ function send_and_build_up_csg() {
 
 function SceneCtrl($scope) {
     "use strict";
-    /*
+    
      $scope.getCamera =function() {
      return camera;
      };
@@ -350,7 +352,7 @@ function SceneCtrl($scope) {
      $scope.camera1.position.x = camera.position.x;
      $scope.camera1.position.y = camera.position.y;
      $scope.camera1.position.z = camera.position.z;
-     */
+     
 }
 
 function updateAJS() {
