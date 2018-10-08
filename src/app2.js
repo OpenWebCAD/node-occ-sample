@@ -25,7 +25,7 @@ const env = process.env.NODE_ENV || "development";
 app.use(compression());
 
 app.set("port", port);
-app.set("views",  "./views");
+app.set("views",  __dirname + "/views");
 app.set("view engine", "ejs");
 
 // parse application/x-www-form-urlencoded
